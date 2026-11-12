@@ -62,13 +62,28 @@ Las herramientas del MVP y el servidor MCP se incorporarán durante la fase 1.
 Índice en [`docs/`](docs/):
 
 - [`00-overview.md`](docs/00-overview.md) — qué es PRAXIS, por qué y para quién.
+- [`01-architecture.md`](docs/01-architecture.md) — verticales, capas y flujo de ejecución.
 - [`02-mvp-scope.md`](docs/02-mvp-scope.md) — alcance, herramientas y criterios de corte.
-
-El resto de documentos (arquitectura, catálogo, modelos de datos, seguridad, MCP, etc.) se añaden en las siguientes iteraciones de la fase 0.
+- [`03-tools-catalog.md`](docs/03-tools-catalog.md) — catálogo de las 21 herramientas del MVP y backlog.
+- [`04-routing.md`](docs/04-routing.md) — capa de canal y `intents.yaml` (v2).
+- [`05-data-models.md`](docs/05-data-models.md) — dominios, RLS y modelos.
+- [`06-external-apis.md`](docs/06-external-apis.md) — proveedores, límites y fallbacks.
+- [`07-security.md`](docs/07-security.md) — multi-tenancy, GDPR y auditoría.
+- [`08-formatting.md`](docs/08-formatting.md) — respuesta, canales y tonos.
+- [`09-mcp.md`](docs/09-mcp.md) — especificación MCP.
+- [`10-infrastructure.md`](docs/10-infrastructure.md) — stack, despliegue y observabilidad.
+- [`11-success-metrics.md`](docs/11-success-metrics.md) — KPIs del proyecto.
+- [`12-legal-notes.md`](docs/12-legal-notes.md) — notas legales españolas (borrador a validar).
+- [`13-connectors.md`](docs/13-connectors.md) — conectores e integraciones.
+- [`14-knowledge-governance.md`](docs/14-knowledge-governance.md) — curación, vigencia y citas.
+- [`15-testing-and-evals.md`](docs/15-testing-and-evals.md) — tests, propiedades y evaluaciones.
+- [`16-tool-authoring.md`](docs/16-tool-authoring.md) — guía para crear herramientas.
+- [`17-versioning.md`](docs/17-versioning.md) — SemVer, deprecación y cambios incompatibles.
+- [`adr/`](docs/adr/) — Architecture Decision Records.
 
 ## Contribuir
 
-La guía para contribuidores y para crear nuevas herramientas estará en `docs/16-tool-authoring.md` (fase 0). Criterios de entrada resumidos en [`docs/02-mvp-scope.md`](docs/02-mvp-scope.md#criterios-de-entrada-para-herramientas-de-backlog).
+La guía para crear nuevas herramientas está en [`docs/16-tool-authoring.md`](docs/16-tool-authoring.md). Los criterios de entrada se resumen en [`docs/02-mvp-scope.md`](docs/02-mvp-scope.md#criterios-de-entrada-para-herramientas-de-backlog).
 
 ## Aviso legal
 
