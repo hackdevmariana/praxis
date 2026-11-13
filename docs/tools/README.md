@@ -90,6 +90,10 @@ tool: dominio.accion
 | `datetime.calc` | [`datetime/calc.md`](datetime/calc.md) |
 | `datetime.business_days` | [`datetime/business_days.md`](datetime/business_days.md) |
 | `calendar.deadline_remaining` | [`calendar/deadline_remaining.md`](calendar/deadline_remaining.md) |
+| `finance.vat` | [`finance/vat.md`](finance/vat.md) |
+| `finance.margin` | [`finance/margin.md`](finance/margin.md) |
+| `finance.discounts` | [`finance/discounts.md`](finance/discounts.md) |
+| `finance.loan_schedule` | [`finance/loan_schedule.md`](finance/loan_schedule.md) |
 
 ### Extras (v2 / backlog)
 
