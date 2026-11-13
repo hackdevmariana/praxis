@@ -101,6 +101,8 @@ tool: dominio.accion
 | `procurement.compare_offers` | [`procurement/compare_offers.md`](procurement/compare_offers.md) |
 | `calendar.list_events` | [`calendar/list_events.md`](calendar/list_events.md) |
 | `calendar.create_event` | [`calendar/create_event.md`](calendar/create_event.md) |
+| `documents.extract_invoice` | [`documents/extract_invoice.md`](documents/extract_invoice.md) |
+| `documents.generate_invoice` | [`documents/generate_invoice.md`](documents/generate_invoice.md) |
 
 ### Extras (v2 / backlog)
 
