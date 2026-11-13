@@ -94,6 +94,9 @@ tool: dominio.accion
 | `finance.margin` | [`finance/margin.md`](finance/margin.md) |
 | `finance.discounts` | [`finance/discounts.md`](finance/discounts.md) |
 | `finance.loan_schedule` | [`finance/loan_schedule.md`](finance/loan_schedule.md) |
+| `currency.convert` | [`currency/convert.md`](currency/convert.md) |
+| `weather.forecast` | [`weather/forecast.md`](weather/forecast.md) |
+| `geo.geocode` | [`geo/geocode.md`](geo/geocode.md) |
 
 ### Extras (v2 / backlog)
 
