@@ -1,0 +1,100 @@
+---
+estado: MVP
+version: 0.1.0
+---
+
+# Especificaciones de herramientas
+
+Un fichero por herramienta. El path refleja el nombre de la tool: `finance/vat.md` ↔ `finance.vat`.
+
+Estas specs son **SDD**: describen el contrato y la semántica exacta antes de escribir código. Cuando exista la implementación, los golden tests (generados desde aquí) impiden la deriva.
+
+## Convenciones
+
+- **Idioma:** castellano; nombres de tool y campos en inglés.
+- **Dinero:** `Decimal` serializado como **string**; redondeo `ROUND_HALF_UP` a 2 decimales salvo indicación.
+- **Fechas:** ISO 8601; zona horaria por defecto `Europe/Madrid`.
+- **Errores:** código estable + mensaje; ver tabla de errores MCP en [`../09-mcp.md`](../09-mcp.md).
+- **Estado:** `MVP` (se implementa en la fase 1), `v2` o `backlog`.
+- **Profundidad:** plantilla completa para MVP/v2; versión ligera (semántica + contrato + casos) para `backlog`.
+
+## Plantilla
+
+Cada spec incluye estas secciones, en este orden:
+
+1. **Metadatos** — versión, permisos, clasificación, `read_only`/`idempotent`/`requires_confirmation`, provider, caché, perfiles de tenant.
+2. **Semántica exacta** — fórmulas, reglas de redondeo y comportamiento en bordes.
+3. **Contrato Pydantic** — `Input` y `Output` con tipos, constraints y defaults.
+4. **Matriz de casos** — feliz / límite / error con resultado esperado.
+5. **Golden cases** — pares `entrada JSON → salida exacta` (base de los tests).
+6. **Metadatos de respuesta** — `source`, `valid_until`, warnings típicos.
+7. **Composiciones** — tools relacionadas y puentes a `praxis-sim`.
+8. **Decisiones pendientes** — cuestiones abiertas antes de implementar.
+
+### Esqueleto
+
+```markdown
+---
+estado: MVP
+version: 1.0.0
+tool: dominio.accion
+---
+
+# `dominio.accion` — <título>
+
+## 1. Metadatos
+
+| Campo | Valor |
+|---|---|
+| Permisos | `dominio.accion` |
+| Clasificación | `public` |
+| read_only | true |
+| idempotent | true |
+| requires_confirmation | false |
+| Provider | determinista |
+| Caché | n/a |
+| Perfiles | all |
+
+## 2. Semántica exacta
+...
+
+## 3. Contrato Pydantic
+...
+
+## 4. Matriz de casos
+...
+
+## 5. Golden cases
+...
+
+## 6. Metadatos de respuesta
+...
+
+## 7. Composiciones
+...
+
+## 8. Decisiones pendientes
+...
+```
+
+## Índice
+
+### MVP
+
+| Tool | Spec |
+|---|---|
+| `validate.spanish_id` | [`validate/spanish_id.md`](validate/spanish_id.md) |
+| `validate.iban` | [`validate/iban.md`](validate/iban.md) |
+| `validate.email_phone` | [`validate/email_phone.md`](validate/email_phone.md) |
+| `units.convert` | [`units/convert.md`](units/convert.md) |
+
+### Extras (v2 / backlog)
+
+Pendientes de redacción (W9+). Se añaden aquí a medida que se especifican.
+
+## Referencias
+
+- Catálogo general: [`../03-tools-catalog.md`](../03-tools-catalog.md)
+- Guía de autoría: [`../16-tool-authoring.md`](../16-tool-authoring.md)
+- Contrato de respuesta: [`../08-formatting.md`](../08-formatting.md)
+- Versionado: [`../17-versioning.md`](../17-versioning.md)
