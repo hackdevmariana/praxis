@@ -1,0 +1,1888 @@
+{
+  "communities": {
+    "AN": {
+      "aliases": [
+        "AN",
+        "Andalucía"
+      ],
+      "holidays": {
+        "2024": [
+          {
+            "date": "2024-02-28",
+            "name": "Día de Andalucía"
+          },
+          {
+            "date": "2024-03-28",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2024-12-09",
+            "name": "Lunes siguiente a Inmaculada Concepción"
+          }
+        ],
+        "2025": [
+          {
+            "date": "2025-02-28",
+            "name": "Día de Andalucía"
+          },
+          {
+            "date": "2025-04-17",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2025-10-13",
+            "name": "Lunes siguiente a Fiesta Nacional de España"
+          }
+        ],
+        "2026": [
+          {
+            "date": "2026-02-28",
+            "name": "Día de Andalucía"
+          },
+          {
+            "date": "2026-04-02",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2026-11-02",
+            "name": "Lunes siguiente a Todos los Santos"
+          },
+          {
+            "date": "2026-12-07",
+            "name": "Lunes siguiente a Día de la Constitución Española"
+          }
+        ],
+        "2027": [
+          {
+            "date": "2027-03-01",
+            "name": "Lunes siguiente a Día de Andalucía"
+          },
+          {
+            "date": "2027-03-25",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2027-08-16",
+            "name": "Lunes siguiente a Asunción de la Virgen"
+          }
+        ],
+        "2028": [
+          {
+            "date": "2028-02-28",
+            "name": "Día de Andalucía"
+          },
+          {
+            "date": "2028-04-13",
+            "name": "Jueves Santo"
+          }
+        ]
+      },
+      "name": "Andalucía"
+    },
+    "AR": {
+      "aliases": [
+        "AR",
+        "Aragón"
+      ],
+      "holidays": {
+        "2024": [
+          {
+            "date": "2024-03-28",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2024-04-23",
+            "name": "Día de San Jorge"
+          },
+          {
+            "date": "2024-12-09",
+            "name": "Lunes siguiente a Inmaculada Concepción"
+          }
+        ],
+        "2025": [
+          {
+            "date": "2025-04-17",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2025-04-23",
+            "name": "Día de San Jorge"
+          },
+          {
+            "date": "2025-10-13",
+            "name": "Lunes siguiente a Fiesta Nacional de España"
+          }
+        ],
+        "2026": [
+          {
+            "date": "2026-04-02",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2026-04-23",
+            "name": "Día de San Jorge"
+          },
+          {
+            "date": "2026-11-02",
+            "name": "Lunes siguiente a Todos los Santos"
+          },
+          {
+            "date": "2026-12-07",
+            "name": "Lunes siguiente a Día de la Constitución Española"
+          }
+        ],
+        "2027": [
+          {
+            "date": "2027-03-25",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2027-04-23",
+            "name": "Día de San Jorge"
+          },
+          {
+            "date": "2027-08-16",
+            "name": "Lunes siguiente a Asunción de la Virgen"
+          }
+        ],
+        "2028": [
+          {
+            "date": "2028-04-13",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2028-04-24",
+            "name": "Lunes siguiente a Día de San Jorge"
+          }
+        ]
+      },
+      "name": "Aragón"
+    },
+    "AS": {
+      "aliases": [
+        "AS",
+        "Asturias",
+        "Principado de Asturias"
+      ],
+      "holidays": {
+        "2024": [
+          {
+            "date": "2024-03-28",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2024-09-09",
+            "name": "Lunes siguiente a Día de Asturias"
+          },
+          {
+            "date": "2024-12-09",
+            "name": "Lunes siguiente a Inmaculada Concepción"
+          }
+        ],
+        "2025": [
+          {
+            "date": "2025-04-17",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2025-09-08",
+            "name": "Día de Asturias"
+          },
+          {
+            "date": "2025-10-13",
+            "name": "Lunes siguiente a Fiesta Nacional de España"
+          }
+        ],
+        "2026": [
+          {
+            "date": "2026-04-02",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2026-09-08",
+            "name": "Día de Asturias"
+          },
+          {
+            "date": "2026-11-02",
+            "name": "Lunes siguiente a Todos los Santos"
+          },
+          {
+            "date": "2026-12-07",
+            "name": "Lunes siguiente a Día de la Constitución Española"
+          }
+        ],
+        "2027": [
+          {
+            "date": "2027-03-25",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2027-08-16",
+            "name": "Lunes siguiente a Asunción de la Virgen"
+          },
+          {
+            "date": "2027-09-08",
+            "name": "Día de Asturias"
+          }
+        ],
+        "2028": [
+          {
+            "date": "2028-04-13",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2028-09-08",
+            "name": "Día de Asturias"
+          }
+        ]
+      },
+      "name": "Principado de Asturias"
+    },
+    "CB": {
+      "aliases": [
+        "CB",
+        "Cantabria"
+      ],
+      "holidays": {
+        "2024": [
+          {
+            "date": "2024-03-28",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2024-04-01",
+            "name": "Lunes de Pascua"
+          },
+          {
+            "date": "2024-07-25",
+            "name": "Santiago Apóstol"
+          }
+        ],
+        "2025": [
+          {
+            "date": "2025-04-17",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2025-07-28",
+            "name": "Día de las Instituciones de Cantabria"
+          },
+          {
+            "date": "2025-09-15",
+            "name": "La Bien Aparecida"
+          }
+        ],
+        "2026": [
+          {
+            "date": "2026-04-02",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2026-07-28",
+            "name": "Día de las Instituciones de Cantabria"
+          },
+          {
+            "date": "2026-09-15",
+            "name": "La Bien Aparecida"
+          },
+          {
+            "date": "2026-12-07",
+            "name": "Lunes siguiente a Día de la Constitución Española"
+          }
+        ],
+        "2027": [
+          {
+            "date": "2027-03-25",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2027-07-28",
+            "name": "Día de las Instituciones de Cantabria"
+          },
+          {
+            "date": "2027-09-15",
+            "name": "La Bien Aparecida"
+          }
+        ],
+        "2028": [
+          {
+            "date": "2028-04-13",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2028-07-28",
+            "name": "Día de las Instituciones de Cantabria"
+          },
+          {
+            "date": "2028-09-15",
+            "name": "La Bien Aparecida"
+          }
+        ]
+      },
+      "name": "Cantabria"
+    },
+    "CE": {
+      "aliases": [
+        "CE",
+        "Ceuta"
+      ],
+      "holidays": {
+        "2024": [
+          {
+            "date": "2024-03-28",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2024-04-10",
+            "name": "Fiesta de Culminación del Ramadán-Eidul Fitr"
+          },
+          {
+            "date": "2024-06-13",
+            "name": "San Antonio"
+          },
+          {
+            "date": "2024-06-17",
+            "name": "Fiesta del Sacrificio-Eidul Adha"
+          },
+          {
+            "date": "2024-08-05",
+            "name": "Nuestra Señora de África"
+          },
+          {
+            "date": "2024-09-02",
+            "name": "Día de Ceuta"
+          }
+        ],
+        "2025": [
+          {
+            "date": "2025-03-31",
+            "name": "Fiesta de Culminación del Ramadán-Eidul Fitr"
+          },
+          {
+            "date": "2025-04-17",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2025-06-06",
+            "name": "Fiesta del Sacrificio-Eidul Adha"
+          },
+          {
+            "date": "2025-06-13",
+            "name": "San Antonio"
+          },
+          {
+            "date": "2025-08-05",
+            "name": "Nuestra Señora de África"
+          }
+        ],
+        "2026": [
+          {
+            "date": "2026-03-20",
+            "name": "Fiesta de Culminación del Ramadán-Eidul Fitr"
+          },
+          {
+            "date": "2026-04-02",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2026-05-27",
+            "name": "Fiesta del Sacrificio-Eidul Adha"
+          },
+          {
+            "date": "2026-06-13",
+            "name": "San Antonio"
+          },
+          {
+            "date": "2026-08-05",
+            "name": "Nuestra Señora de África"
+          },
+          {
+            "date": "2026-09-02",
+            "name": "Día de Ceuta"
+          }
+        ],
+        "2027": [
+          {
+            "date": "2027-03-09",
+            "name": "Fiesta de Culminación del Ramadán-Eidul Fitr (estimado)"
+          },
+          {
+            "date": "2027-03-25",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2027-05-16",
+            "name": "Fiesta del Sacrificio-Eidul Adha (estimado)"
+          },
+          {
+            "date": "2027-06-14",
+            "name": "Lunes siguiente a San Antonio"
+          },
+          {
+            "date": "2027-08-05",
+            "name": "Nuestra Señora de África"
+          },
+          {
+            "date": "2027-09-02",
+            "name": "Día de Ceuta"
+          }
+        ],
+        "2028": [
+          {
+            "date": "2028-02-26",
+            "name": "Fiesta de Culminación del Ramadán-Eidul Fitr (estimado)"
+          },
+          {
+            "date": "2028-04-13",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2028-05-05",
+            "name": "Fiesta del Sacrificio-Eidul Adha (estimado)"
+          },
+          {
+            "date": "2028-06-13",
+            "name": "San Antonio"
+          },
+          {
+            "date": "2028-08-05",
+            "name": "Nuestra Señora de África"
+          },
+          {
+            "date": "2028-09-02",
+            "name": "Día de Ceuta"
+          }
+        ]
+      },
+      "name": "Ceuta"
+    },
+    "CL": {
+      "aliases": [
+        "CL",
+        "Castilla y León"
+      ],
+      "holidays": {
+        "2024": [
+          {
+            "date": "2024-03-28",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2024-04-23",
+            "name": "Fiesta de Castilla y León"
+          },
+          {
+            "date": "2024-12-09",
+            "name": "Lunes siguiente a Inmaculada Concepción"
+          }
+        ],
+        "2025": [
+          {
+            "date": "2025-04-17",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2025-04-23",
+            "name": "Fiesta de Castilla y León"
+          },
+          {
+            "date": "2025-10-13",
+            "name": "Lunes siguiente a Fiesta Nacional de España"
+          }
+        ],
+        "2026": [
+          {
+            "date": "2026-04-02",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2026-04-23",
+            "name": "Fiesta de Castilla y León"
+          },
+          {
+            "date": "2026-11-02",
+            "name": "Lunes siguiente a Todos los Santos"
+          },
+          {
+            "date": "2026-12-07",
+            "name": "Lunes siguiente a Día de la Constitución Española"
+          }
+        ],
+        "2027": [
+          {
+            "date": "2027-03-25",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2027-04-23",
+            "name": "Fiesta de Castilla y León"
+          },
+          {
+            "date": "2027-08-16",
+            "name": "Lunes siguiente a Asunción de la Virgen"
+          }
+        ],
+        "2028": [
+          {
+            "date": "2028-04-13",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2028-04-24",
+            "name": "Lunes siguiente a Fiesta de Castilla y León"
+          }
+        ]
+      },
+      "name": "Castilla y León"
+    },
+    "CM": {
+      "aliases": [
+        "CM",
+        "Castilla-La Mancha"
+      ],
+      "holidays": {
+        "2024": [
+          {
+            "date": "2024-03-28",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2024-05-30",
+            "name": "Corpus Christi"
+          },
+          {
+            "date": "2024-05-31",
+            "name": "Día de Castilla-La Mancha"
+          }
+        ],
+        "2025": [
+          {
+            "date": "2025-04-17",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2025-05-31",
+            "name": "Día de Castilla-La Mancha"
+          },
+          {
+            "date": "2025-06-19",
+            "name": "Corpus Christi"
+          }
+        ],
+        "2026": [
+          {
+            "date": "2026-04-02",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2026-04-06",
+            "name": "Lunes de Pascua"
+          },
+          {
+            "date": "2026-06-04",
+            "name": "Corpus Christi"
+          },
+          {
+            "date": "2026-11-02",
+            "name": "Lunes siguiente a Todos los Santos"
+          }
+        ],
+        "2027": [
+          {
+            "date": "2027-03-25",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2027-05-27",
+            "name": "Corpus Christi"
+          },
+          {
+            "date": "2027-05-31",
+            "name": "Día de Castilla-La Mancha"
+          }
+        ],
+        "2028": [
+          {
+            "date": "2028-04-13",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2028-05-31",
+            "name": "Día de Castilla-La Mancha"
+          },
+          {
+            "date": "2028-06-15",
+            "name": "Corpus Christi"
+          }
+        ]
+      },
+      "name": "Castilla-La Mancha"
+    },
+    "CN": {
+      "aliases": [
+        "CN",
+        "Canarias"
+      ],
+      "holidays": {
+        "2024": [
+          {
+            "date": "2024-03-28",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2024-05-30",
+            "name": "Día de Canarias"
+          }
+        ],
+        "2025": [
+          {
+            "date": "2025-04-17",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2025-05-30",
+            "name": "Día de Canarias"
+          }
+        ],
+        "2026": [
+          {
+            "date": "2026-04-02",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2026-05-30",
+            "name": "Día de Canarias"
+          },
+          {
+            "date": "2026-11-02",
+            "name": "Lunes siguiente a Todos los Santos"
+          }
+        ],
+        "2027": [
+          {
+            "date": "2027-03-25",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2027-05-31",
+            "name": "Lunes siguiente a Día de Canarias"
+          },
+          {
+            "date": "2027-08-16",
+            "name": "Lunes siguiente a Asunción de la Virgen"
+          }
+        ],
+        "2028": [
+          {
+            "date": "2028-04-13",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2028-05-30",
+            "name": "Día de Canarias"
+          }
+        ]
+      },
+      "name": "Canarias"
+    },
+    "CT": {
+      "aliases": [
+        "CT",
+        "Catalunya",
+        "Cataluña"
+      ],
+      "holidays": {
+        "2024": [
+          {
+            "date": "2024-04-01",
+            "name": "Lunes de Pascua"
+          },
+          {
+            "date": "2024-06-24",
+            "name": "San Juan"
+          },
+          {
+            "date": "2024-09-11",
+            "name": "Fiesta Nacional de Cataluña"
+          },
+          {
+            "date": "2024-12-26",
+            "name": "San Esteban"
+          }
+        ],
+        "2025": [
+          {
+            "date": "2025-04-21",
+            "name": "Lunes de Pascua"
+          },
+          {
+            "date": "2025-06-24",
+            "name": "San Juan"
+          },
+          {
+            "date": "2025-09-11",
+            "name": "Fiesta Nacional de Cataluña"
+          },
+          {
+            "date": "2025-12-26",
+            "name": "San Esteban"
+          }
+        ],
+        "2026": [
+          {
+            "date": "2026-04-06",
+            "name": "Lunes de Pascua"
+          },
+          {
+            "date": "2026-06-24",
+            "name": "San Juan"
+          },
+          {
+            "date": "2026-09-11",
+            "name": "Fiesta Nacional de Cataluña"
+          },
+          {
+            "date": "2026-12-26",
+            "name": "San Esteban"
+          }
+        ],
+        "2027": [
+          {
+            "date": "2027-03-29",
+            "name": "Lunes de Pascua"
+          },
+          {
+            "date": "2027-06-24",
+            "name": "San Juan"
+          },
+          {
+            "date": "2027-09-11",
+            "name": "Fiesta Nacional de Cataluña"
+          }
+        ],
+        "2028": [
+          {
+            "date": "2028-04-17",
+            "name": "Lunes de Pascua"
+          },
+          {
+            "date": "2028-06-24",
+            "name": "San Juan"
+          },
+          {
+            "date": "2028-09-11",
+            "name": "Fiesta Nacional de Cataluña"
+          },
+          {
+            "date": "2028-12-26",
+            "name": "San Esteban"
+          }
+        ]
+      },
+      "name": "Cataluña"
+    },
+    "EX": {
+      "aliases": [
+        "EX",
+        "Extremadura"
+      ],
+      "holidays": {
+        "2024": [
+          {
+            "date": "2024-02-13",
+            "name": "Martes de Carnaval"
+          },
+          {
+            "date": "2024-03-28",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2024-12-09",
+            "name": "Lunes siguiente a Inmaculada Concepción"
+          }
+        ],
+        "2025": [
+          {
+            "date": "2025-04-17",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2025-09-08",
+            "name": "Día de Extremadura"
+          },
+          {
+            "date": "2025-10-13",
+            "name": "Lunes siguiente a Fiesta Nacional de España"
+          }
+        ],
+        "2026": [
+          {
+            "date": "2026-04-02",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2026-09-08",
+            "name": "Día de Extremadura"
+          },
+          {
+            "date": "2026-11-02",
+            "name": "Lunes siguiente a Todos los Santos"
+          },
+          {
+            "date": "2026-12-07",
+            "name": "Lunes siguiente a Día de la Constitución Española"
+          }
+        ],
+        "2027": [
+          {
+            "date": "2027-03-25",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2027-09-08",
+            "name": "Día de Extremadura"
+          }
+        ],
+        "2028": [
+          {
+            "date": "2028-04-13",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2028-09-08",
+            "name": "Día de Extremadura"
+          }
+        ]
+      },
+      "name": "Extremadura"
+    },
+    "GA": {
+      "aliases": [
+        "GA",
+        "Galicia"
+      ],
+      "holidays": {
+        "2024": [
+          {
+            "date": "2024-03-28",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2024-05-17",
+            "name": "Día de las Letras Gallegas"
+          },
+          {
+            "date": "2024-07-25",
+            "name": "Día Nacional de Galicia"
+          }
+        ],
+        "2025": [
+          {
+            "date": "2025-04-17",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2025-05-17",
+            "name": "Día de las Letras Gallegas"
+          },
+          {
+            "date": "2025-07-25",
+            "name": "Día Nacional de Galicia"
+          }
+        ],
+        "2026": [
+          {
+            "date": "2026-03-19",
+            "name": "San José"
+          },
+          {
+            "date": "2026-04-02",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2026-06-24",
+            "name": "San Juan"
+          },
+          {
+            "date": "2026-07-25",
+            "name": "Día Nacional de Galicia"
+          }
+        ],
+        "2027": [
+          {
+            "date": "2027-03-25",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2027-05-17",
+            "name": "Día de las Letras Gallegas"
+          }
+        ],
+        "2028": [
+          {
+            "date": "2028-04-13",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2028-05-17",
+            "name": "Día de las Letras Gallegas"
+          },
+          {
+            "date": "2028-07-25",
+            "name": "Día Nacional de Galicia"
+          }
+        ]
+      },
+      "name": "Galicia"
+    },
+    "IB": {
+      "aliases": [
+        "IB",
+        "Illes Balears",
+        "Islas Baleares"
+      ],
+      "holidays": {
+        "2024": [
+          {
+            "date": "2024-03-01",
+            "name": "Día de las Islas Baleares"
+          },
+          {
+            "date": "2024-03-28",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2024-04-01",
+            "name": "Lunes de Pascua"
+          }
+        ],
+        "2025": [
+          {
+            "date": "2025-03-01",
+            "name": "Día de las Islas Baleares"
+          },
+          {
+            "date": "2025-04-17",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2025-12-26",
+            "name": "San Esteban"
+          }
+        ],
+        "2026": [
+          {
+            "date": "2026-03-02",
+            "name": "Lunes siguiente a Día de las Islas Baleares"
+          },
+          {
+            "date": "2026-04-02",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2026-04-06",
+            "name": "Lunes de Pascua"
+          },
+          {
+            "date": "2026-12-26",
+            "name": "San Esteban"
+          }
+        ],
+        "2027": [
+          {
+            "date": "2027-03-01",
+            "name": "Día de las Islas Baleares"
+          },
+          {
+            "date": "2027-03-25",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2027-03-29",
+            "name": "Lunes de Pascua"
+          }
+        ],
+        "2028": [
+          {
+            "date": "2028-03-01",
+            "name": "Día de las Islas Baleares"
+          },
+          {
+            "date": "2028-04-13",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2028-04-17",
+            "name": "Lunes de Pascua"
+          }
+        ]
+      },
+      "name": "Islas Baleares"
+    },
+    "MC": {
+      "aliases": [
+        "MC",
+        "Murcia",
+        "Región de Murcia"
+      ],
+      "holidays": {
+        "2024": [
+          {
+            "date": "2024-03-19",
+            "name": "San José"
+          },
+          {
+            "date": "2024-03-28",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2024-12-09",
+            "name": "Lunes siguiente a Inmaculada Concepción"
+          }
+        ],
+        "2025": [
+          {
+            "date": "2025-03-19",
+            "name": "San José"
+          },
+          {
+            "date": "2025-04-17",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2025-06-09",
+            "name": "Día de la Región de Murcia"
+          }
+        ],
+        "2026": [
+          {
+            "date": "2026-03-19",
+            "name": "San José"
+          },
+          {
+            "date": "2026-04-02",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2026-06-09",
+            "name": "Día de la Región de Murcia"
+          },
+          {
+            "date": "2026-12-07",
+            "name": "Lunes siguiente a Día de la Constitución Española"
+          }
+        ],
+        "2027": [
+          {
+            "date": "2027-03-19",
+            "name": "San José"
+          },
+          {
+            "date": "2027-03-25",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2027-06-09",
+            "name": "Día de la Región de Murcia"
+          }
+        ],
+        "2028": [
+          {
+            "date": "2028-04-13",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2028-06-09",
+            "name": "Día de la Región de Murcia"
+          }
+        ]
+      },
+      "name": "Región de Murcia"
+    },
+    "MD": {
+      "aliases": [
+        "Comunidad de Madrid",
+        "MD",
+        "Madrid"
+      ],
+      "holidays": {
+        "2024": [
+          {
+            "date": "2024-03-28",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2024-05-02",
+            "name": "Fiesta de la Comunidad de Madrid"
+          },
+          {
+            "date": "2024-07-25",
+            "name": "Santiago Apóstol"
+          }
+        ],
+        "2025": [
+          {
+            "date": "2025-04-17",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2025-05-02",
+            "name": "Fiesta de la Comunidad de Madrid"
+          },
+          {
+            "date": "2025-07-25",
+            "name": "Santiago Apóstol"
+          }
+        ],
+        "2026": [
+          {
+            "date": "2026-04-02",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2026-05-02",
+            "name": "Fiesta de la Comunidad de Madrid"
+          },
+          {
+            "date": "2026-11-02",
+            "name": "Lunes siguiente a Todos los Santos"
+          },
+          {
+            "date": "2026-12-07",
+            "name": "Lunes siguiente a Día de la Constitución Española"
+          }
+        ],
+        "2027": [
+          {
+            "date": "2027-03-19",
+            "name": "San José"
+          },
+          {
+            "date": "2027-03-25",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2027-05-03",
+            "name": "Lunes siguiente a Fiesta de la Comunidad de Madrid"
+          }
+        ],
+        "2028": [
+          {
+            "date": "2028-04-13",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2028-05-02",
+            "name": "Fiesta de la Comunidad de Madrid"
+          }
+        ]
+      },
+      "name": "Comunidad de Madrid"
+    },
+    "ML": {
+      "aliases": [
+        "ML",
+        "Melilla"
+      ],
+      "holidays": {
+        "2024": [
+          {
+            "date": "2024-03-28",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2024-04-10",
+            "name": "Fiesta del Eid Fitr"
+          },
+          {
+            "date": "2024-06-17",
+            "name": "Fiesta del Sacrificio-Aid Al Adha"
+          },
+          {
+            "date": "2024-09-17",
+            "name": "Día de Melilla"
+          },
+          {
+            "date": "2024-12-09",
+            "name": "Lunes siguiente a Inmaculada Concepción"
+          }
+        ],
+        "2025": [
+          {
+            "date": "2025-03-31",
+            "name": "Fiesta del Eid Fitr"
+          },
+          {
+            "date": "2025-04-17",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2025-06-06",
+            "name": "Fiesta del Sacrificio-Aid Al Adha"
+          },
+          {
+            "date": "2025-09-08",
+            "name": "Día de Nuestra Señora la Virgen de la Victoria"
+          },
+          {
+            "date": "2025-09-17",
+            "name": "Día de Melilla"
+          }
+        ],
+        "2026": [
+          {
+            "date": "2026-03-20",
+            "name": "Fiesta del Eid Fitr"
+          },
+          {
+            "date": "2026-04-02",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2026-05-27",
+            "name": "Fiesta del Sacrificio-Aid Al Adha"
+          },
+          {
+            "date": "2026-09-08",
+            "name": "Día de Nuestra Señora la Virgen de la Victoria"
+          },
+          {
+            "date": "2026-09-17",
+            "name": "Día de Melilla"
+          },
+          {
+            "date": "2026-12-07",
+            "name": "Lunes siguiente a Día de la Constitución Española"
+          }
+        ],
+        "2027": [
+          {
+            "date": "2027-03-09",
+            "name": "Fiesta del Eid Fitr (estimado)"
+          },
+          {
+            "date": "2027-03-25",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2027-05-16",
+            "name": "Fiesta del Sacrificio-Aid Al Adha (estimado)"
+          },
+          {
+            "date": "2027-09-08",
+            "name": "Día de Nuestra Señora la Virgen de la Victoria"
+          },
+          {
+            "date": "2027-09-17",
+            "name": "Día de Melilla"
+          }
+        ],
+        "2028": [
+          {
+            "date": "2028-02-26",
+            "name": "Fiesta del Eid Fitr (estimado)"
+          },
+          {
+            "date": "2028-04-13",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2028-05-05",
+            "name": "Fiesta del Sacrificio-Aid Al Adha (estimado)"
+          },
+          {
+            "date": "2028-09-08",
+            "name": "Día de Nuestra Señora la Virgen de la Victoria"
+          },
+          {
+            "date": "2028-09-18",
+            "name": "Lunes siguiente a Día de Melilla"
+          }
+        ]
+      },
+      "name": "Melilla"
+    },
+    "NC": {
+      "aliases": [
+        "Comunidad Foral de Navarra",
+        "NC",
+        "Navarra"
+      ],
+      "holidays": {
+        "2024": [
+          {
+            "date": "2024-03-28",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2024-04-01",
+            "name": "Lunes de Pascua"
+          },
+          {
+            "date": "2024-07-25",
+            "name": "Santiago Apóstol"
+          },
+          {
+            "date": "2024-12-03",
+            "name": "San Francisco Javier"
+          }
+        ],
+        "2025": [
+          {
+            "date": "2025-04-17",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2025-04-21",
+            "name": "Lunes de Pascua"
+          },
+          {
+            "date": "2025-07-25",
+            "name": "Santiago Apóstol"
+          },
+          {
+            "date": "2025-12-03",
+            "name": "San Francisco Javier"
+          }
+        ],
+        "2026": [
+          {
+            "date": "2026-03-19",
+            "name": "San José"
+          },
+          {
+            "date": "2026-04-02",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2026-04-06",
+            "name": "Lunes de Pascua"
+          },
+          {
+            "date": "2026-11-02",
+            "name": "Lunes siguiente a Todos los Santos"
+          },
+          {
+            "date": "2026-12-03",
+            "name": "San Francisco Javier"
+          }
+        ],
+        "2027": [
+          {
+            "date": "2027-03-25",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2027-03-29",
+            "name": "Lunes de Pascua"
+          },
+          {
+            "date": "2027-12-03",
+            "name": "San Francisco Javier"
+          }
+        ],
+        "2028": [
+          {
+            "date": "2028-04-13",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2028-04-17",
+            "name": "Lunes de Pascua"
+          },
+          {
+            "date": "2028-12-04",
+            "name": "Lunes siguiente a San Francisco Javier"
+          }
+        ]
+      },
+      "name": "Comunidad Foral de Navarra"
+    },
+    "PV": {
+      "aliases": [
+        "Euskadi",
+        "PV",
+        "País Vasco"
+      ],
+      "holidays": {
+        "2024": [
+          {
+            "date": "2024-03-28",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2024-04-01",
+            "name": "Lunes de Pascua"
+          },
+          {
+            "date": "2024-07-25",
+            "name": "Santiago Apóstol"
+          }
+        ],
+        "2025": [
+          {
+            "date": "2025-04-17",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2025-04-21",
+            "name": "Lunes de Pascua"
+          },
+          {
+            "date": "2025-07-25",
+            "name": "Santiago Apóstol"
+          }
+        ],
+        "2026": [
+          {
+            "date": "2026-03-19",
+            "name": "San José"
+          },
+          {
+            "date": "2026-04-02",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2026-04-06",
+            "name": "Lunes de Pascua"
+          },
+          {
+            "date": "2026-07-25",
+            "name": "Santiago Apóstol"
+          }
+        ],
+        "2027": [
+          {
+            "date": "2027-03-19",
+            "name": "San José"
+          },
+          {
+            "date": "2027-03-25",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2027-03-29",
+            "name": "Lunes de Pascua"
+          }
+        ],
+        "2028": [
+          {
+            "date": "2028-04-13",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2028-04-17",
+            "name": "Lunes de Pascua"
+          },
+          {
+            "date": "2028-07-25",
+            "name": "Santiago Apóstol"
+          }
+        ]
+      },
+      "name": "País Vasco"
+    },
+    "RI": {
+      "aliases": [
+        "La Rioja",
+        "RI"
+      ],
+      "holidays": {
+        "2024": [
+          {
+            "date": "2024-03-28",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2024-04-01",
+            "name": "Lunes de Pascua"
+          },
+          {
+            "date": "2024-06-10",
+            "name": "Lunes siguiente a Día de La Rioja"
+          }
+        ],
+        "2025": [
+          {
+            "date": "2025-04-17",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2025-04-21",
+            "name": "Lunes de Pascua"
+          },
+          {
+            "date": "2025-06-09",
+            "name": "Día de La Rioja"
+          }
+        ],
+        "2026": [
+          {
+            "date": "2026-04-02",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2026-04-06",
+            "name": "Lunes de Pascua"
+          },
+          {
+            "date": "2026-06-09",
+            "name": "Día de La Rioja"
+          },
+          {
+            "date": "2026-12-07",
+            "name": "Lunes siguiente a Día de la Constitución Española"
+          }
+        ],
+        "2027": [
+          {
+            "date": "2027-03-25",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2027-03-29",
+            "name": "Lunes de Pascua"
+          },
+          {
+            "date": "2027-06-09",
+            "name": "Día de La Rioja"
+          }
+        ],
+        "2028": [
+          {
+            "date": "2028-04-13",
+            "name": "Jueves Santo"
+          },
+          {
+            "date": "2028-04-17",
+            "name": "Lunes de Pascua"
+          },
+          {
+            "date": "2028-06-09",
+            "name": "Día de La Rioja"
+          }
+        ]
+      },
+      "name": "La Rioja"
+    },
+    "VC": {
+      "aliases": [
+        "Comunidad Valenciana",
+        "VC",
+        "Valenciana"
+      ],
+      "holidays": {
+        "2024": [
+          {
+            "date": "2024-03-19",
+            "name": "San José"
+          },
+          {
+            "date": "2024-04-01",
+            "name": "Lunes de Pascua"
+          },
+          {
+            "date": "2024-06-24",
+            "name": "San Juan"
+          },
+          {
+            "date": "2024-10-09",
+            "name": "Día de la Comunidad Valenciana"
+          }
+        ],
+        "2025": [
+          {
+            "date": "2025-03-19",
+            "name": "San José"
+          },
+          {
+            "date": "2025-04-21",
+            "name": "Lunes de Pascua"
+          },
+          {
+            "date": "2025-06-24",
+            "name": "San Juan"
+          },
+          {
+            "date": "2025-10-09",
+            "name": "Día de la Comunidad Valenciana"
+          }
+        ],
+        "2026": [
+          {
+            "date": "2026-03-19",
+            "name": "San José"
+          },
+          {
+            "date": "2026-04-06",
+            "name": "Lunes de Pascua"
+          },
+          {
+            "date": "2026-06-24",
+            "name": "San Juan"
+          },
+          {
+            "date": "2026-10-09",
+            "name": "Día de la Comunidad Valenciana"
+          }
+        ],
+        "2027": [
+          {
+            "date": "2027-03-19",
+            "name": "San José"
+          },
+          {
+            "date": "2027-03-29",
+            "name": "Lunes de Pascua"
+          },
+          {
+            "date": "2027-06-24",
+            "name": "San Juan"
+          },
+          {
+            "date": "2027-10-09",
+            "name": "Día de la Comunidad Valenciana"
+          }
+        ],
+        "2028": [
+          {
+            "date": "2028-04-17",
+            "name": "Lunes de Pascua"
+          },
+          {
+            "date": "2028-06-24",
+            "name": "San Juan"
+          },
+          {
+            "date": "2028-10-09",
+            "name": "Día de la Comunidad Valenciana"
+          }
+        ]
+      },
+      "name": "Comunidad Valenciana"
+    }
+  },
+  "generated_at": "2026-11-13",
+  "national": {
+    "2024": [
+      {
+        "date": "2024-01-01",
+        "name": "Año Nuevo"
+      },
+      {
+        "date": "2024-01-06",
+        "name": "Epifanía del Señor"
+      },
+      {
+        "date": "2024-03-29",
+        "name": "Viernes Santo"
+      },
+      {
+        "date": "2024-05-01",
+        "name": "Fiesta del Trabajo"
+      },
+      {
+        "date": "2024-08-15",
+        "name": "Asunción de la Virgen"
+      },
+      {
+        "date": "2024-10-12",
+        "name": "Fiesta Nacional de España"
+      },
+      {
+        "date": "2024-11-01",
+        "name": "Todos los Santos"
+      },
+      {
+        "date": "2024-12-06",
+        "name": "Día de la Constitución"
+      },
+      {
+        "date": "2024-12-08",
+        "name": "Inmaculada Concepción"
+      },
+      {
+        "date": "2024-12-25",
+        "name": "Navidad"
+      }
+    ],
+    "2025": [
+      {
+        "date": "2025-01-01",
+        "name": "Año Nuevo"
+      },
+      {
+        "date": "2025-01-06",
+        "name": "Epifanía del Señor"
+      },
+      {
+        "date": "2025-04-18",
+        "name": "Viernes Santo"
+      },
+      {
+        "date": "2025-05-01",
+        "name": "Fiesta del Trabajo"
+      },
+      {
+        "date": "2025-08-15",
+        "name": "Asunción de la Virgen"
+      },
+      {
+        "date": "2025-10-12",
+        "name": "Fiesta Nacional de España"
+      },
+      {
+        "date": "2025-11-01",
+        "name": "Todos los Santos"
+      },
+      {
+        "date": "2025-12-06",
+        "name": "Día de la Constitución"
+      },
+      {
+        "date": "2025-12-08",
+        "name": "Inmaculada Concepción"
+      },
+      {
+        "date": "2025-12-25",
+        "name": "Navidad"
+      }
+    ],
+    "2026": [
+      {
+        "date": "2026-01-01",
+        "name": "Año Nuevo"
+      },
+      {
+        "date": "2026-01-06",
+        "name": "Epifanía del Señor"
+      },
+      {
+        "date": "2026-04-03",
+        "name": "Viernes Santo"
+      },
+      {
+        "date": "2026-05-01",
+        "name": "Fiesta del Trabajo"
+      },
+      {
+        "date": "2026-08-15",
+        "name": "Asunción de la Virgen"
+      },
+      {
+        "date": "2026-10-12",
+        "name": "Fiesta Nacional de España"
+      },
+      {
+        "date": "2026-11-01",
+        "name": "Todos los Santos"
+      },
+      {
+        "date": "2026-12-06",
+        "name": "Día de la Constitución"
+      },
+      {
+        "date": "2026-12-08",
+        "name": "Inmaculada Concepción"
+      },
+      {
+        "date": "2026-12-25",
+        "name": "Navidad"
+      }
+    ],
+    "2027": [
+      {
+        "date": "2027-01-01",
+        "name": "Año Nuevo"
+      },
+      {
+        "date": "2027-01-06",
+        "name": "Epifanía del Señor"
+      },
+      {
+        "date": "2027-03-26",
+        "name": "Viernes Santo"
+      },
+      {
+        "date": "2027-05-01",
+        "name": "Fiesta del Trabajo"
+      },
+      {
+        "date": "2027-08-15",
+        "name": "Asunción de la Virgen"
+      },
+      {
+        "date": "2027-10-12",
+        "name": "Fiesta Nacional de España"
+      },
+      {
+        "date": "2027-11-01",
+        "name": "Todos los Santos"
+      },
+      {
+        "date": "2027-12-06",
+        "name": "Día de la Constitución"
+      },
+      {
+        "date": "2027-12-08",
+        "name": "Inmaculada Concepción"
+      },
+      {
+        "date": "2027-12-25",
+        "name": "Navidad"
+      }
+    ],
+    "2028": [
+      {
+        "date": "2028-01-01",
+        "name": "Año Nuevo"
+      },
+      {
+        "date": "2028-01-06",
+        "name": "Epifanía del Señor"
+      },
+      {
+        "date": "2028-04-14",
+        "name": "Viernes Santo"
+      },
+      {
+        "date": "2028-05-01",
+        "name": "Fiesta del Trabajo"
+      },
+      {
+        "date": "2028-08-15",
+        "name": "Asunción de la Virgen"
+      },
+      {
+        "date": "2028-10-12",
+        "name": "Fiesta Nacional de España"
+      },
+      {
+        "date": "2028-11-01",
+        "name": "Todos los Santos"
+      },
+      {
+        "date": "2028-12-06",
+        "name": "Día de la Constitución"
+      },
+      {
+        "date": "2028-12-08",
+        "name": "Inmaculada Concepción"
+      },
+      {
+        "date": "2028-12-25",
+        "name": "Navidad"
+      }
+    ]
+  },
+  "source": "python-holidays 0.108",
+  "valid_until": "2028-12-31",
+  "version": "2026.1",
+  "years": [
+    2024,
+    2025,
+    2026,
+    2027,
+    2028
+  ]
+}
