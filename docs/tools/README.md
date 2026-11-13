@@ -114,6 +114,10 @@ tool: dominio.accion
 | `energy.tariff_simulator` | [`energy/tariff_simulator.md`](energy/tariff_simulator.md) |
 | `energy.self_consumption_payback` | [`energy/self_consumption_payback.md`](energy/self_consumption_payback.md) |
 | `energy.carbon_footprint` | [`energy/carbon_footprint.md`](energy/carbon_footprint.md) |
+| `finance.business_kpi` | [`finance/business_kpi.md`](finance/business_kpi.md) |
+| `finance.ebitda` | [`finance/ebitda.md`](finance/ebitda.md) |
+| `finance.cashflow_13w` | [`finance/cashflow_13w.md`](finance/cashflow_13w.md) |
+| `finance.break_even` | [`finance/break_even.md`](finance/break_even.md) |
 
 ### Backlog
 
