@@ -125,6 +125,8 @@ tool: dominio.accion
 | `legal.company_risk` | [`legal/company_risk.md`](legal/company_risk.md) |
 | `legal.collective_agreement` | [`legal/collective_agreement.md`](legal/collective_agreement.md) |
 | `legal.severance_calc` | [`legal/severance_calc.md`](legal/severance_calc.md) |
+| `sim.solar_payback` | [`sim/solar_payback.md`](sim/solar_payback.md) |
+| `sim.hiring_simulator` | [`sim/hiring_simulator.md`](sim/hiring_simulator.md) |
 
 ### Backlog
 
