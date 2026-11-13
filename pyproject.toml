@@ -37,3 +37,18 @@ exclude = [".venv", "__pycache__"]
 pythonVersion = "3.12"
 typeCheckingMode = "strict"
 reportMissingTypeStubs = false
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+addopts = "-q --strict-markers --strict-config"
+testpaths = ["app", "tests"]
+markers = [
+    "integration: requiere PostgreSQL real (testcontainers)",
+]
+
+[tool.coverage.run]
+source = ["app"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
