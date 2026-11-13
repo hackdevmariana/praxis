@@ -130,7 +130,13 @@ tool: dominio.accion
 
 ### Backlog
 
-Pendientes de redacción ligera (W9e). Se añaden aquí a medida que se especifican.
+Especificaciones ligeras (semántica, contrato y casos), pendientes de promover a spec completa.
+
+| Tool | Spec |
+|---|---|
+| `qr.generate` | [`qr/generate.md`](qr/generate.md) |
+| `audit.web_basic` | [`audit/web_basic.md`](audit/web_basic.md) |
+| `grants.search_bdns` | [`grants/search_bdns.md`](grants/search_bdns.md) |
 
 ## Referencias
 
