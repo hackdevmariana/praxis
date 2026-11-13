@@ -99,6 +99,8 @@ tool: dominio.accion
 | `geo.geocode` | [`geo/geocode.md`](geo/geocode.md) |
 | `procurement.tpv_savings` | [`procurement/tpv_savings.md`](procurement/tpv_savings.md) |
 | `procurement.compare_offers` | [`procurement/compare_offers.md`](procurement/compare_offers.md) |
+| `calendar.list_events` | [`calendar/list_events.md`](calendar/list_events.md) |
+| `calendar.create_event` | [`calendar/create_event.md`](calendar/create_event.md) |
 
 ### Extras (v2 / backlog)
 
