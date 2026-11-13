@@ -103,6 +103,7 @@ tool: dominio.accion
 | `calendar.create_event` | [`calendar/create_event.md`](calendar/create_event.md) |
 | `documents.extract_invoice` | [`documents/extract_invoice.md`](documents/extract_invoice.md) |
 | `documents.generate_invoice` | [`documents/generate_invoice.md`](documents/generate_invoice.md) |
+| `alerts.contract_renewal` | [`alerts/contract_renewal.md`](alerts/contract_renewal.md) |
 
 ### Extras (v2 / backlog)
 
