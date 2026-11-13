@@ -122,6 +122,9 @@ tool: dominio.accion
 | `procurement.savings_ledger` | [`procurement/savings_ledger.md`](procurement/savings_ledger.md) |
 | `procurement.rfp_generation` | [`procurement/rfp_generation.md`](procurement/rfp_generation.md) |
 | `procurement.renewal_calendar` | [`procurement/renewal_calendar.md`](procurement/renewal_calendar.md) |
+| `legal.company_risk` | [`legal/company_risk.md`](legal/company_risk.md) |
+| `legal.collective_agreement` | [`legal/collective_agreement.md`](legal/collective_agreement.md) |
+| `legal.severance_calc` | [`legal/severance_calc.md`](legal/severance_calc.md) |
 
 ### Backlog
 
