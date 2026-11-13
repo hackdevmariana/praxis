@@ -13,7 +13,7 @@ Su valor no es la cantidad de herramientas, sino que cada resultado responda de 
 
 ## Estado
 
-**Fase 0 — Documentación.** El repositorio contiene el marco del proyecto y un servidor FastAPI mínimo (`/health`) como punto de partida. Aún no hay herramientas implementadas. El alcance está en [`docs/02-mvp-scope.md`](docs/02-mvp-scope.md).
+**Fase 1 — Implementación (en curso).** La documentación de la fase 0 está cerrada y el toolchain de desarrollo configurado; las tools se incorporan por tandas. El estado detallado, con tareas marcadas, está en [`TODO.md`](TODO.md). El alcance canónico sigue en [`docs/02-mvp-scope.md`](docs/02-mvp-scope.md).
 
 ## Arquitectura en una frase
 
