@@ -97,6 +97,8 @@ tool: dominio.accion
 | `currency.convert` | [`currency/convert.md`](currency/convert.md) |
 | `weather.forecast` | [`weather/forecast.md`](weather/forecast.md) |
 | `geo.geocode` | [`geo/geocode.md`](geo/geocode.md) |
+| `procurement.tpv_savings` | [`procurement/tpv_savings.md`](procurement/tpv_savings.md) |
+| `procurement.compare_offers` | [`procurement/compare_offers.md`](procurement/compare_offers.md) |
 
 ### Extras (v2 / backlog)
 
