@@ -105,9 +105,19 @@ tool: dominio.accion
 | `documents.generate_invoice` | [`documents/generate_invoice.md`](documents/generate_invoice.md) |
 | `alerts.contract_renewal` | [`alerts/contract_renewal.md`](alerts/contract_renewal.md) |
 
-### Extras (v2 / backlog)
+### Extras v2
 
-Pendientes de redacción (W9+). Se añaden aquí a medida que se especifican.
+| Tool | Spec |
+|---|---|
+| `energy.pvpc_hourly` | [`energy/pvpc_hourly.md`](energy/pvpc_hourly.md) |
+| `energy.cheapest_hours` | [`energy/cheapest_hours.md`](energy/cheapest_hours.md) |
+| `energy.tariff_simulator` | [`energy/tariff_simulator.md`](energy/tariff_simulator.md) |
+| `energy.self_consumption_payback` | [`energy/self_consumption_payback.md`](energy/self_consumption_payback.md) |
+| `energy.carbon_footprint` | [`energy/carbon_footprint.md`](energy/carbon_footprint.md) |
+
+### Backlog
+
+Pendientes de redacción ligera (W9e). Se añaden aquí a medida que se especifican.
 
 ## Referencias
 
