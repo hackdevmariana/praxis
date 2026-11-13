@@ -118,6 +118,10 @@ tool: dominio.accion
 | `finance.ebitda` | [`finance/ebitda.md`](finance/ebitda.md) |
 | `finance.cashflow_13w` | [`finance/cashflow_13w.md`](finance/cashflow_13w.md) |
 | `finance.break_even` | [`finance/break_even.md`](finance/break_even.md) |
+| `procurement.detect_price_increase` | [`procurement/detect_price_increase.md`](procurement/detect_price_increase.md) |
+| `procurement.savings_ledger` | [`procurement/savings_ledger.md`](procurement/savings_ledger.md) |
+| `procurement.rfp_generation` | [`procurement/rfp_generation.md`](procurement/rfp_generation.md) |
+| `procurement.renewal_calendar` | [`procurement/renewal_calendar.md`](procurement/renewal_calendar.md) |
 
 ### Backlog
 
