@@ -87,6 +87,9 @@ tool: dominio.accion
 | `validate.iban` | [`validate/iban.md`](validate/iban.md) |
 | `validate.email_phone` | [`validate/email_phone.md`](validate/email_phone.md) |
 | `units.convert` | [`units/convert.md`](units/convert.md) |
+| `datetime.calc` | [`datetime/calc.md`](datetime/calc.md) |
+| `datetime.business_days` | [`datetime/business_days.md`](datetime/business_days.md) |
+| `calendar.deadline_remaining` | [`calendar/deadline_remaining.md`](calendar/deadline_remaining.md) |
 
 ### Extras (v2 / backlog)
 
