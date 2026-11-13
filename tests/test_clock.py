@@ -1,6 +1,7 @@
 from datetime import UTC, date, datetime
 
 import time_machine
+
 from app.clock import MADRID, now, today
 
 
