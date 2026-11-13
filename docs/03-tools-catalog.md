@@ -19,16 +19,18 @@ Este documento describe las **21 herramientas del MVP** y el backlog documentado
 
 ## Resumen del MVP
 
+Cada nombre enlaza a su spec detallada en [`docs/tools/`](tools/README.md).
+
 | Dominio | Tools |
 |---|---|
-| Fechas | `datetime.calc`, `datetime.business_days`, `calendar.deadline_remaining` |
-| Finanzas | `finance.vat`, `finance.margin`, `finance.loan_schedule`, `finance.discounts` |
-| Validación | `validate.spanish_id`, `validate.iban`, `validate.email_phone`, `units.convert` |
-| Datos externos | `currency.convert`, `weather.forecast`, `geo.geocode` |
-| Compras | `procurement.tpv_savings`, `procurement.compare_offers` |
-| Agenda | `calendar.list_events`, `calendar.create_event` |
-| Documentos | `documents.extract_invoice`, `documents.generate_invoice` |
-| Alertas | `alerts.contract_renewal` |
+| Fechas | [`datetime.calc`](tools/datetime/calc.md), [`datetime.business_days`](tools/datetime/business_days.md), [`calendar.deadline_remaining`](tools/calendar/deadline_remaining.md) |
+| Finanzas | [`finance.vat`](tools/finance/vat.md), [`finance.margin`](tools/finance/margin.md), [`finance.loan_schedule`](tools/finance/loan_schedule.md), [`finance.discounts`](tools/finance/discounts.md) |
+| Validación | [`validate.spanish_id`](tools/validate/spanish_id.md), [`validate.iban`](tools/validate/iban.md), [`validate.email_phone`](tools/validate/email_phone.md), [`units.convert`](tools/units/convert.md) |
+| Datos externos | [`currency.convert`](tools/currency/convert.md), [`weather.forecast`](tools/weather/forecast.md), [`geo.geocode`](tools/geo/geocode.md) |
+| Compras | [`procurement.tpv_savings`](tools/procurement/tpv_savings.md), [`procurement.compare_offers`](tools/procurement/compare_offers.md) |
+| Agenda | [`calendar.list_events`](tools/calendar/list_events.md), [`calendar.create_event`](tools/calendar/create_event.md) |
+| Documentos | [`documents.extract_invoice`](tools/documents/extract_invoice.md), [`documents.generate_invoice`](tools/documents/generate_invoice.md) |
+| Alertas | [`alerts.contract_renewal`](tools/alerts/contract_renewal.md) |
 
 ---
 
