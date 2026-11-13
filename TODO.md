@@ -35,9 +35,9 @@
 
 ### Dataset de festivos
 
-- [ ] `app/data/holidays_es.json` versionado (nacionales + CCAA).
-- [ ] Script generador `scripts/generate_holidays.py`.
-- [ ] Fallback con warning `local_holidays_unavailable` si faltan datos locales.
+- [x] `app/data/holidays_es.json` versionado (nacionales + CCAA).
+- [x] Script generador `scripts/generate_holidays.py`.
+- [x] Fallback con warning `local_holidays_unavailable` si faltan datos locales.
 
 ### Tools semana 1 (11)
 
