@@ -24,14 +24,14 @@
 
 ### Núcleo `app/`
 
-- [ ] `money.py` — `Decimal`, `ROUND_HALF_UP`, serialización como string.
-- [ ] `clock.py` — reloj en `Europe/Madrid`, inyectable en tests.
-- [ ] `errors.py` — `ToolError` y códigos de error MCP.
-- [ ] `context.py` — `ToolContext` (usuario, empresa, rol, canal, `request_id`).
-- [ ] `envelope.py` — sobre de respuesta de [`docs/08-formatting.md`](docs/08-formatting.md).
-- [ ] `metadata.py` — `build_metadata()`.
-- [ ] `registry.py` — decorador `@tool`, `ToolSpec`, JSON Schema y descubrimiento.
-- [ ] Tests del núcleo (esquema, sobre, redondeos).
+- [x] `money.py` — `Decimal`, `ROUND_HALF_UP`, serialización como string.
+- [x] `clock.py` — reloj en `Europe/Madrid`, inyectable en tests.
+- [x] `errors.py` — `ToolError` y códigos de error MCP.
+- [x] `context.py` — `ToolContext` (usuario, empresa, rol, canal, `request_id`).
+- [x] `envelope.py` — sobre de respuesta de [`docs/08-formatting.md`](docs/08-formatting.md).
+- [x] `metadata.py` — `build_metadata()`.
+- [x] `registry.py` — decorador `@tool`, `ToolSpec`, JSON Schema y descubrimiento.
+- [x] Tests del núcleo (esquema, sobre, redondeos).
 
 ### Dataset de festivos
 
