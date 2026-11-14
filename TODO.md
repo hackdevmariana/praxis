@@ -41,10 +41,10 @@
 
 ### Tools semana 1 (11)
 
-- [ ] `validate.spanish_id` — NIF/CIF/NIE.
-- [ ] `validate.iban` — IBAN + BIC.
-- [ ] `validate.email_phone` — email y teléfono.
-- [ ] `units.convert` — conversión con `pint` (boundary `Decimal → float → Decimal`).
+- [x] `validate.spanish_id` — NIF/CIF/NIE.
+- [x] `validate.iban` — IBAN + BIC.
+- [x] `validate.email_phone` — email y teléfono.
+- [x] `units.convert` — conversión con `pint` (boundary `Decimal → float → Decimal`).
 - [x] `datetime.calc` — fechas, diferencias y semana ISO.
 - [x] `datetime.business_days` — días hábiles con festivos.
 - [x] `calendar.deadline_remaining` — cierre de mes/trimestre/año.
@@ -52,19 +52,19 @@
 - [x] `finance.margin` — margen y markup.
 - [x] `finance.discounts` — descuentos sucesivos y precio original.
 - [x] `finance.loan_schedule` — cuadro francés/italiano, cierre exacto a `0.00`.
-- [ ] Golden tests (feliz, límite, error) por tool.
-- [ ] Propiedades `Hypothesis` donde aplique (IVA, descuentos, préstamo, unidades, días hábiles).
+- [x] Golden tests (feliz, límite, error) por tool.
+- [x] Propiedades `Hypothesis` donde aplique (IVA, descuentos, préstamo, unidades, días hábiles).
 
 ### Servidor MCP
 
-- [ ] Rutas `POST /api/tools/{name}` generadas desde el registry.
-- [ ] Montaje de `fastapi-mcp` en `/mcp` (o SDK `mcp` si degrada esquemas).
-- [ ] `app/main.py` con `/health`; retirar `main.py` raíz.
-- [ ] Smoke test: invocar `finance.vat` vía MCP y validar el sobre completo.
+- [x] Rutas `POST /api/tools/{name}` generadas desde el registry.
+- [x] Montaje MCP en `/mcp` con el SDK oficial (fastapi-mcp 0.4 incompatible con mcp 2.x).
+- [x] `app/main.py` con `/health`; retirar `main.py` raíz.
+- [x] Smoke test: invocar `finance.vat` vía MCP y validar el sobre completo.
 
 ### Documentación de la tanda
 
-- [ ] README con arranque (`uv run uvicorn app.main:app`) y prueba MCP.
+- [x] README con arranque (`uv run uvicorn app.main:app`) y prueba MCP.
 - [ ] Revisar que las specs implementadas no requieran correcciones.
 
 ## Fase 1 — Tanda 2: proveedores externos
