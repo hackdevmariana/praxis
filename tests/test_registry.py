@@ -1,11 +1,12 @@
 import asyncio
-from typing import Any
+from typing import Any, cast
 
 import pytest
 from pydantic import BaseModel
 
 from app.context import ToolContext
 from app.registry import registry, tool
+from app.result import ToolResult, tool_result
 
 
 class AddInput(BaseModel):
@@ -43,6 +44,41 @@ def test_tool_registers_validated_spec() -> None:
     assert spec.examples == ({"a": 1, "b": 2},)
     assert spec.input_schema()["properties"].keys() == {"a", "b"}
     assert spec.output_schema()["properties"].keys() == {"total"}
+
+
+class WrappedInput(BaseModel):
+    value: int
+
+
+class WrappedOutput(BaseModel):
+    doubled: int
+
+
+@tool(
+    name="test.wrapped",
+    version="1.0.0",
+    mcp_description="Duplica un entero y devuelve un warning.",
+)
+async def wrapped(params: WrappedInput, ctx: ToolContext) -> ToolResult[WrappedOutput]:
+    return tool_result(
+        WrappedOutput(doubled=params.value * 2),
+        warnings=["demo_warning"],
+        metadata_extra={"source": "demo"},
+    )
+
+
+def test_wrapped_result_exposes_data_schema() -> None:
+    spec = registry.get("test.wrapped")
+
+    assert spec.output_model is WrappedOutput
+    assert spec.output_schema()["properties"].keys() == {"doubled"}
+    result = asyncio.run(spec.handler(WrappedInput(value=3), ToolContext(request_id="req-test")))
+
+    assert isinstance(result, ToolResult)
+    wrapped_result = cast("ToolResult[WrappedOutput]", result)
+    assert wrapped_result.data == WrappedOutput(doubled=6)
+    assert wrapped_result.warnings == ["demo_warning"]
+    assert wrapped_result.metadata_extra == {"source": "demo"}
 
 
 def test_tool_annotations_reflect_flags() -> None:

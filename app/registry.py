@@ -10,11 +10,12 @@ import inspect
 import re
 from collections.abc import Callable, Coroutine, Mapping, Sequence
 from dataclasses import dataclass
-from typing import Any, TypeVar, cast, get_type_hints
+from typing import Any, TypeVar, cast, get_args, get_origin, get_type_hints
 
 from pydantic import BaseModel
 
 from app.context import ToolContext
+from app.result import ToolResult
 
 _NAME_RE = re.compile(r"^[a-z][a-z0-9_]*\.[a-z][a-z0-9_]*$")
 _VERSION_RE = re.compile(r"^\d+\.\d+\.\d+$")
@@ -128,11 +129,13 @@ def tool(
             raise TypeError(f"{name} must accept exactly (params, ctx)")
 
         input_annotation = hints.get(parameters[0].name)
-        output_annotation = hints.get("return")
+        output_model = _extract_output_model(hints.get("return"))
         if not _is_model(input_annotation):
             raise TypeError(f"{name} input parameter must be annotated with a BaseModel")
-        if not _is_model(output_annotation):
-            raise TypeError(f"{name} return value must be annotated with a BaseModel")
+        if output_model is None:
+            raise TypeError(
+                f"{name} return value must be annotated with a BaseModel or ToolResult[Model]"
+            )
 
         description = (mcp_description or inspect.getdoc(func) or "").strip()
         if not description:
@@ -150,7 +153,7 @@ def tool(
                 idempotent=idempotent,
                 requires_confirmation=requires_confirmation,
                 input_model=cast("type[BaseModel]", input_annotation),
-                output_model=cast("type[BaseModel]", output_annotation),
+                output_model=output_model,
                 handler=cast(ToolHandler, func),
                 examples=tuple(dict(example) for example in examples),
                 open_world=open_world,
@@ -163,3 +166,21 @@ def tool(
 
 def _is_model(annotation: Any) -> bool:
     return isinstance(annotation, type) and issubclass(annotation, BaseModel)
+
+
+def _extract_output_model(annotation: Any) -> type[BaseModel] | None:
+    result_base = cast("type[BaseModel]", ToolResult)
+    annotated = cast("type[Any]", annotation) if isinstance(annotation, type) else None
+    if annotated is not None and issubclass(annotated, result_base):
+        metadata = cast("dict[str, Any]", getattr(annotated, "__pydantic_generic_metadata__", {}))
+        arguments = cast("tuple[Any, ...]", metadata.get("args", ()))
+        if arguments and _is_model(arguments[0]):
+            return cast("type[BaseModel]", arguments[0])
+        return None
+    if _is_model(annotation):
+        return annotation
+    if get_origin(annotation) is ToolResult:
+        arguments = get_args(annotation)
+        if arguments and _is_model(arguments[0]):
+            return cast("type[BaseModel]", arguments[0])
+    return None
