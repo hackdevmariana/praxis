@@ -36,7 +36,7 @@ La capa de canal (WhatsApp/Telegram, routing, formatters) es externa al core y n
 
 - **Backend:** FastAPI, Pydantic v2, `uv`.
 - **Base de datos:** PostgreSQL con `pgvector` (conocimiento) y PostGIS (geolocalización).
-- **MCP:** `fastmcp` / `mcp`.
+- **MCP:** SDK oficial `mcp` (streamable HTTP).
 - **Licencia:** MIT.
 
 ## Quickstart
@@ -45,17 +45,25 @@ Requisitos: Python 3.12+ y [`uv`](https://docs.astral.sh/uv/).
 
 ```bash
 uv sync
-uv run uvicorn main:app --reload
+uv run uvicorn app.main:app --reload
 ```
 
 Comprobar el estado del servidor:
 
 ```bash
 curl http://127.0.0.1:8000/health
-# {"status":"ok"}
+# {"status":"ok","service":"praxis","version":"0.1.0","tools":11}
 ```
 
-Las herramientas del MVP y el servidor MCP se incorporarán durante la fase 1.
+El catálogo incluye las 11 tools de la semana 1 y se puede invocar por REST:
+
+```bash
+curl -X POST http://127.0.0.1:8000/api/tools/finance.vat \
+  -H "Content-Type: application/json" \
+  -d '{"amount":"1000.00"}'
+```
+
+El servidor MCP (streamable HTTP) escucha en `http://127.0.0.1:8000/mcp`.
 
 ## Documentación
 
