@@ -65,7 +65,7 @@ praxis-core/
 │   ├── providers/            # Clientes de APIs externas
 │   ├── metadata/             # Modelo de metadatos y helpers
 │   ├── registry.py           # Descubrimiento y registro de tools
-│   ├── mcp_server.py         # Exposición MCP (fastmcp)
+│   ├── mcp_server.py         # Exposición MCP (SDK mcp)
 │   ├── api/                  # Endpoints REST auxiliares (/health, admin)
 │   └── main.py
 └── tests/

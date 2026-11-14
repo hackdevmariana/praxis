@@ -11,8 +11,9 @@ PRAXIS expone sus herramientas mediante el **Model Context Protocol**. El MCP es
 
 - **MCP sobre HTTP** (streamable HTTP) para uso remoto, servido por FastAPI.
 - **stdio** para uso local en agentes de escritorio.
-- Implementación con `fastmcp` / `mcp` (ya en `pyproject.toml`).
-- El servidor MCP se monta en `main.py` junto a los endpoints auxiliares (`/health`).
+- Implementación con el SDK oficial `mcp` y transporte streamable HTTP.
+- El servidor MCP se monta en `app/main.py` en `/mcp`, junto a `/health` y las rutas REST auxiliares.
+- `fastapi-mcp` se evaluó, pero su versión 0.4 no es compatible con `mcp` 2.x; el registro se expone directamente con el SDK.
 
 ## Descubrimiento de tools
 

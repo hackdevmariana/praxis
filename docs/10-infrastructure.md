@@ -11,7 +11,7 @@ version: 0.1.0
 |---|---|
 | Lenguaje | Python 3.12+ |
 | Backend | FastAPI, Pydantic v2 |
-| MCP | `fastmcp` / `mcp` |
+| MCP | SDK oficial `mcp` |
 | Persistencia | PostgreSQL + `pgvector` + PostGIS, SQLAlchemy 2, Alembic |
 | Caché | Redis (`cashews`) |
 | Clientes HTTP | `httpx` + `stamina` (reintentos) |
