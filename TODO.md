@@ -45,13 +45,13 @@
 - [ ] `validate.iban` — IBAN + BIC.
 - [ ] `validate.email_phone` — email y teléfono.
 - [ ] `units.convert` — conversión con `pint` (boundary `Decimal → float → Decimal`).
-- [ ] `datetime.calc` — fechas, diferencias y semana ISO.
-- [ ] `datetime.business_days` — días hábiles con festivos.
-- [ ] `calendar.deadline_remaining` — cierre de mes/trimestre/año.
-- [ ] `finance.vat` — sumar, extraer y restar IVA.
-- [ ] `finance.margin` — margen y markup.
-- [ ] `finance.discounts` — descuentos sucesivos y precio original.
-- [ ] `finance.loan_schedule` — cuadro francés/italiano, cierre exacto a `0.00`.
+- [x] `datetime.calc` — fechas, diferencias y semana ISO.
+- [x] `datetime.business_days` — días hábiles con festivos.
+- [x] `calendar.deadline_remaining` — cierre de mes/trimestre/año.
+- [x] `finance.vat` — sumar, extraer y restar IVA.
+- [x] `finance.margin` — margen y markup.
+- [x] `finance.discounts` — descuentos sucesivos y precio original.
+- [x] `finance.loan_schedule` — cuadro francés/italiano, cierre exacto a `0.00`.
 - [ ] Golden tests (feliz, límite, error) por tool.
 - [ ] Propiedades `Hypothesis` donde aplique (IVA, descuentos, préstamo, unidades, días hábiles).
 
