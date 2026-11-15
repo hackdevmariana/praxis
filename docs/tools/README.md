@@ -7,14 +7,14 @@ version: 0.1.0
 
 Un fichero por herramienta. El path refleja el nombre de la tool: `finance/vat.md` ↔ `finance.vat`.
 
-Estas specs son **SDD**: describen el contrato y la semántica exacta antes de escribir código. Cuando exista la implementación, los golden tests (generados desde aquí) impiden la deriva.
+Estas specs son **SDD**: describen el contrato y la semántica exacta antes de escribir código. Cuando existe la implementación, los golden cases de la ficha fijan los valores que los tests verifican, y la revisión cruzada impide la deriva.
 
 ## Convenciones
 
 - **Idioma:** castellano; nombres de tool y campos en inglés.
 - **Dinero:** `Decimal` serializado como **string**; redondeo `ROUND_HALF_UP` a 2 decimales salvo indicación.
 - **Fechas:** ISO 8601; zona horaria por defecto `Europe/Madrid`.
-- **Errores:** código estable + mensaje; ver tabla de errores MCP en [`../09-mcp.md`](../09-mcp.md).
+- **Errores:** código estable + mensaje; ver tabla de errores MCP en [`../09-mcp.md`](../09-mcp.md). Los fallos de esquema se rechazan antes de ejecutar la tool (REST `422`; MCP error de tool del framework); `invalid_params` dentro del sobre corresponde a un `ToolError(INVALID_PARAMS)` lanzado por la tool.
 - **Estado:** `MVP` (se implementa en la fase 1), `v2` o `backlog`.
 - **Profundidad:** plantilla completa para MVP/v2; versión ligera (semántica + contrato + casos) para `backlog`.
 
