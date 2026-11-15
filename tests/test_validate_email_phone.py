@@ -72,3 +72,9 @@ def test_short_phone_is_invalid_length() -> None:
 def test_no_contact_is_rejected_by_schema() -> None:
     with pytest.raises(ValidationError):
         EmailPhoneInput()
+
+
+def test_result_type_is_validation() -> None:
+    result = asyncio.run(email_phone(EmailPhoneInput(email="a@b.es"), CTX))
+
+    assert result.metadata_extra["result_type"] == "validation"
