@@ -39,6 +39,7 @@ def _handler(spec: ToolSpec) -> Callable[..., Any]:
         )
         for name, field in spec.input_model.model_fields.items()
     ]
+    parameters.sort(key=lambda parameter: parameter.default is not Parameter.empty)
     handler.__signature__ = Signature(parameters=parameters, return_annotation=dict[str, Any])
     return handler
 
