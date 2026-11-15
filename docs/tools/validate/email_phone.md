@@ -31,8 +31,15 @@ Valida **formato** de email y teléfono. No verifica que el buzón exista ni la 
 - **Teléfono (`phonenumbers`):**
   - Parseo con región por defecto `ES` (`default_region`).
   - `is_valid_number` y clasificación (`mobile`, `fixed_line`, `voip`, `toll_free`, `unknown`).
+  - `FIXED_LINE_OR_MOBILE` (número válido sin distinción fijo/móvil, típico en EE. UU.) se mapea a `fixed_line`.
   - Salida en **E.164** y formato internacional legible.
 - Al menos uno de los dos campos debe estar presente (`model_validator`).
+
+Reglas:
+
+- `email_reason` solo puede ser `invalid_format`: `email-validator` no distingue longitud ni país.
+- Los códigos `invalid_length`, `invalid_country`, `invalid_format` y `parse_error` aplican a `phone_reason`.
+- `phone_type` se devuelve como texto; `unknown` cubre tipos no clasificables.
 
 ## 3. Contrato Pydantic
 
@@ -128,12 +135,15 @@ class EmailPhoneOutput(BaseModel):
     "email_valid": null,
     "phone_valid": true,
     "phone_e164": "+33142685300",
+    "phone_international": "+33 1 42 68 53 00",
     "phone_type": "fixed_line",
     "phone_country": "FR",
     "phone_reason": null
   }
 }
 ```
+
+Los campos omitidos en un golden toman el valor por defecto del contrato (`null`).
 
 ## 6. Metadatos de respuesta
 
@@ -146,9 +156,11 @@ class EmailPhoneOutput(BaseModel):
   "result_type": "validation",
   "is_estimated": false,
   "confidence": null,
+  "unit_system": "metric",
   "timezone": "Europe/Madrid",
   "warnings": [],
-  "errors": []
+  "errors": [],
+  "legal_disclaimer_required": false
 }
 ```
 
@@ -161,5 +173,5 @@ class EmailPhoneOutput(BaseModel):
 ## 8. Decisiones pendientes
 
 - ¿Añadir comprobación DNS/MX opcional (`check_dns`) en v2? Implicaría red y no determinismo; propuesta: tool separada.
-- ¿Devolver `phone_type` como enum cerrado o texto? Propuesta: enum estable.
-- Códigos `reason` estables: `invalid_format`, `invalid_length`, `invalid_country`, `parse_error`.
+- Implementado: `phone_type` se devuelve como texto (`mobile`, `fixed_line`, `voip`, `toll_free`, `unknown`); evaluar enum cerrado en v1.1.
+- Implementado: códigos `reason` estables (`invalid_format`, `invalid_length`, `invalid_country`, `parse_error`).
