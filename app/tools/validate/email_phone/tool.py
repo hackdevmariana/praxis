@@ -86,4 +86,4 @@ async def email_phone(params: EmailPhoneInput, ctx: ToolContext) -> ToolResult[E
                     else "invalid_format"
                 )
 
-    return tool_result(output)
+    return tool_result(output, metadata_extra={"result_type": "validation"})
