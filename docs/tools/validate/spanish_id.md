@@ -37,7 +37,8 @@ Reglas:
 
 - La validación es **offline**; no consulta VIES ni registros.
 - `normalized` devuelve la forma canónica sin separadores.
-- `checksum_ok` es independiente de `valid` (permite distinguir formato inválido de checksum erróneo).
+- `checksum_ok` distingue el fallo de formato del fallo de dígito de control: es `false` cuando el formato no encaja y, cuando encaja, refleja el checksum (coincide con `valid`).
+- `reason` usa códigos estables: `invalid_length`, `invalid_format`, `invalid_checksum`, `type_mismatch`.
 
 ## 3. Contrato Pydantic
 
@@ -66,18 +67,18 @@ class SpanishIdOutput(BaseModel):
 
 ## 4. Matriz de casos
 
-| Caso | `value` | `type` | `valid` | `id_type` | `checksum_ok` |
-|---|---|---|---|---|---|
-| DNI válido | `12345678Z` | auto | true | nif | true |
-| DNI con separadores | `12.345.678-Z` | auto | true | nif | true |
-| DNI minúsculas | `12345678z` | auto | true | nif | true |
-| DNI checksum erróneo | `12345678A` | auto | false | nif | false |
-| NIE válido | `X1234567L` | auto | true | nie | true |
-| CIF válido | `A58818501` | auto | true | cif | true |
-| CIF checksum erróneo | `A58818500` | auto | false | cif | false |
-| Longitud incorrecta | `1234` | auto | false | nif | false |
-| Tipo forzado incompatible | `X1234567L` | nif | false | nif | false |
-| Vacío | `` | auto | error `invalid_params` | — | — |
+| Caso | `value` | `type` | `valid` | `id_type` | `checksum_ok` | `reason` |
+|---|---|---|---|---|---|---|
+| DNI válido | `12345678Z` | auto | true | nif | true | null |
+| DNI con separadores | `12.345.678-Z` | auto | true | nif | true | null |
+| DNI minúsculas | `12345678z` | auto | true | nif | true | null |
+| DNI checksum erróneo | `12345678A` | auto | false | nif | false | `invalid_checksum` |
+| NIE válido | `X1234567L` | auto | true | nie | true | null |
+| CIF válido | `A58818501` | auto | true | cif | true | null |
+| CIF checksum erróneo | `A58818500` | auto | false | cif | false | `invalid_checksum` |
+| Longitud incorrecta | `1234` | auto | false | nif | false | `invalid_length` |
+| Tipo forzado incompatible | `X1234567L` | nif | false | nif | false | `type_mismatch` |
+| Vacío | `` | auto | error `invalid_params` | — | — | — |
 
 ## 5. Golden cases
 
@@ -103,7 +104,8 @@ class SpanishIdOutput(BaseModel):
     "id_type": "nif",
     "normalized": "12345678Z",
     "checksum_ok": true,
-    "reason": null
+    "reason": null,
+    "warning": "Un identificador válido no implica que la empresa o persona exista o esté activa."
   }
 }
 ```
@@ -116,7 +118,8 @@ class SpanishIdOutput(BaseModel):
     "id_type": "nie",
     "normalized": "X1234567L",
     "checksum_ok": true,
-    "reason": null
+    "reason": null,
+    "warning": "Un identificador válido no implica que la empresa o persona exista o esté activa."
   }
 }
 ```
@@ -129,7 +132,8 @@ class SpanishIdOutput(BaseModel):
     "id_type": "cif",
     "normalized": "A58818500",
     "checksum_ok": false,
-    "reason": "invalid_checksum"
+    "reason": "invalid_checksum",
+    "warning": "Un identificador válido no implica que la empresa o persona exista o esté activa."
   }
 }
 ```
@@ -142,10 +146,13 @@ class SpanishIdOutput(BaseModel):
     "id_type": "nif",
     "normalized": "1234",
     "checksum_ok": false,
-    "reason": "invalid_length"
+    "reason": "invalid_length",
+    "warning": "Un identificador válido no implica que la empresa o persona exista o esté activa."
   }
 }
 ```
+
+Los campos omitidos en un golden toman el valor por defecto del contrato (`null`).
 
 ## 6. Metadatos de respuesta
 
@@ -158,9 +165,11 @@ class SpanishIdOutput(BaseModel):
   "result_type": "validation",
   "is_estimated": false,
   "confidence": null,
+  "unit_system": "metric",
   "timezone": "Europe/Madrid",
   "warnings": [],
-  "errors": []
+  "errors": [],
+  "legal_disclaimer_required": false
 }
 ```
 
@@ -174,4 +183,4 @@ class SpanishIdOutput(BaseModel):
 
 - ¿Validar también número de Seguridad Social y NIE de extranjeros sin NIF? (fuera de v1).
 - ¿Añadir consulta VIES opcional en v2 (implica red y no determinismo)? Propuesta: tool separada `validate.vies_eu`.
-- `reason` debe usar códigos estables (`invalid_length`, `invalid_format`, `invalid_checksum`, `type_mismatch`).
+- Implementado: `reason` usa códigos estables (`invalid_length`, `invalid_format`, `invalid_checksum`, `type_mismatch`).
