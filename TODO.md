@@ -65,7 +65,7 @@
 ### Documentación de la tanda
 
 - [x] README con arranque (`uv run uvicorn app.main:app`) y prueba MCP.
-- [ ] Revisar que las specs implementadas no requieran correcciones.
+- [x] Revisar que las specs implementadas no requieran correcciones.
 
 ## Fase 1 — Tanda 2: proveedores externos
 
@@ -108,6 +108,6 @@
 
 ## Huecos y decisiones pendientes
 
-- [ ] Cerrar las decisiones pendientes de las specs en [`docs/tools/README.md`](docs/tools/README.md).
+- [ ] Cerrar las decisiones pendientes (§8) de cada ficha en [`docs/tools/`](docs/tools/README.md).
 - [ ] Documentar/implementar el servicio de enlaces QR (`qr.generate`, v3) si se prioriza.
 - [ ] Revisar `docs/12-legal-notes.md` con validación profesional.
