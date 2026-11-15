@@ -70,3 +70,17 @@ def test_invalid_bic_does_not_invalidate_iban() -> None:
     assert output.valid is True
     assert output.bic_valid is False
     assert output.reason is None
+
+
+def test_spanish_ccc_is_validated() -> None:
+    output = validate("ES6421000418450200051333")
+
+    assert output.valid is False
+    assert output.reason == "invalid_checksum"
+    assert output.bban is None
+
+
+def test_result_type_is_validation() -> None:
+    result = asyncio.run(iban(IbanInput(iban="ES9121000418450200051332"), CTX))
+
+    assert result.metadata_extra["result_type"] == "validation"
