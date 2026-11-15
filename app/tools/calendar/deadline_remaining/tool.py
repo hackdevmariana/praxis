@@ -2,7 +2,7 @@ from calendar import monthrange
 from datetime import date, datetime, time, timedelta
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
-from app.business_days import count_business_days, holiday_metadata
+from app.business_days import count_business_days, holiday_metadata, holiday_source_detail
 from app.clock import MADRID
 from app.clock import today as current_date
 from app.context import ToolContext
@@ -87,7 +87,7 @@ async def deadline_remaining(params: DeadlineInput, ctx: ToolContext) -> ToolRes
             "source_type": "deterministic",
             "valid_until": datetime.combine(dataset.valid_until, time.min, tzinfo=MADRID),
             "holiday_dataset_version": dataset.version,
-            "source_detail": "BOE + comunidades autónomas + datos.gob.es",
+            "source_detail": holiday_source_detail(),
         }
 
     return tool_result(
