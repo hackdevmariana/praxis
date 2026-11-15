@@ -28,13 +28,16 @@ Valida la estructura de un IBAN y, opcionalmente, un BIC/SWIFT. **No verifica** 
 2. **Longitud por país:** cada país tiene longitud fija de IBAN (p. ej. ES = 24).
 3. **Estructura BBAN:** validación del formato por país según `python-stdnum`.
 4. **Dígitos de control:** mover los 4 primeros caracteres al final, convertir letras a números (`A=10`…`Z=35`) y comprobar `mod 97 == 1`.
-5. **BIC (opcional):** si se aporta, validar formato de 8 u 11 caracteres y coherencia básica con el país del IBAN.
+5. **Dígito de control nacional:** en IBAN españoles se valida además el CCC (`stdnum.es.iban` / `stdnum.es.ccc`); un CCC inválido produce `reason=invalid_checksum`.
+6. **BIC (opcional):** si se aporta, validar formato de 8 u 11 caracteres y coherencia básica con el país del IBAN.
 
 Reglas:
 
 - Validación **offline**; no consulta la entidad bancaria ni el VIES.
-- `bban` devuelve la parte nacional (sin código de país ni dígitos de control).
-- `bic_valid` es `null` si no se aporta BIC.
+- `bban` devuelve la parte nacional (sin código de país ni dígitos de control); es `null` cuando `valid=false`.
+- `bic_valid` es `null` si no se aporta BIC. Un BIC con formato inválido **no** invalida el IBAN.
+- La coherencia de país del BIC solo se evalúa si el IBAN es válido; si el IBAN falla, se devuelve su `reason` y `bic_valid` refleja únicamente el formato del BIC.
+- `reason` usa códigos estables: `invalid_length`, `invalid_format`, `invalid_checksum`, `unknown_country`, `bic_country_mismatch`.
 
 ## 3. Contrato Pydantic
 
@@ -62,7 +65,8 @@ class IbanOutput(BaseModel):
 | IBAN ES válido | `ES9121000418450200051332` | — | true | `country=ES` |
 | IBAN con espacios | `ES91 2100 0418 4502 0005 1332` | — | true | `normalized` sin espacios |
 | IBAN minúsculas | `es9121000418450200051332` | — | true | |
-| Checksum erróneo | `ES9121000418450200051333` | — | false | `invalid_checksum` |
+| Checksum IBAN erróneo | `ES9121000418450200051333` | — | false | `invalid_checksum` |
+| CCC español inválido (mod-97 válido) | `ES6421000418450200051333` | — | false | `invalid_checksum` |
 | Longitud incorrecta | `ES912100041845020005133` | — | false | `invalid_length` |
 | País desconocido | `ZZ9121000418450200051332` | — | false | `unknown_country` |
 | BIC válido (8) | `ES9121000418450200051332` | `CAIXESBB` | true | `bic_valid=true` |
@@ -96,7 +100,8 @@ class IbanOutput(BaseModel):
     "country": "ES",
     "bban": "21000418450200051332",
     "bic_valid": true,
-    "reason": null
+    "reason": null,
+    "warning": "Un IBAN válido no implica que la cuenta exista o esté operativa."
   }
 }
 ```
@@ -110,7 +115,23 @@ class IbanOutput(BaseModel):
     "country": "ES",
     "bban": null,
     "bic_valid": null,
-    "reason": "invalid_checksum"
+    "reason": "invalid_checksum",
+    "warning": "Un IBAN válido no implica que la cuenta exista o esté operativa."
+  }
+}
+```
+
+```json
+{
+  "input": { "iban": "ES6421000418450200051333" },
+  "output": {
+    "valid": false,
+    "normalized": "ES6421000418450200051333",
+    "country": "ES",
+    "bban": null,
+    "bic_valid": null,
+    "reason": "invalid_checksum",
+    "warning": "Un IBAN válido no implica que la cuenta exista o esté operativa."
   }
 }
 ```
@@ -124,10 +145,13 @@ class IbanOutput(BaseModel):
     "country": "ES",
     "bban": null,
     "bic_valid": false,
-    "reason": "invalid_length"
+    "reason": "invalid_length",
+    "warning": "Un IBAN válido no implica que la cuenta exista o esté operativa."
   }
 }
 ```
+
+Los campos omitidos en un golden toman el valor por defecto del contrato (`null`).
 
 ## 6. Metadatos de respuesta
 
@@ -140,9 +164,11 @@ class IbanOutput(BaseModel):
   "result_type": "validation",
   "is_estimated": false,
   "confidence": null,
+  "unit_system": "metric",
   "timezone": "Europe/Madrid",
   "warnings": [],
-  "errors": []
+  "errors": [],
+  "legal_disclaimer_required": false
 }
 ```
 
@@ -153,6 +179,6 @@ class IbanOutput(BaseModel):
 
 ## 8. Decisiones pendientes
 
-- ¿Validar también el dígito de control nacional español (doble cálculo) además del IBAN? Propuesta: sí, en `v1.1`.
+- Implementado en v1.0: además del mod-97 se valida el dígito de control nacional español (CCC) vía `stdnum.es.iban`.
 - ¿Soportar IBAN de países no europeos? `python-stdnum` ya cubre muchos; documentar límites.
-- Códigos `reason` estables: `invalid_length`, `invalid_format`, `invalid_checksum`, `unknown_country`, `bic_country_mismatch`.
+- Implementado: códigos `reason` estables (`invalid_length`, `invalid_format`, `invalid_checksum`, `unknown_country`, `bic_country_mismatch`).
