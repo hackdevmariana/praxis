@@ -54,8 +54,9 @@ def test_price_below_cost_is_negative() -> None:
 
 
 def test_zero_cost_warns_markup_undefined() -> None:
-    result = run_result(cost="0", price="100")
+    result = run_result(cost="0", price="50")
 
+    assert result.data.margin_amount == Decimal("50.00")
     assert result.data.margin_pct == Decimal("100.00")
     assert result.data.markup_pct is None
     assert result.warnings == ["markup_undefined"]
