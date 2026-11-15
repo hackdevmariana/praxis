@@ -83,7 +83,8 @@ async def spanish_id(params: SpanishIdInput, ctx: ToolContext) -> ToolResult[Spa
                 normalized=normalized,
                 checksum_ok=False,
                 reason=reason,
-            )
+            ),
+            metadata_extra={"result_type": "validation"},
         )
 
     checksum_ok = (
@@ -96,5 +97,6 @@ async def spanish_id(params: SpanishIdInput, ctx: ToolContext) -> ToolResult[Spa
             normalized=normalized,
             checksum_ok=checksum_ok,
             reason=None if checksum_ok else "invalid_checksum",
-        )
+        ),
+        metadata_extra={"result_type": "validation"},
     )
