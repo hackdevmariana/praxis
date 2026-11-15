@@ -71,7 +71,8 @@ Errores MCP:
 
 | Código | Situación |
 |---|---|
-| `invalid_params` | Fallo de validación Pydantic |
+| `invalid_params` | `ToolError(INVALID_PARAMS)` lanzado al ejecutar; el rechazo de esquema previo lo gestiona el framework |
+| `incompatible_units` | Unidades de dimensiones distintas en `units.convert` |
 | `permission_denied` | Scope insuficiente |
 | `tool_not_available` | No activa para el tenant |
 | `confirmation_required` | Efecto sin confirmación |
