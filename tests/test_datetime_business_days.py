@@ -70,6 +70,10 @@ def test_warnings_and_metadata_for_local_holidays() -> None:
     assert result.warnings == ["local_holidays_unavailable"]
     assert result.metadata_extra["holiday_dataset_version"] == "2026.1"
     assert result.metadata_extra["source"] == "seeder:holidays"
+    assert (
+        result.metadata_extra["source_detail"]
+        == "python-holidays 0.108 (calendario festivo español)"
+    )
 
 
 def test_inverted_range_is_schema_error() -> None:
