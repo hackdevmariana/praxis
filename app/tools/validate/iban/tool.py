@@ -85,5 +85,6 @@ async def iban(params: IbanInput, ctx: ToolContext) -> ToolResult[IbanOutput]:
             bban=normalized[4:] if valid else None,
             bic_valid=bic_valid,
             reason=reason,
-        )
+        ),
+        metadata_extra={"result_type": "validation"},
     )
