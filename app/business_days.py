@@ -78,10 +78,15 @@ def count_business_days(
     )
 
 
+def holiday_source_detail() -> str:
+    """Describe the real provenance of the holidays dataset."""
+    return f"{load_dataset().source} (calendario festivo español)"
+
+
 def holiday_metadata(result: BusinessDayResult) -> dict[str, Any]:
     """Metadata fields tied to the versioned holidays dataset."""
     return {
         "valid_until": datetime.combine(result.valid_until, time.min, tzinfo=MADRID),
         "holiday_dataset_version": result.dataset_version,
-        "source_detail": "BOE + comunidades autónomas + datos.gob.es",
+        "source_detail": holiday_source_detail(),
     }
