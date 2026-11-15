@@ -63,3 +63,9 @@ def test_invalid_identifiers(value: str, id_type: IdType, reason: str) -> None:
 def test_empty_value_is_rejected_by_schema() -> None:
     with pytest.raises(ValidationError):
         SpanishIdInput(value="")
+
+
+def test_result_type_is_validation() -> None:
+    result = asyncio.run(spanish_id(SpanishIdInput(value="12345678Z"), CTX))
+
+    assert result.metadata_extra["result_type"] == "validation"
