@@ -30,22 +30,24 @@ Calcula cuánto queda hasta el cierre de un periodo (mes, trimestre o año).
    - `year`: del 1 de enero al 31 de diciembre.
 3. **`days_remaining`:** `deadline - reference_date` en días naturales (0 si es el mismo día).
 4. **`business_days_remaining`:** días hábiles en `(reference_date, deadline]` (excluye la fecha de referencia, incluye el cierre), descontando festivos.
-5. **Festivos:** nacionales siempre; autonómicos si `community`; locales si `municipality_code`.
+5. **Festivos:** nacionales siempre; autonómicos si `community`; locales si `municipality_code`. Los avisos de datos (`local_holidays_unavailable`, `community_not_found`) se propagan igual que en `datetime.business_days`.
 
 Reglas:
 
 - `reference_date` es una fecha, no un instante; `timezone` solo aplica si se omite y se usa «hoy».
-- Si falta el dataset de festivos para el año → `warnings` con `holiday_dataset_incomplete`.
+- Si el rango hasta el cierre incluye un año sin dataset → `warnings` con `holiday_dataset_incomplete`. Si `reference_date` ya es el cierre no hay rango que calcular y no se emite ese aviso.
 - Nunca se devuelve un número negativo de días: si `reference_date` cae en el cierre, ambos contadores son `0`.
 
 ## 3. Contrato Pydantic
 
 ```python
 from datetime import date
-from enum import Enum
+from enum import StrEnum
 from pydantic import BaseModel, Field
 
-class Period(str, Enum):
+from app.tools.datetime.business_days.schemas import HolidayApplied
+
+class Period(StrEnum):
     month = "month"
     quarter = "quarter"
     year = "year"
@@ -63,7 +65,7 @@ class DeadlineOutput(BaseModel):
     deadline: date
     days_remaining: int
     business_days_remaining: int
-    holidays_applied: list[dict]
+    holidays_applied: list[HolidayApplied]
 ```
 
 ## 4. Matriz de casos
@@ -77,6 +79,7 @@ class DeadlineOutput(BaseModel):
 | Febrero bisiesto | `period=month`, `reference_date=2028-02-15` | deadline `2028-02-29` |
 | Sin fecha (hoy) | `period=month` | usa «hoy» en `timezone` |
 | Periodo inválido | `period=week` | error `invalid_params` |
+| Zona inválida | `timezone=Europe/Atlantis` | error `invalid_params` |
 
 ## 5. Golden cases
 
@@ -140,20 +143,44 @@ class DeadlineOutput(BaseModel):
 }
 ```
 
+```json
+{
+  "input": { "period": "year", "reference_date": "2026-11-13" },
+  "output": {
+    "period": "year",
+    "period_start": "2026-01-01",
+    "deadline": "2026-12-31",
+    "days_remaining": 48,
+    "business_days_remaining": 32,
+    "holidays_applied": [
+      { "date": "2026-12-06", "name": "Día de la Constitución", "scope": "national" },
+      { "date": "2026-12-08", "name": "Inmaculada Concepción", "scope": "national" },
+      { "date": "2026-12-25", "name": "Navidad", "scope": "national" }
+    ]
+  }
+}
+```
+
+Los campos omitidos en un golden toman el valor por defecto del contrato (`null`).
+
 ## 6. Metadatos de respuesta
 
 ```json
 {
   "source": "deterministic+seeder:holidays",
   "source_type": "deterministic",
+  "source_detail": "python-holidays 0.108 (calendario festivo español)",
   "retrieved_at": "<now>",
-  "valid_until": "2026-12-31",
+  "valid_until": "2028-12-31",
   "holiday_dataset_version": "2026.1",
   "result_type": "calculation",
   "is_estimated": false,
+  "confidence": null,
+  "unit_system": "metric",
   "timezone": "Europe/Madrid",
   "warnings": [],
-  "errors": []
+  "errors": [],
+  "legal_disclaimer_required": false
 }
 ```
 
@@ -167,4 +194,4 @@ class DeadlineOutput(BaseModel):
 
 - ¿Añadir cierre fiscal (`FiscalCalendarRule`) como periodo? Propuesta: tool separada `calendar.tax_deadline` en v2.
 - ¿Devolver también `weeks_remaining`? Propuesta: sí, campo opcional en v1.1.
-- Verificar que el cómputo de días hábiles coincide exactamente con `datetime.business_days` (mismo helper interno).
+- Implementado: el cómputo de días hábiles usa el mismo helper interno (`app.business_days.count_business_days`) que `datetime.business_days`.
