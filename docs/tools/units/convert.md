@@ -33,8 +33,8 @@ Reglas:
 
 - Se aceptan valores negativos y cero.
 - **Temperatura:** se tratan como magnitudes absolutas, no como diferencias. `0 °C = 32 °F`. Para diferencias de temperatura debe usarse otra tool (backlog `units.convert_delta`).
-- **Precisión:** `pint` opera internamente en `float`; se documenta el boundary `Decimal → float → Decimal` y se testea la tolerancia.
-- No se convierten magnitudes monetarias (usar `currency.convert`).
+- **Precisión:** `pint` opera internamente en `float`; el resultado se cuantiza a `precision` decimales, así que no se garantiza exactitud más allá de esa precisión.
+- No se convierten magnitudes monetarias (usar `currency.convert`). Una unidad monetaria desconocida produce `invalid_params`.
 
 ## 3. Contrato Pydantic
 
@@ -52,11 +52,13 @@ class UnitsConvertOutput(BaseModel):
     value: Decimal          # serializado como string
     from_unit: str          # unidad canónica
     to_unit: str            # unidad canónica
-    dimension: str          # p. ej. "[length]"
+    dimension: str          # dimensionalidad pint; p. ej. "[length]" o "[mass] * [length] ** 2 / [time] ** 2"
     factor: Decimal         # factor de conversión aplicado (sin offset)
 ```
 
 ## 4. Matriz de casos
+
+Salvo indicación, `precision=6` y el valor se muestra ya cuantizado.
 
 | Caso | Entrada | Resultado |
 |---|---|---|
@@ -65,15 +67,15 @@ class UnitsConvertOutput(BaseModel):
 | Masa | `2 kg → lb` | `4.409245` lb |
 | Volumen | `1 L → gal (US)` | `0.264172` gal |
 | Superficie | `100 m² → ft²` | `1076.391042` ft² |
-| Energía | `1 kWh → MJ` | `3.6` MJ |
-| Temperatura | `0 °C → °F` | `32` °F |
-| Temperatura | `100 °C → °F` | `212` °F |
-| Cero | `0 km → m` | `0` m |
-| Negativo | `-5 °C → °F` | `23` °F |
+| Energía | `1 kWh → MJ` | `3.600000` MJ |
+| Temperatura | `0 °C → °F` (`precision=2`) | `32.00` °F |
+| Temperatura | `100 °C → °F` (`precision=2`) | `212.00` °F |
+| Cero | `0 km → m` | `0.000000` m |
+| Negativo | `-5 °C → °F` (`precision=2`) | `23.00` °F |
 | Dimensiones incompatibles | `1 kg → km` | error `incompatible_units` |
 | Unidad desconocida | `1 foo → m` | error `invalid_params` |
 | Precisión 0 | `1.234 km → m` | `1234` m |
-| Precisión 12 | `1 in → m` | `0.0254` m |
+| Precisión 12 | `1 in → m` | `0.025400000000` m |
 
 ## 5. Golden cases
 
@@ -123,7 +125,7 @@ class UnitsConvertOutput(BaseModel):
     "value": "3.600000",
     "from_unit": "kilowatt_hour",
     "to_unit": "megajoule",
-    "dimension": "[energy]",
+    "dimension": "[mass] * [length] ** 2 / [time] ** 2",
     "factor": "3.6"
   }
 }
@@ -150,7 +152,8 @@ class UnitsConvertOutput(BaseModel):
   "unit_system": "metric",
   "timezone": "Europe/Madrid",
   "warnings": [],
-  "errors": []
+  "errors": [],
+  "legal_disclaimer_required": false
 }
 ```
 
@@ -168,5 +171,5 @@ Notas:
 ## 8. Decisiones pendientes
 
 - ¿Añadir `units.convert_delta` para diferencias de temperatura? Propuesta: sí, backlog.
-- ¿Fijar `precision` por defecto a 6 o a 2? Propuesta: 6 para no perder exactitud en conversiones pequeñas.
-- Definir política para unidades ambiguas (`gal`, `oz`, `ton`) en la descripción MCP.
+- Implementado: `precision` por defecto 6 (máximo 12) para no perder exactitud en conversiones pequeñas.
+- Implementado: las unidades ambiguas se resuelven con el registro de `pint` (`gal` = US) y se documentan en `mcp_description`.
