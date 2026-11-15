@@ -86,6 +86,28 @@ def test_mcp_lists_and_calls_finance_vat() -> None:
     assert envelope["metadata"]["source"] == "deterministic"
 
 
+def test_mcp_invalid_params_returns_structured_error() -> None:
+    async def scenario() -> dict[str, Any]:
+        server = create_app().state.mcp
+        async with (
+            InMemoryTransport(server) as (read, write),
+            ClientSession(read, write) as session,
+        ):
+            await session.initialize()
+            result = await session.call_tool(
+                "finance.discounts",
+                {"amount": "100", "discounts": ["100"], "operation": "reverse"},
+            )
+            item = result.content[0]
+            assert isinstance(item, TextContent)
+            return json.loads(item.text)
+
+    envelope = asyncio.run(scenario())
+
+    assert envelope["success"] is False
+    assert envelope["metadata"]["errors"][0]["code"] == "invalid_params"
+
+
 def test_mcp_endpoint_accepts_initialize() -> None:
     with TestClient(create_app()) as client:
         response = client.post(
