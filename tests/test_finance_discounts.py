@@ -46,16 +46,16 @@ def test_single_discount_and_reverse() -> None:
 
 
 def test_full_discount_yields_zero() -> None:
-    output = run(amount="50", discounts=["100"])
+    output = run(amount="100", discounts=["100"])
 
     assert output.final_amount == Decimal("0.00")
-    assert output.discount_amount == Decimal("50.00")
+    assert output.discount_amount == Decimal("100.00")
     assert output.effective_discount_pct == Decimal("100.00")
 
 
 def test_reverse_with_full_discount_is_tool_error() -> None:
     with pytest.raises(ToolError) as error:
-        run(amount="50", discounts=["100"], operation="reverse")
+        run(amount="100", discounts=["100"], operation="reverse")
 
     assert error.value.code == ErrorCode.INVALID_PARAMS
 
