@@ -4,7 +4,7 @@ version: 1.0.0
 tool: finance.loan_schedule
 ---
 
-# `finance.loan_schedule` — Cuadro de amortización
+# `finance.loan_schedule` — Generar cuadro de amortización
 
 ## 1. Metadatos
 
@@ -52,10 +52,10 @@ Reglas:
 
 ```python
 from decimal import Decimal
-from enum import Enum
+from enum import StrEnum
 from pydantic import BaseModel, Field
 
-class LoanType(str, Enum):
+class LoanType(StrEnum):
     french = "french"
     italian = "italian"
 
@@ -95,7 +95,7 @@ class LoanOutput(BaseModel):
 | Francés sin interés | `principal=15000`, `annual_rate=0`, `term_months=12` | cuota 1250.00, interés 0.00 |
 | Francés corto | `principal=1000`, `annual_rate=12`, `term_months=3` | cuota 340.02, interés 20.07 |
 | Italiano 6% 12m | `principal=10000`, `annual_rate=6`, `term_months=12` | 1ª 883.33, última 837.54, interés 325.00 |
-| Italiano sin interés | `principal=15000`, `annual_rate=0`, `term_months=12` | cuota 1250.00, interés 0.00 |
+| Italiano sin interés | `principal=15000`, `annual_rate=0`, `term_months=12` | 1er/último pago 1250.00, `monthly_payment=null`, interés 0.00 |
 | Principal cero | `principal=0` | error `invalid_params` |
 | Plazo cero | `term_months=0` | error `invalid_params` |
 | Tipo negativo | `annual_rate=-1` | error `invalid_params` |
@@ -167,6 +167,8 @@ Francés sin interés:
 }
 ```
 
+Los campos omitidos en un golden toman el valor por defecto del contrato (`null`).
+
 ## 6. Metadatos de respuesta
 
 ```json
@@ -177,6 +179,8 @@ Francés sin interés:
   "valid_until": null,
   "result_type": "calculation",
   "is_estimated": false,
+  "confidence": null,
+  "unit_system": "metric",
   "timezone": "Europe/Madrid",
   "warnings": [],
   "errors": [],
@@ -194,4 +198,4 @@ Francés sin interés:
 
 - ¿Soportar carencia (periodo de gracia) y tipo variable? Propuesta: parámetros `grace_months` y `rate_schedule` en v2.
 - ¿Añadir `type=american` (solo intereses + devolución final)? Propuesta: v2.
-- Precisión del cálculo de `(1+i)^−n`: usar `Decimal` de alta precisión; documentar el redondeo final por periodo.
+- Implementado: `(1+i)^−n` se calcula con `Decimal` y precisión 60; el redondeo se aplica por periodo al céntimo.
