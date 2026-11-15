@@ -38,7 +38,7 @@ Cada nombre enlaza a su spec detallada en [`docs/tools/`](tools/README.md).
 
 ### `datetime.calc` — v1.0.0
 
-Cálculos de fecha deterministas: hoy, mañana, ayer, diferencias, día de la semana, semana/trimestre/semestre.
+Cálculos de fecha deterministas: hoy, sumar/restar días, diferencias, día de la semana, semana ISO, trimestre y semestre.
 
 - `read_only: true`, `idempotent: true`, `requires_confirmation: false`
 - Permiso: `datetime.read` · Clasificación: `public`
@@ -52,7 +52,7 @@ Cálculos de fecha deterministas: hoy, mañana, ayer, diferencias, día de la se
 | `days` | int | Para `add_days` |
 | `timezone` | str | Por defecto `Europe/Madrid` |
 
-Salida: `{ result, iso_date, weekday, week_number, quarter, semester }` según operación.
+Salida: `{ operation, date, days_diff, weekday, weekday_name, iso_week, iso_year, quarter, semester, day_of_year }` según operación.
 
 ### `datetime.business_days` — v1.0.0
 
@@ -64,12 +64,13 @@ Días hábiles entre dos fechas excluyendo festivos nacionales, autonómicos y l
 
 | Entrada | Tipo | Notas |
 |---|---|---|
-| `start` | date | |
-| `end` | date | |
+| `start` | date | Inclusivo |
+| `end` | date | Exclusivo salvo `include_end=true` |
 | `municipality_code` | str | Código INE, opcional para festivos locales |
 | `community` | str | CCAA, opcional |
+| `include_end` | bool | Por defecto `false` |
 
-Salida: `{ business_days, holidays_applied: [...] }`. Los festivos usados se listan en `metadata.warnings` si faltan datos locales.
+Salida: `{ business_days, calendar_days, holidays_applied: [...] }`. Los avisos de cobertura (p. ej. `local_holidays_unavailable`) van en `metadata.warnings`.
 
 ### `calendar.deadline_remaining` — v1.0.0
 
@@ -83,8 +84,11 @@ Días restantes para cierre de mes, trimestre o año.
 |---|---|
 | `period` | enum: `month`, `quarter`, `year` |
 | `reference_date` | date (opcional) |
+| `community` | str (opcional) |
+| `municipality_code` | str (opcional) |
+| `timezone` | str (por defecto `Europe/Madrid`) |
 
-Salida: `{ deadline, days_remaining, business_days_remaining }`.
+Salida: `{ period, period_start, deadline, days_remaining, business_days_remaining, holidays_applied }`.
 
 ---
 
@@ -108,7 +112,7 @@ Salida: `{ base_amount, vat_rate, vat_amount, total_amount, currency }`. Redonde
 
 ### `finance.margin` — v1.0.0
 
-Margen bruto/comercial y markup.
+Margen comercial y markup.
 
 - `read_only: true`, `idempotent: true`
 - Permiso: `finance.calculate` · Clasificación: `business`
@@ -119,7 +123,7 @@ Margen bruto/comercial y markup.
 | `price` | Decimal | Opcional si se da `cost` |
 | `margin_pct` | Decimal | Opcional para calcular precio |
 
-Salida: `{ margin_amount, margin_pct, markup_pct, price, cost }`.
+Salida: `{ cost, price, margin_amount, margin_pct, markup_pct, currency }`; `margin_pct`/`markup_pct` pueden ser `null` con warning.
 
 ### `finance.loan_schedule` — v1.0.0
 
@@ -127,16 +131,15 @@ Cuota y cuadro de amortización.
 
 - `read_only: true`, `idempotent: true`
 - Permiso: `finance.calculate` · Clasificación: `business`
-- Nota: boundary `Decimal → float → Decimal` documentado y testeado al céntimo.
 
 | Entrada | Tipo |
 |---|---|
 | `principal` | Decimal |
-| `annual_rate` | Decimal |
+| `annual_rate` | Decimal (por defecto 0) |
 | `term_months` | int |
 | `type` | enum: `french`, `italian` |
 
-Salida: `{ monthly_payment, total_interest, total_paid, schedule: [{period, interest, principal, balance}] }`.
+Salida: `{ principal, annual_rate, term_months, type, monthly_payment, first_payment, last_payment, total_interest, total_paid, schedule: [{period, payment, interest, principal, balance}], currency }`. En `italian`, `monthly_payment` es `null`.
 
 ### `finance.discounts` — v1.0.0
 
@@ -148,10 +151,10 @@ Descuentos sucesivos y cálculo del precio original.
 | Entrada | Tipo |
 |---|---|
 | `amount` | Decimal |
-| `discounts` | list[Decimal] |
+| `discounts` | list[Decimal] (1–10 elementos) |
 | `operation` | enum: `apply`, `reverse` |
 
-Salida: `{ final_amount, total_discount_pct, original_amount }`.
+Salida: `{ original_amount, final_amount, discount_amount, effective_discount_pct, currency }`.
 
 ---
 
@@ -169,7 +172,7 @@ Valida NIF, NIE y CIF con `python-stdnum`. Un checksum válido **no** prueba que
 | `value` | str |
 | `type` | enum: `auto`, `nif`, `nie`, `cif` |
 
-Salida: `{ valid, id_type, normalized, checksum_ok, warning }`.
+Salida: `{ valid, id_type, normalized, checksum_ok, reason, warning }`.
 
 ### `validate.iban` — v1.0.0
 
@@ -177,7 +180,7 @@ Valida IBAN (y opcionalmente BIC) con `python-stdnum`. No verifica que la cuenta
 
 - Permiso: `validation.check` · Clasificación: `personal`
 
-Salida: `{ valid, country, bban, bic_valid }`.
+Salida: `{ valid, normalized, country, bban, bic_valid, reason, warning }`.
 
 ### `validate.email_phone` — v1.0.0
 
@@ -185,7 +188,7 @@ Valida formato de email (`email-validator`) y teléfono (`phonenumbers`). No ver
 
 - Permiso: `validation.check` · Clasificación: `personal`
 
-Salida: `{ email_valid, phone_valid, phone_e164, phone_type, country }`.
+Salida: `{ email_valid, email_normalized, email_reason, phone_valid, phone_e164, phone_international, phone_type, phone_country, phone_reason }`.
 
 ### `units.convert` — v1.0.0
 
@@ -199,8 +202,9 @@ Conversión de unidades con `pint`.
 | `value` | Decimal |
 | `from_unit` | str |
 | `to_unit` | str |
+| `precision` | int (0–12, por defecto 6) |
 
-Salida: `{ value, from_unit, to_unit, dimension }`.
+Salida: `{ value, from_unit, to_unit, dimension, factor }`.
 
 ---
 
