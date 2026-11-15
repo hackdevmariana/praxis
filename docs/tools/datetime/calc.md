@@ -36,17 +36,17 @@ Reglas:
 - `today` depende del reloj del servidor; en tests se fija con `time-machine`. El resultado es determinista para un instante dado.
 - `add_days` y `diff_days` operan en **días naturales**, no laborables (para eso, `datetime.business_days`).
 - `diff_days` es firmado: si `date_b < date`, devuelve un entero negativo.
-- `week_info` usa la norma ISO 8601 (semana 1 = la que contiene el primer jueves del año).
-- La zona horaria solo afecta a `today`; las demás operaciones trabajan sobre la fecha dada.
+- `week_info` usa la norma ISO 8601 (semana 1 = la que contiene el primer jueves del año); `iso_year` puede diferir del año natural en los bordes (p. ej. `2027-01-01` → `iso_week=53`, `iso_year=2026`).
+- La zona horaria solo afecta a `today`; las demás operaciones trabajan sobre la fecha dada. `metadata.timezone` es siempre `Europe/Madrid` (zona de visualización), no el parámetro de entrada.
 
 ## 3. Contrato Pydantic
 
 ```python
 from datetime import date
-from enum import Enum
+from enum import StrEnum
 from pydantic import BaseModel, Field, model_validator
 
-class Operation(str, Enum):
+class Operation(StrEnum):
     today = "today"
     add_days = "add_days"
     diff_days = "diff_days"
@@ -61,7 +61,7 @@ class DateCalcInput(BaseModel):
     timezone: str = "Europe/Madrid"
 
     @model_validator(mode="after")
-    def requisitos(self):
+    def requirements(self):
         req = {
             "add_days": ("date", "days"),
             "diff_days": ("date", "date_b"),
@@ -99,8 +99,9 @@ class DateCalcOutput(BaseModel):
 | Diferencia | `operation=diff_days`, `date=2026-11-01`, `date_b=2026-11-13` | `12` |
 | Diferencia negativa | `operation=diff_days`, `date=2026-11-13`, `date_b=2026-11-01` | `-12` |
 | Día de la semana | `operation=weekday`, `date=2026-11-13` | `weekday=5`, `weekday_name=viernes` |
-| Semana ISO | `operation=week_info`, `date=2026-11-13` | `iso_week=46`, `quarter=4`, `semester=2`, `day_of_year=317` |
-| Semana 1 | `operation=week_info`, `date=2026-01-01` | `iso_week=1`, `quarter=1`, `semester=1`, `day_of_year=1` |
+| Semana ISO | `operation=week_info`, `date=2026-11-13` | `iso_week=46`, `iso_year=2026`, `quarter=4`, `semester=2`, `day_of_year=317` |
+| Semana 1 | `operation=week_info`, `date=2026-01-01` | `iso_week=1`, `iso_year=2026`, `quarter=1`, `semester=1`, `day_of_year=1` |
+| Borde ISO | `operation=week_info`, `date=2027-01-01` | `iso_week=53`, `iso_year=2026`, `quarter=1`, `semester=1`, `day_of_year=1` |
 | Falta `date` | `operation=add_days`, sin `date` | error `invalid_params` |
 | Zona inválida | `timezone=Europe/Atlantis` | error `invalid_params` |
 
@@ -149,6 +150,8 @@ class DateCalcOutput(BaseModel):
 }
 ```
 
+Los campos omitidos en un golden toman el valor por defecto del contrato (`null`).
+
 ## 6. Metadatos de respuesta
 
 ```json
@@ -159,9 +162,12 @@ class DateCalcOutput(BaseModel):
   "valid_until": null,
   "result_type": "calculation",
   "is_estimated": false,
+  "confidence": null,
+  "unit_system": "metric",
   "timezone": "Europe/Madrid",
   "warnings": [],
-  "errors": []
+  "errors": [],
+  "legal_disclaimer_required": false
 }
 ```
 
@@ -175,4 +181,4 @@ class DateCalcOutput(BaseModel):
 
 - ¿Añadir `add_business_days` aquí o mantenerlo en `datetime.business_days`? Propuesta: en `business_days`.
 - ¿Devolver `weekday_name` localizado según idioma del usuario? Propuesta: parámetro `language` en v1.1.
-- Nombres de día estables en castellano sin acentos (`miercoles`), con `language` para otras lenguas en v2.
+- Implementado: nombres de día estables en castellano sin acentos (`miercoles`); `language` para otras lenguas queda en v2.
