@@ -83,6 +83,24 @@ def test_precision_zero() -> None:
     assert str(run("1.234", "km", "m", precision=0).value) == "1234"
 
 
+def test_precision_twelve() -> None:
+    assert str(run("1", "in", "m", precision=12).value) == "0.025400000000"
+
+
+def test_energy_dimension_is_expressed_in_base_dimensions() -> None:
+    output = run("1", "kWh", "MJ")
+
+    assert output.dimension == "[mass] * [length] ** 2 / [time] ** 2"
+    assert output.value == Decimal("3.600000")
+
+
+def test_monetary_unit_is_invalid_params() -> None:
+    with pytest.raises(ToolError) as error:
+        run("1", "USD", "EUR")
+
+    assert error.value.code == "invalid_params"
+
+
 def test_incompatible_units_raise_domain_error() -> None:
     with pytest.raises(ToolError) as error:
         run("1", "kg", "km")
