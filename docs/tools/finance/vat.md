@@ -4,7 +4,7 @@ version: 1.0.0
 tool: finance.vat
 ---
 
-# `finance.vat` — Cálculo de IVA
+# `finance.vat` — Calcular IVA
 
 ## 1. Metadatos
 
@@ -42,10 +42,10 @@ Reglas:
 
 ```python
 from decimal import Decimal
-from enum import Enum
+from enum import StrEnum
 from pydantic import BaseModel, Field
 
-class VatOperation(str, Enum):
+class VatOperation(StrEnum):
     add = "add"
     extract = "extract"
     remove = "remove"
@@ -78,8 +78,10 @@ class VatOutput(BaseModel):
 | Exento | `amount=100`, `rate=0`, `add` | vat 0.00, total 100.00 |
 | Cero | `amount=0`, `rate=21`, `add` | todo 0.00 |
 | Redondeo | `amount=0.01`, `rate=21`, `add` | vat 0.00, total 0.01 |
-| Importe negativo | `amount=-5` | error `invalid_params` |
-| Tipo fuera de rango | `rate=101` | error `invalid_params` |
+| Importe negativo | `amount=-5` | rechazo de esquema (`422` en REST; error de tool en MCP) |
+| Tipo fuera de rango | `rate=101` | rechazo de esquema (`422` en REST; error de tool en MCP) |
+
+Los fallos de esquema se rechazan antes de ejecutar la tool, así que no viajan en el sobre.
 
 ## 5. Golden cases
 
@@ -148,6 +150,8 @@ class VatOutput(BaseModel):
 }
 ```
 
+Los campos omitidos en un golden toman el valor por defecto del contrato (`null`).
+
 ## 6. Metadatos de respuesta
 
 ```json
@@ -158,6 +162,7 @@ class VatOutput(BaseModel):
   "valid_until": null,
   "result_type": "calculation",
   "is_estimated": false,
+  "confidence": null,
   "unit_system": "metric",
   "timezone": "Europe/Madrid",
   "warnings": [],
