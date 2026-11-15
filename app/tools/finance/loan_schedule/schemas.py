@@ -11,7 +11,7 @@ class LoanType(StrEnum):
 
 class LoanInput(BaseModel):
     principal: Decimal = Field(gt=0, max_digits=16, decimal_places=2)
-    annual_rate: Decimal = Field(ge=0, le=100)
+    annual_rate: Decimal = Field(default=Decimal("0"), ge=0, le=100)
     term_months: int = Field(gt=0, le=600)
     type: LoanType = LoanType.french
     currency: str = Field(default="EUR", min_length=3, max_length=3)
