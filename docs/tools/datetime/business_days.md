@@ -27,23 +27,25 @@ Cuenta días hábiles (lunes a viernes) entre dos fechas, excluyendo festivos na
 2. **Fin de semana:** sábado y domingo nunca cuentan.
 3. **Festivos aplicados:**
    - Nacionales (siempre).
-   - Autonómicos si se indica `community`.
-   - Locales si se indica `municipality_code` (código INE de 5 dígitos).
+   - Autonómicos si se indica `community` (código o nombre, sin distinguir mayúsculas ni acentos).
+   - Locales si se indica `municipality_code` (código INE de 5 dígitos). El dataset actual **no** incluye festivos locales: se calcula sin ellos y se avisa.
 4. **Cómputo:** se recorren los días del rango y se cuentan los que son laborables y no festivos.
-5. **Salida:** número de días hábiles, días naturales y lista de festivos aplicados con su ámbito.
+5. **Salida:** número de días hábiles, días naturales y lista de festivos aplicados con su ámbito, ordenada por fecha y nombre.
 
 Reglas:
 
-- Si `start > end` → error `invalid_range`.
+- Si `start > end` → error `invalid_params`.
 - Si `start == end`: `0` sin `include_end`; `1` si ese día es laborable y no festivo y `include_end=true`.
-- Si se pide festivo local sin datos para ese municipio → `warnings` con `local_holidays_unavailable`, y se calcula sin locales (nunca se inventan).
-- Si el rango cruza años sin dataset → `warnings` con `holiday_dataset_incomplete`.
+- Si se indica `municipality_code` → `warnings` con `local_holidays_unavailable`, y se calcula sin locales (nunca se inventan).
+- Si `community` no se reconoce → `warnings` con `community_not_found`; se calcula solo con nacionales.
+- Si el rango incluye algún año sin dataset → `warnings` con `holiday_dataset_incomplete`.
 - El dataset de festivos está versionado (ver `metadata.holiday_dataset_version` y `valid_until`).
 
 ## 3. Contrato Pydantic
 
 ```python
 from datetime import date
+from typing import Literal
 from pydantic import BaseModel, Field, model_validator
 
 class BusinessDaysInput(BaseModel):
@@ -54,7 +56,7 @@ class BusinessDaysInput(BaseModel):
     include_end: bool = False
 
     @model_validator(mode="after")
-    def rango(self):
+    def valid_range(self):
         if self.start > self.end:
             raise ValueError("start no puede ser posterior a end")
         return self
@@ -62,7 +64,7 @@ class BusinessDaysInput(BaseModel):
 class HolidayApplied(BaseModel):
     date: date
     name: str
-    scope: str  # national | autonomous | local
+    scope: Literal["national", "autonomous", "local"]
 
 class BusinessDaysOutput(BaseModel):
     business_days: int
@@ -80,9 +82,12 @@ class BusinessDaysOutput(BaseModel):
 | Incluir fin | `start=2026-11-02`, `end=2026-11-06`, `include_end=true` | `business_days=5` |
 | Mismo día (exclusivo) | `start=end=2026-11-13` | `business_days=0` |
 | Mismo día (inclusivo) | `start=end=2026-11-13`, `include_end=true` | `business_days=1` |
-| Fin de semana completo | `start=2026-11-14`, `end=2026-11-16` | `business_days=0` |
+| Fin de semana completo | `start=2026-11-14`, `end=2026-11-16` | `business_days=0`, `calendar_days=2` |
+| Festivo autonómico | `start=2026-11-02`, `end=2026-11-09`, `community=MD` | `business_days=4`, festivo 11-02 (autonómico) |
 | Rango invertido | `start=2026-11-13`, `end=2026-11-01` | error `invalid_params` |
-| Local sin datos | `municipality_code=99999` | warning `local_holidays_unavailable` |
+| Local sin datos | `municipality_code=28079` | warning `local_holidays_unavailable` |
+| Comunidad desconocida | `community=Narnia` | warning `community_not_found` |
+| Año sin dataset | `start=2029-01-01`, `end=2029-01-05` | warning `holiday_dataset_incomplete` |
 
 ## 5. Golden cases
 
@@ -134,21 +139,26 @@ class BusinessDaysOutput(BaseModel):
 }
 ```
 
+Los campos omitidos en un golden toman el valor por defecto del contrato (`null`).
+
 ## 6. Metadatos de respuesta
 
 ```json
 {
   "source": "seeder:holidays",
   "source_type": "database",
-  "source_detail": "BOE + comunidades autónomas + datos.gob.es",
+  "source_detail": "python-holidays 0.108 (calendario festivo español)",
   "retrieved_at": "<now>",
-  "valid_until": "2026-12-31",
+  "valid_until": "2028-12-31",
   "holiday_dataset_version": "2026.1",
   "result_type": "calculation",
   "is_estimated": false,
+  "confidence": null,
+  "unit_system": "metric",
   "timezone": "Europe/Madrid",
   "warnings": [],
-  "errors": []
+  "errors": [],
+  "legal_disclaimer_required": false
 }
 ```
 
@@ -162,4 +172,4 @@ class BusinessDaysOutput(BaseModel):
 
 - ¿Añadir `add_business_days(start, days)` como operación? Propuesta: nueva operación en v1.1.
 - ¿Cómo tratar festivos que caen en fin de semana (traslado autonómico)? Depende del dataset por comunidad; documentar por año.
-- Origen y mantenimiento de festivos locales: `datos.gob.es` + BOE; validar cobertura por municipio.
+- Cobertura de festivos locales: pendiente. El dataset actual no incluye locales y toda petición con `municipality_code` emite `local_holidays_unavailable`.
