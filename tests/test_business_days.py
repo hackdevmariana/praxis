@@ -78,5 +78,5 @@ def test_holiday_metadata_uses_dataset_version() -> None:
     metadata = holiday_metadata(result)
 
     assert metadata["holiday_dataset_version"] == "2026.1"
-    assert metadata["source_detail"] == "BOE + comunidades autónomas + datos.gob.es"
+    assert metadata["source_detail"] == "python-holidays 0.108 (calendario festivo español)"
     assert metadata["valid_until"].year == 2028
