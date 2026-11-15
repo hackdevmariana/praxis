@@ -4,7 +4,7 @@ version: 1.0.0
 tool: finance.margin
 ---
 
-# `finance.margin` — Margen y markup
+# `finance.margin` — Calcular margen y markup
 
 ## 1. Metadatos
 
@@ -40,10 +40,11 @@ Se deben aportar **exactamente dos** de los tres valores `{cost, price, margin_p
 Reglas:
 
 - Importes en `Decimal` con 2 decimales (`ROUND_HALF_UP`); porcentajes con 2 decimales.
-- `margin_pct` debe ser `< 100` cuando se combina con `cost` (denominador).
+- `margin_pct` debe ser `< 100` siempre (restricción de esquema).
 - `cost = 0` y `price > 0`: `markup_pct = null` y warning `markup_undefined` (división por cero).
+- `price = 0` y `cost > 0`: `margin_pct = null` y warning `margin_undefined`; el resto de campos se calcula normalmente.
 - `price = 0` y `cost = 0`: todo `0`; `margin_pct` y `markup_pct` se devuelven `0`.
-- Se permiten valores negativos (pérdidas): `margin_pct` puede ser negativo.
+- Se permiten valores negativos (pérdidas): `margin_pct` puede ser negativo; `markup_pct` puede ser `null` cuando no está definido.
 
 ## 3. Contrato Pydantic
 
@@ -68,7 +69,7 @@ class MarginOutput(BaseModel):
     cost: Decimal | None
     price: Decimal | None
     margin_amount: Decimal
-    margin_pct: Decimal
+    margin_pct: Decimal | None
     markup_pct: Decimal | None
     currency: str
 ```
@@ -160,6 +161,8 @@ class MarginOutput(BaseModel):
 }
 ```
 
+Los campos omitidos en un golden toman el valor por defecto del contrato (`null`).
+
 ## 6. Metadatos de respuesta
 
 ```json
@@ -170,9 +173,12 @@ class MarginOutput(BaseModel):
   "valid_until": null,
   "result_type": "calculation",
   "is_estimated": false,
+  "confidence": null,
+  "unit_system": "metric",
   "timezone": "Europe/Madrid",
   "warnings": [],
-  "errors": []
+  "errors": [],
+  "legal_disclaimer_required": false
 }
 ```
 
@@ -186,4 +192,4 @@ class MarginOutput(BaseModel):
 
 - ¿Añadir `markup_pct` como entrada válida? Propuesta: sí en v1.1 (`{cost, markup_pct}` y `{price, markup_pct}`).
 - ¿Distinguir margen bruto de margen comercial (con o sin otros costes)? Propuesta: tool `finance.gross_margin` en v2.
-- Confirmar tratamiento de `price=0, cost>0` (margen −∞): devolver `margin_pct=null` con warning.
+- Implementado: `price=0, cost>0` devuelve `margin_pct=null` con warning `margin_undefined`; `cost=0, price>0` devuelve `markup_pct=null` con warning `markup_undefined`.
