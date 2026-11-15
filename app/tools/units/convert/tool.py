@@ -58,7 +58,8 @@ def _dimensionality(quantity: Any) -> str:
     requires_confirmation=False,
     mcp_description=(
         "Convierte un valor entre unidades compatibles de longitud, masa, volumen, "
-        "superficie, energía o temperatura. Acepta símbolos y nombres de pint. "
+        "superficie, energía o temperatura. Acepta símbolos y nombres de pint; "
+        "`gal` es el galón US (para el imperial usar `imperial_gallon`). "
         "No usar para monedas ni para diferencias de temperatura."
     ),
 )
