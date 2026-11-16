@@ -284,11 +284,11 @@ Calcula el ahorro anual al cambiar de comisión de TPV.
 | `new_rate_pct` | Decimal |
 | `average_ticket` | Decimal (opcional) |
 
-Salida: `{ current_cost, new_cost, annual_savings, monthly_savings, savings_pct }`.
+Salida: `{ current_cost, new_cost, annual_savings, monthly_savings, savings_pct, savings_per_ticket, currency }`.
 
 ### `procurement.compare_offers` — v1.0.0
 
-Normaliza 3-5 presupuestos (PDF o datos estructurados) en una tabla comparable por coste total.
+Normaliza 2-5 presupuestos (PDF o datos estructurados) en una tabla comparable por coste total.
 
 - `read_only: true`, `idempotent: true`
 - Permiso: `procurement.calculate` · Clasificación: `business`
@@ -301,9 +301,9 @@ Normaliza 3-5 presupuestos (PDF o datos estructurados) en una tabla comparable p
 | `years` | int (por defecto 5) |
 | `normalize_by` | enum: `total_cost`, `monthly`, `annual` |
 
-`OfferInput`: `{ supplier, monthly_price, permanence_months, cancellation_cost, year2_price, year3_price, notes }`.
+`OfferInput`: `{ supplier, monthly_price, permanence_months, cancellation_cost, year2_price, year3_price, upfront_cost, vat_included, vat_rate, currency }`.
 
-Salida: `{ ranking: [...], normalized_table: [...], warnings: [...] }`. Cada fila incluye `total_cost_<years>y` para comparación homogénea.
+Salida: `{ years, normalize_by, currency, ranking, normalized_table }`. La tabla incluye coste recurrente, costes puntuales, total, anual, mensual, ranking y ahorro frente a la oferta más cara.
 
 ---
 
