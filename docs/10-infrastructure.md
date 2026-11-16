@@ -55,8 +55,14 @@ PRAXIS_ENV=production
 PRAXIS_SECRET_KEY=...
 DATABASE_URL=postgresql+asyncpg://...
 REDIS_URL=redis://...
-JWT_ALGORITHM=HS256
-JWT_EXPIRES_MINUTES=30
+# Autenticación (MVP)
+PRAXIS_AUTH_REQUIRED=true
+PRAXIS_JWT_SECRET=...
+PRAXIS_JWT_ALGORITHM=HS256
+PRAXIS_JWT_ISSUER=praxis
+PRAXIS_JWT_AUDIENCE=praxis-mcp
+PRAXIS_JWT_EXPIRES_MINUTES=30
+PRAXIS_API_KEYS_FILE=/etc/praxis/api_keys.json
 
 # APIs externas (por instalación)
 OPEN_METEO_BASE_URL=https://api.open-meteo.com/v1
@@ -71,7 +77,7 @@ GOOGLE_REDIRECT_URI=...
 FIELD_ENCRYPTION_KEYS=...   # versionadas
 ```
 
-`pydantic-settings` valida el entorno al arrancar y falla rápido si falta algo crítico.
+`AuthSettings.from_env` valida el entorno al arrancar y falla rápido si falta el secreto JWT o la configuración es inválida.
 
 ## Base de datos
 
