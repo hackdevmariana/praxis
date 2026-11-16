@@ -21,6 +21,7 @@ from starlette.types import ASGIApp, Receive, Scope, Send
 
 from app.context import ToolContext
 from app.errors import ErrorCode, ToolError
+from app.tenancy import ToolAccessPolicy, apply_tool_access
 
 _ROLES = frozenset({"owner", "admin", "manager", "viewer", "employee", "association_admin"})
 _PUBLIC_PATHS = frozenset({"/health", "/openapi.json", "/docs", "/docs/oauth2-redirect", "/redoc"})
@@ -295,10 +296,12 @@ class AuthMiddleware:
         *,
         settings: AuthSettings,
         api_key_store: ApiKeyStore,
+        tool_access_policy: ToolAccessPolicy,
     ) -> None:
         self.app = app
         self.settings = settings
         self.api_key_store = api_key_store
+        self.tool_access_policy = tool_access_policy
 
     async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
         if scope["type"] != "http":
@@ -329,6 +332,7 @@ class AuthMiddleware:
             await response(scope, receive, send)
             return
 
+        context = apply_tool_access(context, self.tool_access_policy)
         token = _CURRENT_CONTEXT.set(context)
         try:
             await self.app(scope, receive, send)
