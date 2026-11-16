@@ -14,6 +14,7 @@ class ToolContext:
     channel: str = "mcp"
     scopes: frozenset[str] = field(default_factory=lambda: frozenset[str]())
     confirmed: bool = False
+    allowed_tools: frozenset[str] | None = None
 
     def has_scope(self, scope: str) -> bool:
         return "*" in self.scopes or scope in self.scopes
