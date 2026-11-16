@@ -16,4 +16,4 @@ class ToolContext:
     confirmed: bool = False
 
     def has_scope(self, scope: str) -> bool:
-        return scope in self.scopes
+        return "*" in self.scopes or scope in self.scopes
