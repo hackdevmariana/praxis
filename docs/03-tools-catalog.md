@@ -405,18 +405,19 @@ Salida: `{ document_id, pdf_path, number, total }`.
 
 Programa recordatorios de renovación de contratos a 60/30/15 días.
 
-- `read_only: false`, `idempotent: true`
+- `read_only: false`, `idempotent: true` (con `idempotency_key`), `requires_confirmation: true`
 - Permiso: `alerts.write` · Clasificación: `business`
 - Efectos: crea `AlertRule`; no envía notificaciones en el MVP (solo registra eventos).
 
 | Entrada | Tipo |
 |---|---|
 | `contract_id` | UUID |
-| `renewal_date` | date |
-| `notice_days` | list[int] (por defecto `[60, 30, 15]`) |
+| `renewal_date` | date (hoy o futura) |
+| `notice_days` | list[int] (1-365, por defecto `[60, 30, 15]`) |
 | `channel` | enum: `none`, `email`, `whatsapp` |
+| `idempotency_key` | str |
 
-Salida: `{ alert_rule_id, next_trigger_at, schedule: [...] }`.
+Salida: `{ alert_rule_id, renewal_date, next_trigger_at, schedule: [{days_before, trigger_at, channel, status}], deduplicated }`.
 
 ---
 
