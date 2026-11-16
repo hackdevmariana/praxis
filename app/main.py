@@ -25,23 +25,37 @@ from app.errors import ToolError
 from app.execution import error_envelope, execute_tool
 from app.mcp_server import build_mcp_server
 from app.registry import ToolSpec, registry
+from app.tenancy import (
+    AllowAllToolAccess,
+    ToolAccessPolicy,
+    apply_tool_access,
+)
 
 API_VERSION = "0.1.0"
 _TOOL_MODULES = tools  # imported for registration side effects
 logger = logging.getLogger(__name__)
 
 
-def _tool_endpoint(spec: ToolSpec, settings: AuthSettings) -> Callable[..., Any]:
+def _tool_endpoint(
+    spec: ToolSpec,
+    settings: AuthSettings,
+    tool_access_policy: ToolAccessPolicy,
+) -> Callable[..., Any]:
     async def endpoint(**kwargs: Any) -> dict[str, Any]:
         request = cast(Request, kwargs["request"])
         params = cast(BaseModel, kwargs["params"])
         request_id = request.headers.get("x-request-id") or uuid4().hex
         try:
-            ctx = current_context() or fallback_context(
-                settings,
-                request_id=request_id,
-                channel="http",
-            )
+            ctx = current_context()
+            if ctx is None:
+                ctx = apply_tool_access(
+                    fallback_context(
+                        settings,
+                        request_id=request_id,
+                        channel="http",
+                    ),
+                    tool_access_policy,
+                )
             return await execute_tool(spec, params, ctx)
         except ToolError as error:
             return error_envelope(spec, error)
@@ -63,11 +77,15 @@ def _tool_endpoint(spec: ToolSpec, settings: AuthSettings) -> Callable[..., Any]
     return endpoint
 
 
-def _register_tool_routes(app: FastAPI, settings: AuthSettings) -> None:
+def _register_tool_routes(
+    app: FastAPI,
+    settings: AuthSettings,
+    tool_access_policy: ToolAccessPolicy,
+) -> None:
     for spec in registry.all():
         app.add_api_route(
             f"/api/tools/{spec.name}",
-            _tool_endpoint(spec, settings),
+            _tool_endpoint(spec, settings, tool_access_policy),
             methods=["POST"],
             name=spec.name,
             operation_id=spec.name,
@@ -92,12 +110,14 @@ def _register_health(app: FastAPI) -> None:
 def create_app(
     settings: AuthSettings | None = None,
     api_key_store: ApiKeyStore | None = None,
+    tool_access_policy: ToolAccessPolicy | None = None,
 ) -> FastAPI:
     auth_settings = settings or AuthSettings.from_env()
     keys = api_key_store or load_api_key_store(auth_settings)
+    access_policy = tool_access_policy or AllowAllToolAccess()
     if not auth_settings.required:
         logger.warning("PRAXIS_AUTH_REQUIRED=false: contexto de desarrollo con scope '*'")
-    mcp_server = build_mcp_server(auth_settings)
+    mcp_server = build_mcp_server(auth_settings, access_policy)
     mcp_app = mcp_server.streamable_http_app(
         streamable_http_path="/mcp",
         stateless_http=True,
@@ -122,12 +142,14 @@ def create_app(
         AuthMiddleware,
         settings=auth_settings,
         api_key_store=keys,
+        tool_access_policy=access_policy,
     )
-    _register_tool_routes(app, auth_settings)
+    _register_tool_routes(app, auth_settings, access_policy)
     _register_health(app)
     app.mount("/", mcp_app)
     app.state.mcp = mcp_server
     app.state.auth_settings = auth_settings
+    app.state.tool_access_policy = access_policy
     return app
 
 
