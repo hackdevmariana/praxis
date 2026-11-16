@@ -12,19 +12,63 @@ version: 0.1.0
 - **Credenciales externas:** tokens OAuth y claves de API son objetivo de robo.
 - **Datos personales:** nóminas, NIF, IBAN y agendas requieren protección reforzada (GDPR).
 
-## Autenticación (MVP)
+## Autenticación (MVP) — implementado
 
-- **API key + JWT simple** para el servidor MCP. Sin OIDC/Keycloak en el MVP (v2).
-- **API key:** enviada en cabecera; se almacena únicamente su hash con **Argon2id** (`argon2-cffi`). Nunca en claro.
-- **JWT:** firmado por la instalación, con claims `sub` (user_id), `company_id`, `role`, `scopes`, `exp`. Vida corta y rotación.
-- **MCP OAuth:** `authlib` como base para el flujo OAuth de Google Calendar (por usuario), no para identidad de PRAXIS.
+Sin OIDC/Keycloak en el MVP (v2). El servidor acepta dos credenciales:
+
+| Credencial | Cabecera | Uso |
+|---|---|---|
+| JWT | `Authorization: Bearer <jwt>` | Sesión de usuario/empresa |
+| API key | `X-API-Key: <key_id>.<secret>` | Cliente máquina a máquina |
+
+- **API key:** formato `<key_id>.<secret>`; se almacena únicamente el hash **Argon2id** (`argon2-cffi`) de la clave completa, nunca en claro. El prefijo `key_id` permite localizar un único registro sin verificar todos los hashes. El registro incluye `user_id`, `company_id`, `role`, `scopes`, `expires_at` e `is_active`.
+- **JWT:** firmado por la instalación con **HS256** (`PyJWT`, sin `python-jose`), claims obligatorios `sub`, `company_id`, `role`, `scopes`, `iat`, `exp`, `iss` y `aud`. Vida máxima por defecto: 30 minutos; el secreto debe tener al menos 32 caracteres.
+- **Identidad:** `ToolContext` se construye exclusivamente desde el token o la API key. Nunca se acepta `company_id` del cuerpo de la petición.
+- **Confirmación:** las tools con efectos leen `X-PRAXIS-Confirm: true`. El ejecutor también rechaza la llamada si falta, antes de invocar el handler.
+- **Modo desarrollo:** `PRAXIS_AUTH_REQUIRED=false` (por defecto en local) crea un contexto con scope comodín `*`. En producción debe valer `true`; un scope `*` real se rechaza.
+- **MCP OAuth:** `authlib` se reserva al flujo OAuth de Google Calendar (por usuario), no a la identidad de PRAXIS.
 - **2FA/TOTP** (`pyotp`): backlog cercano; barato y demandado por gestorías.
+
+Variables: `PRAXIS_AUTH_REQUIRED`, `PRAXIS_JWT_SECRET` (o `PRAXIS_SECRET_KEY`), `PRAXIS_JWT_ALGORITHM=HS256`, `PRAXIS_JWT_ISSUER`, `PRAXIS_JWT_AUDIENCE`, `PRAXIS_JWT_EXPIRES_MINUTES` y `PRAXIS_API_KEYS_FILE`.
+
+Operación:
+
+```bash
+# Genera el hash Argon2id de "key-1.<secret>" para PRAXIS_API_KEYS_FILE
+uv run python scripts/hash_api_key.py
+
+# Emite un JWT de desarrollo con el secreto y los claims indicados
+PRAXIS_JWT_SECRET=... uv run python scripts/issue_token.py \
+  --subject user-1 --company-id 11111111-1111-4111-8111-111111111111 \
+  --role admin --scope finance.calculate --minutes 30
+```
+
+Formato de `PRAXIS_API_KEYS_FILE` (solo hashes, nunca la clave en claro):
+
+```json
+{
+  "keys": [
+    {
+      "key_id": "key-1",
+      "key_hash": "$argon2id$v=19$m=65536,t=3,p=4$...",
+      "user_id": "user-1",
+      "company_id": "11111111-1111-4111-8111-111111111111",
+      "role": "manager",
+      "scopes": ["finance.calculate", "documents.read"],
+      "expires_at": "2027-01-01T00:00:00+00:00",
+      "is_active": true
+    }
+  ]
+}
+```
 
 ### Scopes y permisos
 
 - Scopes por dominio y acción: `finance.calculate`, `calendar.read`, `calendar.write`, `documents.write`, etc.
 - `Permission` asocia `tool_name` + `role` a `can_read`, `can_write` y `requires_confirmation`.
-- Toda tool declara `permissions_required`; el ejecutor rechaza si el token no los cubre.
+- Toda tool declara `permissions`; el ejecutor comprueba que el contexto cubre **todos** los scopes y devuelve `permission_denied` si falta alguno.
+- El rechazo por credenciales ausentes o inválidas es HTTP `401` (`authentication_required` / `invalid_token`); el rechazo por scope o confirmación usa el sobre de error de la tool.
+- La intersección con `TenantProfile` y `ToolActivation` sigue pendiente de persistencia; hoy el filtro de catálogo por tenant no está implementado.
 
 ## Multi-tenancy
 
@@ -124,11 +168,11 @@ Estos plazos se documentan como configurables y se validan legalmente (ver [`12-
 ## Checklist de seguridad del MVP
 
 - [ ] RLS activo en todas las tablas tenant + tests de aislamiento.
-- [ ] API keys hasheadas con Argon2id y nunca logueadas.
-- [ ] JWT con expiración y validación de scopes.
+- [x] API keys hasheadas con Argon2id y nunca logueadas.
+- [x] JWT con expiración y validación de scopes.
 - [ ] Cifrado de campos sensibles + gestión de claves.
 - [ ] Validación de tipo real de archivos subidos.
-- [ ] `requires_confirmation` en tools con efectos.
+- [x] `requires_confirmation` en tools con efectos (cabecera de confirmación; UI real pendiente).
 - [ ] Rate limiting por tenant/tool.
 - [ ] Retención y borrado GDPR documentados e implementados.
 - [ ] Secretos fuera del repositorio.
