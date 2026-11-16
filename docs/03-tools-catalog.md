@@ -374,7 +374,7 @@ Extrae datos estructurados de una factura o albarán en PDF.
 | `document_type` | enum: `invoice`, `delivery_note`, `budget` |
 | `language` | str (opcional) |
 
-Salida: `{ issuer, issuer_cif, number, date, due_date, lines: [...], base, vat, total, currency }` + `metadata.confidence`.
+Salida: `{ issuer, issuer_cif, number, date, due_date, lines: [...], base, vat, total, currency, needs_review, confidence }` + `metadata.processor`.
 
 ### `documents.generate_invoice` — v1.0.0
 
