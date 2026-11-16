@@ -17,7 +17,25 @@ async def execute_tool(
     payload: BaseModel | object,
     ctx: ToolContext,
 ) -> dict[str, Any]:
-    """Validate input, run the handler and return a JSON-ready envelope."""
+    """Validate input, enforce access, run the handler and build the envelope."""
+    missing_scopes = [
+        permission for permission in spec.permissions if not ctx.has_scope(permission)
+    ]
+    if missing_scopes:
+        raise ToolError(
+            ErrorCode.PERMISSION_DENIED,
+            "El contexto no tiene los scopes necesarios para ejecutar la tool.",
+            details={
+                "required": list(spec.permissions),
+                "missing": missing_scopes,
+            },
+        )
+    if spec.requires_confirmation and not ctx.confirmed:
+        raise ToolError(
+            ErrorCode.CONFIRMATION_REQUIRED,
+            f"{spec.name} requiere confirmación humana.",
+        )
+
     if isinstance(payload, spec.input_model):
         params = payload
     else:
