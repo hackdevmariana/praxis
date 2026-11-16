@@ -8,6 +8,8 @@ class ErrorCode(StrEnum):
     """Standard error codes exposed over MCP."""
 
     INVALID_PARAMS = "invalid_params"
+    AUTHENTICATION_REQUIRED = "authentication_required"
+    INVALID_TOKEN = "invalid_token"
     PERMISSION_DENIED = "permission_denied"
     TOOL_NOT_AVAILABLE = "tool_not_available"
     CONFIRMATION_REQUIRED = "confirmation_required"
