@@ -81,8 +81,8 @@
 
 - [x] `procurement.tpv_savings`.
 - [x] `procurement.compare_offers`.
-- [ ] `calendar.list_events` (OAuth Google Calendar).
-- [ ] `calendar.create_event` (confirmación humana).
+- [ ] `calendar.list_events` (tool y conector inyectable listos; falta OAuth real).
+- [ ] `calendar.create_event` (tool, confirmación e idempotencia listos; faltan OAuth real y persistencia).
 - [ ] `documents.extract_invoice` (PDF → JSON).
 - [ ] `documents.generate_invoice` (HTML → PDF).
 - [ ] `alerts.contract_renewal` (60/30/15 días).
