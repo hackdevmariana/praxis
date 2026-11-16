@@ -2,12 +2,33 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from datetime import date
 from typing import Protocol
 from uuid import UUID
 
 from app.context import ToolContext
 from app.errors import ErrorCode, ToolError
+
+
+@dataclass(frozen=True, slots=True)
+class StoredDocument:
+    document_id: UUID
+    company_id: str
+    filename: str
+    content: bytes
+
+
+class DocumentRepository(Protocol):
+    async def get(self, *, company_id: str, document_id: UUID) -> StoredDocument | None: ...
+
+
+class _UnconfiguredDocumentRepository:
+    async def get(self, *, company_id: str, document_id: UUID) -> StoredDocument | None:
+        raise ToolError(
+            ErrorCode.PROVIDER_UNAVAILABLE,
+            "El repositorio de documentos no está configurado.",
+        )
 
 
 class DocumentStore(Protocol):
@@ -96,6 +117,7 @@ class _UnconfiguredInvoiceRenderer:
 
 _store: DocumentStore = _UnconfiguredDocumentStore()
 _renderer: InvoiceRenderer = _UnconfiguredInvoiceRenderer()
+_repository: DocumentRepository = _UnconfiguredDocumentRepository()
 
 
 def get_document_store(ctx: ToolContext) -> DocumentStore:
@@ -106,6 +128,10 @@ def get_invoice_renderer(ctx: ToolContext) -> InvoiceRenderer:
     return _renderer
 
 
+def get_document_repository(ctx: ToolContext) -> DocumentRepository:
+    return _repository
+
+
 def set_document_adapters(
     store: DocumentStore | None = None,
     renderer: InvoiceRenderer | None = None,
@@ -113,3 +139,8 @@ def set_document_adapters(
     global _store, _renderer
     _store = store or _UnconfiguredDocumentStore()
     _renderer = renderer or _UnconfiguredInvoiceRenderer()
+
+
+def set_document_repository(repository: DocumentRepository | None) -> None:
+    global _repository
+    _repository = repository or _UnconfiguredDocumentRepository()
