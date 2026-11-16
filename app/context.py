@@ -13,6 +13,7 @@ class ToolContext:
     role: str | None = None
     channel: str = "mcp"
     scopes: frozenset[str] = field(default_factory=lambda: frozenset[str]())
+    confirmed: bool = False
 
     def has_scope(self, scope: str) -> bool:
         return scope in self.scopes
