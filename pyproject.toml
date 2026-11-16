@@ -5,6 +5,7 @@ requires-python = ">=3.12"
 dependencies = [
     "email-validator>=2.3.0",
     "fastapi>=0.162.4",
+    "httpx>=0.28.1",
     "mcp>=2.3.0",
     "phonenumbers>=9.0.43",
     "pint>=0.26.2",
@@ -19,6 +20,7 @@ dev = [
     "pyright>=1.1.414",
     "pytest>=9.2.0",
     "pytest-cov>=7.1.0",
+    "respx>=0.23.1",
     "ruff>=0.17.5",
     "time-machine>=3.6.0",
 ]
