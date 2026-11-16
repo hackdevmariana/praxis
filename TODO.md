@@ -89,11 +89,11 @@
 
 ### Seguridad, tenants y efectos
 
-- [ ] API key con Argon2id + JWT simple.
-- [ ] `ToolContext` construido desde el token; nunca aceptar `company_id` del cliente.
+- [x] API key con Argon2id + JWT simple.
+- [x] `ToolContext` construido desde el token; nunca aceptar `company_id` del cliente.
 - [ ] Toolsets por `TenantProfile` (intersección catálogo/permisos/activación).
 - [ ] Idempotencia por (`tool`, `company_id`, `idempotency_key`).
-- [ ] Confirmación humana en tools con `requires_confirmation`.
+- [x] Confirmación humana en tools con `requires_confirmation` (cabecera `X-PRAXIS-Confirm`; UI real pendiente).
 - [ ] RLS en PostgreSQL y seeders mínimos.
 - [ ] `ToolExecutionLog` con empresa, usuario, versión y fuente.
 
