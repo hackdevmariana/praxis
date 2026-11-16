@@ -1,6 +1,7 @@
 """Importing this package registers every available tool."""
 
 from app.tools import (
+    alerts,
     calendar,
     currency,
     datetime,
@@ -13,6 +14,7 @@ from app.tools import (
 )
 
 __all__ = [
+    "alerts",
     "calendar",
     "currency",
     "datetime",
