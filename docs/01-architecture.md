@@ -65,6 +65,7 @@ praxis-core/
 │   ├── providers/            # Clientes de APIs externas
 │   ├── metadata/             # Modelo de metadatos y helpers
 │   ├── auth.py               # API key, JWT, scopes y contexto HTTP
+│   ├── tenancy.py            # Catálogos, activación y toolset por tenant
 │   ├── registry.py           # Descubrimiento y registro de tools
 │   ├── mcp_server.py         # Exposición MCP (SDK mcp)
 │   ├── api/                  # Endpoints REST auxiliares (/health, admin)
@@ -80,6 +81,7 @@ Responsabilidades:
 | `providers/` | Consultas a APIs externas con timeouts, reintentos, circuit breaker y caché. |
 | `metadata/` | Construcción del bloque `metadata` común a toda respuesta. |
 | `auth.py` | Autentica API key/JWT, construye `ToolContext` y aplica scopes/confirmación. |
+| `tenancy.py` | Resuelve catálogo y activación por tenant; filtra tools anunciadas y ejecutables. |
 | `registry.py` | Descubre tools y genera JSON Schema, catálogo MCP y documentación. |
 | `mcp_server.py` | Expone las tools activas según `TenantProfile`. |
 | `api/` | Solo operaciones auxiliares; la interfaz pública es MCP. |
