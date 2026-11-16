@@ -8,22 +8,44 @@ from typing import Any
 from uuid import uuid4
 
 from mcp.server.mcpserver import MCPServer
+from mcp.types import Tool as MCPTool
 from mcp.types import ToolAnnotations
 
 from app.auth import AuthSettings, current_context, fallback_context
 from app.errors import ToolError
 from app.execution import error_envelope, execute_tool
 from app.registry import ToolSpec, registry
+from app.tenancy import AllowAllToolAccess, ToolAccessPolicy, apply_tool_access
 
 
-def _handler(spec: ToolSpec, settings: AuthSettings) -> Callable[..., Any]:
+class PraxisMCPServer(MCPServer):
+    """MCP server that hides tools outside the authenticated tenant toolset."""
+
+    async def list_tools(self) -> list[MCPTool]:
+        tools = await super().list_tools()
+        ctx = current_context()
+        if ctx is None or ctx.allowed_tools is None:
+            return tools
+        return [tool for tool in tools if tool.name in ctx.allowed_tools]
+
+
+def _handler(
+    spec: ToolSpec,
+    settings: AuthSettings,
+    tool_access_policy: ToolAccessPolicy,
+) -> Callable[..., Any]:
     async def handler(**kwargs: Any) -> dict[str, Any]:
         try:
-            ctx = current_context() or fallback_context(
-                settings,
-                request_id=uuid4().hex,
-                channel="mcp",
-            )
+            ctx = current_context()
+            if ctx is None:
+                ctx = apply_tool_access(
+                    fallback_context(
+                        settings,
+                        request_id=uuid4().hex,
+                        channel="mcp",
+                    ),
+                    tool_access_policy,
+                )
             return await execute_tool(spec, kwargs, ctx)
         except ToolError as error:
             return error_envelope(spec, error)
@@ -48,9 +70,13 @@ def _handler(spec: ToolSpec, settings: AuthSettings) -> Callable[..., Any]:
     return handler
 
 
-def build_mcp_server(settings: AuthSettings | None = None) -> MCPServer:
+def build_mcp_server(
+    settings: AuthSettings | None = None,
+    tool_access_policy: ToolAccessPolicy | None = None,
+) -> MCPServer:
     auth_settings = settings or AuthSettings()
-    server = MCPServer(
+    access_policy = tool_access_policy or AllowAllToolAccess()
+    server = PraxisMCPServer(
         name="PRAXIS",
         title="PRAXIS",
         description="Herramientas deterministas para pymes y asociaciones.",
@@ -58,7 +84,7 @@ def build_mcp_server(settings: AuthSettings | None = None) -> MCPServer:
     )
     for spec in registry.all():
         server.add_tool(
-            _handler(spec, auth_settings),
+            _handler(spec, auth_settings, access_policy),
             name=spec.name,
             title=spec.title,
             description=spec.description,
