@@ -77,6 +77,9 @@ Errores MCP:
 | `currency_mismatch` | Ofertas con divisas distintas en `procurement.compare_offers` |
 | `invalid_tax_id` | CIF/NIF español inválido en factura |
 | `conflict` | Número de documento duplicado |
+| `document_not_found` | Documento inexistente o de otro tenant |
+| `unsupported_format` | Documento que no es un PDF legible |
+| `document_too_large` | Documento por encima del límite |
 | `permission_denied` | Scope insuficiente |
 | `tool_not_available` | No activa para el tenant |
 | `confirmation_required` | Efecto sin confirmación |
