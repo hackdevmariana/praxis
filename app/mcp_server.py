@@ -10,16 +10,20 @@ from uuid import uuid4
 from mcp.server.mcpserver import MCPServer
 from mcp.types import ToolAnnotations
 
-from app.context import ToolContext
+from app.auth import AuthSettings, current_context, fallback_context
 from app.errors import ToolError
 from app.execution import error_envelope, execute_tool
 from app.registry import ToolSpec, registry
 
 
-def _handler(spec: ToolSpec) -> Callable[..., Any]:
+def _handler(spec: ToolSpec, settings: AuthSettings) -> Callable[..., Any]:
     async def handler(**kwargs: Any) -> dict[str, Any]:
-        ctx = ToolContext(request_id=uuid4().hex, channel="mcp")
         try:
+            ctx = current_context() or fallback_context(
+                settings,
+                request_id=uuid4().hex,
+                channel="mcp",
+            )
             return await execute_tool(spec, kwargs, ctx)
         except ToolError as error:
             return error_envelope(spec, error)
@@ -44,7 +48,8 @@ def _handler(spec: ToolSpec) -> Callable[..., Any]:
     return handler
 
 
-def build_mcp_server() -> MCPServer:
+def build_mcp_server(settings: AuthSettings | None = None) -> MCPServer:
+    auth_settings = settings or AuthSettings()
     server = MCPServer(
         name="PRAXIS",
         title="PRAXIS",
@@ -53,7 +58,7 @@ def build_mcp_server() -> MCPServer:
     )
     for spec in registry.all():
         server.add_tool(
-            _handler(spec),
+            _handler(spec, auth_settings),
             name=spec.name,
             title=spec.title,
             description=spec.description,
