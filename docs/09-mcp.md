@@ -44,6 +44,15 @@ Reglas:
 - Las tools no activas no se anuncian; si se invocan, el servidor responde `tool_not_available`.
 - `ToolCatalog` permite catálogos personalizados por tenant en el futuro (base para planes SaaS).
 
+### Implementación MVP (inyectable)
+
+- `app/tenancy.py` define `TenantProfile`, `ToolAccessPolicy` y `InMemoryToolAccessPolicy`.
+- El catálogo se resuelve por `catalog_key` (`hotel`, `poligono`, `asociacion`, `general`) y se intersecta con `TenantProfile.enabled_tools` si está definido.
+- `ToolContext.allowed_tools` transporta el resultado; el ejecutor devuelve `tool_not_available` si la tool no está permitida.
+- `MCPServer.list_tools` filtra el anuncio con el mismo contexto autenticado, de modo que el agente no ve tools fuera de su perfil.
+- En el MVP los scopes del JWT/API key representan los `Permission` del rol. Sin `TenantProfile` para una empresa autenticada, el toolset es vacío (deny by default).
+- Pendiente: persistencia de `TenantProfile`/`ToolActivation`, overrides de catálogo y permisos por rol en base de datos.
+
 ## Autenticación y autorización
 
 - **MVP implementado:** API key o JWT simple.
