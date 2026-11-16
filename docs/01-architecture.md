@@ -64,6 +64,7 @@ praxis-core/
 │   │       └── tests/
 │   ├── providers/            # Clientes de APIs externas
 │   ├── metadata/             # Modelo de metadatos y helpers
+│   ├── auth.py               # API key, JWT, scopes y contexto HTTP
 │   ├── registry.py           # Descubrimiento y registro de tools
 │   ├── mcp_server.py         # Exposición MCP (SDK mcp)
 │   ├── api/                  # Endpoints REST auxiliares (/health, admin)
@@ -78,6 +79,7 @@ Responsabilidades:
 | `tools/` | Lógica determinista y esquemas. Fuente de verdad de cada herramienta. |
 | `providers/` | Consultas a APIs externas con timeouts, reintentos, circuit breaker y caché. |
 | `metadata/` | Construcción del bloque `metadata` común a toda respuesta. |
+| `auth.py` | Autentica API key/JWT, construye `ToolContext` y aplica scopes/confirmación. |
 | `registry.py` | Descubre tools y genera JSON Schema, catálogo MCP y documentación. |
 | `mcp_server.py` | Expone las tools activas según `TenantProfile`. |
 | `api/` | Solo operaciones auxiliares; la interfaz pública es MCP. |
@@ -88,7 +90,7 @@ Responsabilidades:
 1. El arnés del LLM recibe la petición del usuario.
 2. El LLM selecciona una tool MCP y envía argumentos tipados.
 3. praxis-core valida la entrada (Pydantic).
-4. Resuelve permisos y tenant (API key/JWT → company_id, roles).
+4. Resuelve permisos y tenant (API key/JWT → `ToolContext`; nunca desde el cuerpo).
 5. Comprueba caché (clave con source + parámetros + company_id si aplica).
 6. Ejecuta:
    a. lógica determinista, o
