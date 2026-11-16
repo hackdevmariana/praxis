@@ -16,6 +16,7 @@ from app.auth import (
 )
 from app.main import create_app
 from app.registry import registry
+from app.tenancy import InMemoryToolAccessPolicy, TenantProfile
 
 COMPANY = "11111111-1111-4111-8111-111111111111"
 AUTH_SETTINGS = AuthSettings(
@@ -363,3 +364,134 @@ def test_mcp_tool_call_rejects_missing_scope() -> None:
     assert response.status_code == 200
     assert envelope["success"] is False
     assert envelope["metadata"]["errors"][0]["code"] == "permission_denied"
+
+
+def _tenant_policy(
+    *,
+    catalog_key: str = "hotel",
+    enabled_tools: frozenset[str] | None = None,
+) -> InMemoryToolAccessPolicy:
+    return InMemoryToolAccessPolicy(
+        {
+            COMPANY: TenantProfile(
+                company_id=COMPANY,
+                catalog_key=catalog_key,
+                enabled_tools=enabled_tools,
+            )
+        }
+    )
+
+
+def _mcp_result_payload(response_text: str) -> dict[str, Any]:
+    for line in response_text.splitlines():
+        if line.startswith("data: "):
+            return json.loads(line.removeprefix("data: "))["result"]
+    return json.loads(response_text)["result"]
+
+
+def test_mcp_list_filters_tenant_catalog() -> None:
+    app = create_app(AUTH_SETTINGS, tool_access_policy=_tenant_policy())
+
+    with TestClient(app) as client:
+        response = client.post(
+            "/mcp",
+            json={"jsonrpc": "2.0", "id": 10, "method": "tools/list", "params": {}},
+            headers={
+                "accept": "application/json, text/event-stream",
+                **_authorization(["finance.calculate"]),
+            },
+        )
+
+    names = [tool["name"] for tool in _mcp_result_payload(response.text)["tools"]]
+    assert "finance.vat" in names
+    assert "calendar.create_event" in names
+    assert "procurement.tpv_savings" not in names
+    assert "procurement.compare_offers" not in names
+
+
+def test_rest_rejects_tool_outside_tenant_catalog() -> None:
+    app = create_app(AUTH_SETTINGS, tool_access_policy=_tenant_policy())
+
+    with TestClient(app) as client:
+        response = client.post(
+            "/api/tools/procurement.tpv_savings",
+            json={
+                "annual_card_turnover": "120000",
+                "current_rate_pct": "1.5",
+                "new_rate_pct": "1.0",
+            },
+            headers=_authorization(["procurement.calculate"]),
+        )
+
+    envelope = response.json()
+    assert response.status_code == 200
+    assert envelope["success"] is False
+    assert envelope["metadata"]["errors"][0]["code"] == "tool_not_available"
+
+
+def test_rest_rejects_deactivated_tool() -> None:
+    app = create_app(
+        AUTH_SETTINGS,
+        tool_access_policy=_tenant_policy(enabled_tools=frozenset()),
+    )
+
+    with TestClient(app) as client:
+        response = client.post(
+            "/api/tools/finance.vat",
+            json={"amount": "1000.00"},
+            headers=_authorization(["finance.calculate"]),
+        )
+
+    envelope = response.json()
+    assert response.status_code == 200
+    assert envelope["success"] is False
+    assert envelope["metadata"]["errors"][0]["code"] == "tool_not_available"
+
+
+def test_mcp_rejects_tool_outside_tenant_catalog() -> None:
+    app = create_app(AUTH_SETTINGS, tool_access_policy=_tenant_policy())
+
+    with TestClient(app) as client:
+        response = client.post(
+            "/mcp",
+            json={
+                "jsonrpc": "2.0",
+                "id": 11,
+                "method": "tools/call",
+                "params": {
+                    "name": "procurement.tpv_savings",
+                    "arguments": {
+                        "annual_card_turnover": "120000",
+                        "current_rate_pct": "1.5",
+                        "new_rate_pct": "1.0",
+                    },
+                },
+            },
+            headers={
+                "accept": "application/json, text/event-stream",
+                **_authorization(["procurement.calculate"]),
+            },
+        )
+
+    envelope = _mcp_tool_payload(response.text)
+    assert envelope["success"] is False
+    assert envelope["metadata"]["errors"][0]["code"] == "tool_not_available"
+
+
+def test_mcp_missing_tenant_profile_hides_all_tools() -> None:
+    app = create_app(
+        AUTH_SETTINGS,
+        tool_access_policy=InMemoryToolAccessPolicy(),
+    )
+
+    with TestClient(app) as client:
+        response = client.post(
+            "/mcp",
+            json={"jsonrpc": "2.0", "id": 12, "method": "tools/list", "params": {}},
+            headers={
+                "accept": "application/json, text/event-stream",
+                **_authorization(["finance.calculate"]),
+            },
+        )
+
+    assert _mcp_result_payload(response.text)["tools"] == []
