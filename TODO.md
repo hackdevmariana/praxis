@@ -79,8 +79,8 @@
 
 ### Tools restantes del MVP (7)
 
-- [ ] `procurement.tpv_savings`.
-- [ ] `procurement.compare_offers`.
+- [x] `procurement.tpv_savings`.
+- [x] `procurement.compare_offers`.
 - [ ] `calendar.list_events` (OAuth Google Calendar).
 - [ ] `calendar.create_event` (confirmación humana).
 - [ ] `documents.extract_invoice` (PDF → JSON).
