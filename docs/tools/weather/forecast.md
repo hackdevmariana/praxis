@@ -27,7 +27,7 @@ Previsión meteorológica por coordenadas para los próximos 1–7 días.
 - `granularity=hourly`: un punto por hora (24 × `days`), en la zona `timezone`.
 - `timezone` se envía a Open-Meteo; por defecto `Europe/Madrid`. Los `time` de salida son ISO 8601 locales (sin offset) para `daily`, y con offset para `hourly`.
 - `variables` es un subconjunto de las soportadas; si se omite, se usan las de por defecto.
-- Unidades siempre métricas: °C, mm, km/h, %, W/m², índice UV (0–11+). Se declaran en `metadata.units`.
+- Unidades siempre métricas: °C, mm, km/h, %, índice UV (0–11+) y radiación (MJ/m² en la suma diaria, W/m² en el dato horario). Se declaran en `metadata.units`.
 
 Variables y sus agregados diarios:
 
@@ -185,7 +185,7 @@ Fixture congelado `open-meteo-2026-11-13-madrid.json` (Madrid, 40.4168/−3.7038
     "precipitation": "mm",
     "wind_speed": "km/h",
     "relative_humidity": "%",
-    "shortwave_radiation": "W/m²"
+    "shortwave_radiation": "MJ/m²"
   },
   "timezone": "Europe/Madrid",
   "attribution": "Weather data by Open-Meteo (https://open-meteo.com)",
@@ -205,4 +205,5 @@ Fixture congelado `open-meteo-2026-11-13-madrid.json` (Madrid, 40.4168/−3.7038
 - Añadir `current` (condiciones actuales) como bloque opcional.
 - Histórico meteorológico: `weather.historical` en v2 con caché de 6 h.
 - Unidades imperiales: `unit_system=imperial` en v1.1.
-- Verificar disponibilidad de `relative_humidity_2m_mean` y `cloud_cover_mean` con la API real; si no existen, calcularlas en servidor.
+- Implementado: `relative_humidity_2m_mean` y `cloud_cover_mean` existen en la API real de Open-Meteo y se solicitan como agregados diarios.
+- Implementado: `metadata.units.shortwave_radiation` es `MJ/m²` en daily (suma) y `W/m²` en hourly (valor instantáneo).
