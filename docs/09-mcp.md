@@ -80,6 +80,7 @@ Errores MCP:
 | `confirmation_required` | Efecto sin confirmación |
 | `connector_not_connected` | El usuario no ha conectado el proveedor |
 | `connector_auth_expired` | Token caducado o revocado |
+| `contract_not_found` | Contrato inexistente o de otro tenant |
 | `provider_unavailable` | API externa y fallback agotados |
 | `rate_limited` | Límite de uso superado |
 | `internal_error` | Fallo no controlado |
