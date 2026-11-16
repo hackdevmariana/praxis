@@ -69,11 +69,11 @@
 
 ## Fase 1 — Tanda 2: proveedores externos
 
-- [ ] `currency.convert` — BCE, caché y `rate_date`.
-- [ ] `weather.forecast` — Open-Meteo, granularidad diaria/horaria.
-- [ ] `geo.geocode` — CartoCiudad.
-- [ ] Tests con `respx`: éxito, timeout, 429, 5xx y fallback.
-- [ ] Fichas de proveedor y `valid_until` en metadatos.
+- [x] `currency.convert` — BCE, caché y `rate_date`.
+- [x] `weather.forecast` — Open-Meteo, granularidad diaria/horaria.
+- [x] `geo.geocode` — CartoCiudad.
+- [x] Tests con `respx`: éxito, timeout, 429, 5xx y fallback.
+- [x] Fichas de proveedor y `valid_until` en metadatos.
 
 ## Fase 1 — Tanda 3: negocio, seguridad y datos
 
