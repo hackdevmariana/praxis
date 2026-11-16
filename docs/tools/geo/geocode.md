@@ -31,6 +31,8 @@ Convierte direcciones en coordenadas (forward) o coordenadas en direcciones (rev
 - Coordenadas con 6 decimales (`ROUND_HALF_UP`); `confidence ∈ [0, 1]` con 2 decimales.
 - Preferencia por CartoCiudad para direcciones de España. Si falla y responde Nominatim, se añade warning `fallback_source_used` y `source` pasa a `nominatim`.
 - La cobertura prioritaria es España; direcciones fuera pueden devolver vacío.
+- `municipality_code` no es un parámetro fiable de CartoCiudad: se piden hasta 5 candidatos y se filtra por `ine_code` (`muniCode`) antes de aplicar `limit`.
+- CartoCiudad no publica confianza: se deriva de forma determinista (0.98 con `refCatastral`, 0.95 portal, 0.90 callejero, 0.50 resto).
 
 ## 3. Contrato Pydantic
 
