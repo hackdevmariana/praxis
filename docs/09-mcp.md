@@ -75,6 +75,8 @@ Errores MCP:
 | `incompatible_units` | Unidades de dimensiones distintas en `units.convert` |
 | `unsupported_currency` | Divisa fuera de la cesta de referencia del BCE |
 | `currency_mismatch` | Ofertas con divisas distintas en `procurement.compare_offers` |
+| `invalid_tax_id` | CIF/NIF español inválido en factura |
+| `conflict` | Número de documento duplicado |
 | `permission_denied` | Scope insuficiente |
 | `tool_not_available` | No activa para el tenant |
 | `confirmation_required` | Efecto sin confirmación |
