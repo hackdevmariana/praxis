@@ -118,7 +118,7 @@ class GenerateInvoiceOutput(BaseModel):
 | Albarán | `document_type=delivery_note` | vat 0.00, total = base |
 | Sin número | `number` omitido | propone `2026-0007` |
 | Número duplicado | número existente | error `conflict` |
-| CIF inválido | `cif="B00000000"` | error `invalid_tax_id` |
+| CIF inválido | `cif="B00000001"` | error `invalid_tax_id` |
 | Cliente extranjero | `country=FR`, `vat_number` | se omite validación española |
 | Vencimiento anterior | `due_date < date` | error `invalid_params` |
 | Reintento misma clave | mismo `idempotency_key` | mismo `document_id`, `deduplicated=true` |
@@ -237,6 +237,8 @@ class GenerateInvoiceOutput(BaseModel):
 ## 8. Decisiones pendientes
 
 - Numeración fiscal por serie y ejercicio: confirmar requisitos con gestoría (¿reinicio anual?).
+- Implementado: cálculo por líneas y grupos de IVA, numeración delegada a `DocumentStore`, renderizado delegado a `InvoiceRenderer`, HTML saneado e idempotencia en memoria.
+- Pendiente: adaptadores reales de WeasyPrint, almacenamiento fuera del webroot, secuencia transaccional y persistencia de `Document`/`Invoice`/`AuditLog`.
 - Veri*factu / TicketBAI y firma electrónica: fuera del MVP; analizar en v2.
 - Plantillas por tenant (logo, colores, idioma): v1.1.
 - ¿Guardar PDF en `storage_path` con hash y permitir descarga firmada? v2 con S3/MinIO.
