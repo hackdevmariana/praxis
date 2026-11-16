@@ -18,6 +18,12 @@ async def execute_tool(
     ctx: ToolContext,
 ) -> dict[str, Any]:
     """Validate input, enforce access, run the handler and build the envelope."""
+    if ctx.allowed_tools is not None and spec.name not in ctx.allowed_tools:
+        raise ToolError(
+            ErrorCode.TOOL_NOT_AVAILABLE,
+            f"La tool {spec.name} no está activa para el tenant.",
+            details={"tool": spec.name},
+        )
     missing_scopes = [
         permission for permission in spec.permissions if not ctx.has_scope(permission)
     ]
