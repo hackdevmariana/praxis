@@ -189,4 +189,6 @@ Fixture `invoice-F-2026-0042.pdf` (texto embebido, 2 líneas).
 - Umbral de confianza configurable por tenant (`0.70` por defecto).
 - Soporte de facturas multi-página, abonos y facturas rectificativas (v1.1).
 - OCR de tablas complejas: evaluar `camelot`/`tabula` antes de ampliar heurísticas.
+- Implementado: validación de PDF por magic bytes y tamaño, extracción con `pdfplumber`, heurísticas para CIF, fechas, líneas y totales, caché de 30 días y advertencias de cuadre/confianza.
+- Pendiente: OCR con Tesseract, `python-magic`, almacenamiento persistente de `DocumentExtraction` y soporte multi-página avanzado.
 - ¿Guardar el texto extraído completo? Propuesta: solo campos y hashes; minimización de datos.
