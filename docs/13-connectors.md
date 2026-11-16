@@ -25,6 +25,8 @@ Ver [`05-data-models.md`](05-data-models.md).
 - Tokens cifrados con envelope encryption; `refresh_token` con rotación.
 - El `calendar_id` distingue calendario (personal, empresa, recurso).
 - Escritura (`calendar.create_event`) requiere `requires_confirmation: true` e `idempotency_key`.
+- Las tools consumen un `CalendarConnector` inyectable. Sin conector configurado fallan con `connector_not_connected`; token caducado → `connector_auth_expired`.
+- En esta fase el conector real con `authlib`, tokens cifrados y rotación de `refresh_token` sigue pendiente; los tests usan un conector falso.
 
 ### Sincronización
 
