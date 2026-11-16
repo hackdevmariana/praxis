@@ -1,6 +1,16 @@
 """Importing this package registers every available tool."""
 
-from app.tools import calendar, currency, datetime, finance, geo, units, validate, weather
+from app.tools import (
+    calendar,
+    currency,
+    datetime,
+    finance,
+    geo,
+    procurement,
+    units,
+    validate,
+    weather,
+)
 
 __all__ = [
     "calendar",
@@ -8,6 +18,7 @@ __all__ = [
     "datetime",
     "finance",
     "geo",
+    "procurement",
     "units",
     "validate",
     "weather",
