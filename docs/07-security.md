@@ -68,7 +68,7 @@ Formato de `PRAXIS_API_KEYS_FILE` (solo hashes, nunca la clave en claro):
 - `Permission` asocia `tool_name` + `role` a `can_read`, `can_write` y `requires_confirmation`.
 - Toda tool declara `permissions`; el ejecutor comprueba que el contexto cubre **todos** los scopes y devuelve `permission_denied` si falta alguno.
 - El rechazo por credenciales ausentes o inválidas es HTTP `401` (`authentication_required` / `invalid_token`); el rechazo por scope o confirmación usa el sobre de error de la tool.
-- La intersección con `TenantProfile` y `ToolActivation` sigue pendiente de persistencia; hoy el filtro de catálogo por tenant no está implementado.
+- La intersección con `TenantProfile` y `ToolActivation` está implementada mediante `ToolAccessPolicy` inyectable; la persistencia en PostgreSQL sigue pendiente.
 
 ## Multi-tenancy
 
