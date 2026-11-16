@@ -178,4 +178,5 @@ Fixture congelado `gcal-2026-11-13.json` (dos eventos en `primary`).
 - Paginación completa con `page_token` de entrada en v1.1.
 - Filtro por `attendee` o `q` (texto) en v1.1.
 - Microsoft 365 / Outlook como conector alternativo en v2 (misma interfaz).
-- Confirmar política de caché de eventos personales (¿cifrado en reposo de la caché?).
+- Implementado: conector inyectable (`CalendarConnector`) y caché TTL de 60 s por usuario/tenant/calendario/rango.
+- Pendiente: OAuth real con `authlib`, almacenamiento cifrado de tokens y cifrado de la caché en reposo.
