@@ -378,24 +378,26 @@ Salida: `{ issuer, issuer_cif, number, date, due_date, lines: [...], base, vat, 
 
 ### `documents.generate_invoice` — v1.0.0
 
-Genera una factura o albarán en PDF (HTML → PDF con WeasyPrint).
+Genera una factura o albarán en PDF mediante un renderizador HTML → PDF inyectable.
 
 - `read_only: false`, `idempotent: true` (con `idempotency_key`), `requires_confirmation: true`
 - Permiso: `documents.write` · Clasificación: `business`
-- Efectos: crea documento y registro en BD.
+- Efectos: calcula totales, reserva número y guarda el PDF a través de `DocumentStore`.
 
 | Entrada | Tipo |
 |---|---|
-| `company_id` | UUID (del contexto) |
 | `client` | ClientInput |
 | `lines` | list[LineInput] |
 | `number` | str (opcional; si falta, se propone) |
-| `date` | date |
+| `series` | str (opcional) |
+| `date` / `due_date` | date |
 | `vat_rate` | Decimal |
 | `document_type` | enum: `invoice`, `delivery_note` |
+| `currency` | str |
+| `notes` / `payment_terms` | str (opcional) |
 | `idempotency_key` | str |
 
-Salida: `{ document_id, pdf_path, number, total }`.
+Salida: `{ document_id, invoice_id, pdf_path, number, date, due_date, base, vat, total, currency, document_type, deduplicated }`.
 
 ---
 
