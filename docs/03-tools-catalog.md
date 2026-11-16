@@ -324,9 +324,10 @@ Lista eventos de la agenda del usuario en un rango.
 | `start` | datetime |
 | `end` | datetime |
 | `calendar_id` | str (opcional) |
-| `max_results` | int |
+| `max_results` | int (1-250, por defecto 50) |
+| `timezone` | str (por defecto `Europe/Madrid`) |
 
-Salida: `{ events: [{id, title, start, end, location, attendees}] }`.
+Salida: `{ events: [{id, title, start, end, location, attendees, status, is_all_day, html_link}], next_page_token, timezone }`.
 
 ### `calendar.create_event` — v1.0.0
 
@@ -344,9 +345,13 @@ Crea una cita en el calendario del usuario.
 | `calendar_id` | str (opcional) |
 | `description` / `location` | str (opcional) |
 | `attendees` | list[email] (opcional) |
+| `all_day` | bool |
+| `timezone` | str |
+| `send_notifications` | bool |
+| `recurrence_rrule` | str (opcional) |
 | `idempotency_key` | str |
 
-Salida: `{ event_id, html_link, status }`.
+Salida: `{ event_id, html_link, status, start, end, created, deduplicated }`.
 
 ---
 
