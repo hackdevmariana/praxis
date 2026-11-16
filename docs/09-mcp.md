@@ -78,6 +78,8 @@ Errores MCP:
 | `permission_denied` | Scope insuficiente |
 | `tool_not_available` | No activa para el tenant |
 | `confirmation_required` | Efecto sin confirmación |
+| `connector_not_connected` | El usuario no ha conectado el proveedor |
+| `connector_auth_expired` | Token caducado o revocado |
 | `provider_unavailable` | API externa y fallback agotados |
 | `rate_limited` | Límite de uso superado |
 | `internal_error` | Fallo no controlado |
