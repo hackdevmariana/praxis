@@ -73,6 +73,7 @@ Errores MCP:
 |---|---|
 | `invalid_params` | `ToolError(INVALID_PARAMS)` lanzado al ejecutar; el rechazo de esquema previo lo gestiona el framework |
 | `incompatible_units` | Unidades de dimensiones distintas en `units.convert` |
+| `unsupported_currency` | Divisa fuera de la cesta de referencia del BCE |
 | `permission_denied` | Scope insuficiente |
 | `tool_not_available` | No activa para el tenant |
 | `confirmation_required` | Efecto sin confirmación |
