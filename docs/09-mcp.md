@@ -46,11 +46,14 @@ Reglas:
 
 ## Autenticación y autorización
 
-- **MVP:** API key + JWT simple.
-  - La API key identifica la instalación/usuario y se valida con hash Argon2id.
-  - El JWT aporta `sub`, `company_id`, `role`, `scopes`.
+- **MVP implementado:** API key o JWT simple.
+  - `Authorization: Bearer <jwt>`: HS256 con `sub`, `company_id`, `role`, `scopes`, `iat`, `exp`, `iss` y `aud`; expiración máxima de 30 minutos por defecto.
+  - `X-API-Key: <key_id>.<secret>`: se localiza por prefijo y se valida contra su hash Argon2id (`PRAXIS_API_KEYS_FILE`).
+  - `X-PRAXIS-Confirm: true`: señal de confirmación para tools con efectos.
+- **Contexto:** `ToolContext` se construye desde la credencial; nunca se acepta `company_id` del cliente. El ejecutor comprueba scopes y confirmación antes de llamar al handler.
+- **Modo desarrollo:** con `PRAXIS_AUTH_REQUIRED=false` se usa un contexto local con scope `*`; en producción debe estar activo y un scope `*` firmado se rechaza.
+- **HTTP:** credenciales ausentes o inválidas devuelven `401` con `{ "success": false, "error": { "code", "message" } }`. `/health` es público.
 - **OAuth 2.1** (`authlib`) para el servidor MCP se evalúa en v2; no se usa `python-jose`.
-- El contexto de ejecución (`ToolContext`) se construye a partir del token y nunca se acepta `company_id` del cliente sin validarlo contra el token.
 
 ## Idempotencia y efectos
 
@@ -80,6 +83,8 @@ Errores MCP:
 | `document_not_found` | Documento inexistente o de otro tenant |
 | `unsupported_format` | Documento que no es un PDF legible |
 | `document_too_large` | Documento por encima del límite |
+| `authentication_required` | Faltan credenciales (HTTP 401) |
+| `invalid_token` | JWT/API key inválidos o caducados (HTTP 401) |
 | `permission_denied` | Scope insuficiente |
 | `tool_not_available` | No activa para el tenant |
 | `confirmation_required` | Efecto sin confirmación |
