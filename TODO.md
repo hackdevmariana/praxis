@@ -83,7 +83,7 @@
 - [x] `procurement.compare_offers`.
 - [ ] `calendar.list_events` (tool y conector inyectable listos; falta OAuth real).
 - [ ] `calendar.create_event` (tool, confirmación e idempotencia listos; faltan OAuth real y persistencia).
-- [ ] `documents.extract_invoice` (PDF → JSON).
+- [ ] `documents.extract_invoice` (pdfplumber y caché listos; falta OCR/Tesseract).
 - [ ] `documents.generate_invoice` (cálculo, numeración, idempotencia y adaptadores listos; falta WeasyPrint/almacenamiento real).
 - [ ] `alerts.contract_renewal` (tool, avisos y tests listos; faltan repositorio persistente y envío real).
 
