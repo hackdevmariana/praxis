@@ -52,10 +52,10 @@ Comprobar el estado del servidor:
 
 ```bash
 curl http://127.0.0.1:8000/health
-# {"status":"ok","service":"praxis","version":"0.1.0","tools":11}
+# {"status":"ok","service":"praxis","version":"0.1.0","tools":21}
 ```
 
-El catálogo incluye las 11 tools de la semana 1 y se puede invocar por REST:
+El catálogo incluye las 21 tools del MVP y se puede invocar por REST:
 
 ```bash
 curl -X POST http://127.0.0.1:8000/api/tools/finance.vat \
@@ -64,6 +64,8 @@ curl -X POST http://127.0.0.1:8000/api/tools/finance.vat \
 ```
 
 El servidor MCP (streamable HTTP) escucha en `http://127.0.0.1:8000/mcp`.
+
+En local, `PRAXIS_AUTH_REQUIRED=false` permite probar sin credenciales. En producción, activa autenticación con `PRAXIS_AUTH_REQUIRED=true` y `PRAXIS_JWT_SECRET`, o configura `PRAXIS_API_KEYS_FILE`. Las tools con efectos exigen `X-PRAXIS-Confirm: true`. Ver [`07-security.md`](docs/07-security.md).
 
 ## Documentación
 
