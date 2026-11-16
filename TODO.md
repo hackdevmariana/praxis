@@ -85,7 +85,7 @@
 - [ ] `calendar.create_event` (tool, confirmación e idempotencia listos; faltan OAuth real y persistencia).
 - [ ] `documents.extract_invoice` (PDF → JSON).
 - [ ] `documents.generate_invoice` (HTML → PDF).
-- [ ] `alerts.contract_renewal` (60/30/15 días).
+- [ ] `alerts.contract_renewal` (tool, avisos y tests listos; faltan repositorio persistente y envío real).
 
 ### Seguridad, tenants y efectos
 
