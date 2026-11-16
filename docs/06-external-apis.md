@@ -5,7 +5,7 @@ version: 0.1.0
 
 # APIs externas
 
-Cada proveedor externo se describe con una **ficha declarativa** (YAML) que alimenta `DataSource`: autenticación, límites, caché, fallback, términos de servicio y política de redistribución. El código nunca debe asumir estos datos: los lee de la ficha.
+Cada proveedor externo se describe con una **ficha declarativa** (bloque YAML en este documento): autenticación, límites, caché, fallback, términos de servicio y política de redistribución. La ficha es el contrato de referencia; el código mantiene sus constantes y políticas sincronizadas con ella.
 
 ## Reglas generales
 
