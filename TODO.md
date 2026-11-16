@@ -91,7 +91,7 @@
 
 - [x] API key con Argon2id + JWT simple.
 - [x] `ToolContext` construido desde el token; nunca aceptar `company_id` del cliente.
-- [ ] Toolsets por `TenantProfile` (intersección catálogo/permisos/activación).
+- [x] Toolsets por `TenantProfile` (catálogo/activación inyectables; falta persistencia).
 - [ ] Idempotencia por (`tool`, `company_id`, `idempotency_key`).
 - [x] Confirmación humana en tools con `requires_confirmation` (cabecera `X-PRAXIS-Confirm`; UI real pendiente).
 - [ ] RLS en PostgreSQL y seeders mínimos.
