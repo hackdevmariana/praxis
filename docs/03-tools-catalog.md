@@ -227,7 +227,7 @@ Conversión de divisas con tipos de referencia del BCE.
 | `to_currency` | str |
 | `date` | date (opcional) |
 
-Salida: `{ converted_amount, rate, rate_date, from_currency, to_currency }`. BTC no está cubierto por el BCE: se marcará como no soportado en v1 y se documenta como backlog.
+Salida: `{ amount, converted_amount, rate, rate_date, from_currency, to_currency }`. BTC no está cubierto por el BCE: devuelve `unsupported_currency`.
 
 ### `weather.forecast` — v1.0.0
 
@@ -241,26 +241,29 @@ Previsión meteorológica con Open-Meteo (temperatura, sensación, lluvia, vient
 |---|---|
 | `latitude` | float |
 | `longitude` | float |
-| `days` | int (1-7) |
+| `days` | int (1-7, por defecto 3) |
+| `granularity` | enum: `daily`, `hourly` |
 | `variables` | list[str] (opcional) |
+| `timezone` | str (por defecto `Europe/Madrid`) |
 
-Salida: serie horaria/diaria con unidades en `metadata`.
+Salida: `{ location: { latitude, longitude, elevation, timezone }, granularity, points: [{ time, values }] }`. Unidades en `metadata.units`.
 
 ### `geo.geocode` — v1.0.0
 
-Geocoding y reverse geocoding con CartoCiudad (IGN).
+Geocoding y reverse geocoding con CartoCiudad (IGN) y fallback Nominatim.
 
 - `read_only: true`, `idempotent: true`
 - Permiso: `geo.read` · Clasificación: `public`
-- Proveedor: CartoCiudad · Caché: 7 días
+- Proveedor: CartoCiudad · Fallback: Nominatim · Caché: 7 días
 
 | Entrada | Tipo |
 |---|---|
 | `address` | str (para forward) |
 | `latitude` / `longitude` | float (para reverse) |
 | `municipality_code` | str (opcional) |
+| `limit` | int (1-5, por defecto 1) |
 
-Salida: `{ latitude, longitude, normalized_address, ine_code, province }`.
+Salida: `{ mode, results: [{ latitude, longitude, normalized_address, ine_code, municipality, province, postal_code, confidence, source }] }`.
 
 ---
 
