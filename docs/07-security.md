@@ -158,6 +158,7 @@ Estos plazos se documentan como configurables y se validan legalmente (ver [`12-
 
 `ToolExecutionLog` y `AuditLog` registran:
 
+- Implementado: `execution_time_ms`, `success`, código de error, `input_hash`, idempotencia y fuente por ejecución. No se guardan parámetros ni salidas en claro en el store inyectable del MVP.
 - `request_id`, usuario, empresa, canal.
 - Tool, versión, `execution_method`, `cache_hit`, `provider_calls`.
 - `success`/`error`, `warnings`, `legal_disclaimer_shown`.
@@ -167,7 +168,7 @@ Estos plazos se documentan como configurables y se validan legalmente (ver [`12-
 
 ## Checklist de seguridad del MVP
 
-- [ ] RLS activo en todas las tablas tenant + tests de aislamiento.
+- [x] RLS activo en todas las tablas tenant + tests de aislamiento.
 - [x] API keys hasheadas con Argon2id y nunca logueadas.
 - [x] JWT con expiración y validación de scopes.
 - [ ] Cifrado de campos sensibles + gestión de claves.
