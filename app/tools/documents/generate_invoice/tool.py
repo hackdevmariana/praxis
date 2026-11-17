@@ -7,7 +7,6 @@ from uuid import uuid4
 
 from app.context import ToolContext
 from app.errors import ErrorCode, ToolError
-from app.idempotency import idempotency_store
 from app.money import quantize_money
 from app.providers.documents import get_document_store, get_invoice_renderer
 from app.registry import tool
@@ -112,21 +111,6 @@ async def generate_invoice(
         )
 
     company_id = ctx.company_id or ""
-    idempotency_key = f"documents.generate_invoice:{company_id}:{params.idempotency_key}"
-    stored = idempotency_store.get(idempotency_key)
-    if isinstance(stored, GenerateInvoiceOutput):
-        return tool_result(
-            stored.model_copy(update={"deduplicated": True}),
-            metadata_extra={
-                "source": "document_generator",
-                "source_type": "internal",
-                "result_type": "mutation",
-                "currency": params.currency,
-                "idempotency_key": params.idempotency_key,
-                "effect": "deduplicated",
-            },
-        )
-
     if (
         params.document_type is InvoiceDocumentType.invoice
         and params.client.country == "ES"
@@ -222,7 +206,6 @@ async def generate_invoice(
         document_type=params.document_type,
         deduplicated=False,
     )
-    idempotency_store.put(idempotency_key, output)
 
     return tool_result(
         output,
