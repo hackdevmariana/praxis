@@ -94,7 +94,7 @@
 - [x] Toolsets por `TenantProfile` (catálogo/activación inyectables; falta persistencia).
 - [x] Idempotencia central por (`tool`, `company_id`, `idempotency_key`) con `input_hash` (falta persistencia).
 - [x] Confirmación humana en tools con `requires_confirmation` (cabecera `X-PRAXIS-Confirm`; UI real pendiente).
-- [ ] RLS en PostgreSQL y seeders mínimos.
+- [x] Esquema mínimo y RLS en PostgreSQL con tests de aislamiento (seeders completos pendientes).
 - [ ] `ToolExecutionLog` con empresa, usuario, versión y fuente.
 
 ## Cierre Fase 1
