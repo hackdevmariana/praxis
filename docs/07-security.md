@@ -145,7 +145,7 @@ Estos plazos se documentan como configurables y se validan legalmente (ver [`12-
 
 - `is_read_only: false` obliga a declarar idempotencia y `idempotency_key`.
 - `requires_confirmation: true` en `calendar.create_event`, `documents.generate_invoice` y `alerts.contract_renewal`.
-- El ejecutor registra `input_hash` e `idempotency_key` para evitar duplicados por reintentos del agente.
+- El ejecutor deduplica centralmente por `scoped_key(tool, company_id, idempotency_key)` con `input_hash` de los parámetros (sin la propia clave) y TTL de 30 días. Reutilizar una clave con parámetros distintos devuelve `conflict`; el almacén es en memoria hasta que exista PostgreSQL.
 - Las escrituras se validan contra permisos y tenant antes de ejecutar.
 
 ## Rate limiting
