@@ -8,7 +8,12 @@ from fnmatch import fnmatchcase
 from typing import Protocol
 from uuid import UUID
 
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncEngine
+
 from app.context import ToolContext
+from app.db.models import TenantProfileRow, ToolActivationRow
+from app.db.rls import company_session
 from app.registry import registry
 
 CATALOG_PATTERNS: dict[str, tuple[str, ...]] = {
@@ -64,23 +69,23 @@ class TenantProfile:
 class ToolAccessPolicy(Protocol):
     """Resolve the effective toolset for an execution context."""
 
-    def allowed_tools(self, ctx: ToolContext) -> frozenset[str] | None: ...
+    async def allowed_tools(self, ctx: ToolContext) -> frozenset[str] | None: ...
 
 
 class AllowAllToolAccess:
     """Development/default policy: every registered tool is available."""
 
-    def allowed_tools(self, ctx: ToolContext) -> frozenset[str] | None:
+    async def allowed_tools(self, ctx: ToolContext) -> frozenset[str] | None:
         return None
 
 
 class InMemoryToolAccessPolicy:
-    """Injectable MVP policy backed by tenant profiles."""
+    """Injectable policy backed by in-process tenant profiles."""
 
     def __init__(self, profiles: Mapping[str, TenantProfile] | None = None) -> None:
         self._profiles = dict(profiles or {})
 
-    def allowed_tools(self, ctx: ToolContext) -> frozenset[str] | None:
+    async def allowed_tools(self, ctx: ToolContext) -> frozenset[str] | None:
         if ctx.company_id is None:
             return None
         profile = self._profiles.get(ctx.company_id)
@@ -89,7 +94,45 @@ class InMemoryToolAccessPolicy:
         tools = catalog_tools(profile.catalog_key)
         if profile.enabled_tools is not None:
             tools = tools & profile.enabled_tools
-        return tools
+        return frozenset(tools)
+
+
+class SqlAlchemyToolAccessPolicy:
+    """Policy backed by `tenant_profiles` and `tool_activations` under RLS."""
+
+    def __init__(self, engine: AsyncEngine) -> None:
+        self._engine = engine
+
+    async def allowed_tools(self, ctx: ToolContext) -> frozenset[str] | None:
+        if ctx.company_id is None:
+            return None
+        try:
+            company_id = UUID(ctx.company_id)
+        except ValueError:
+            return frozenset()
+
+        async with company_session(self._engine, company_id) as session:
+            profile = await session.scalar(
+                select(TenantProfileRow).where(TenantProfileRow.company_id == company_id)
+            )
+            if profile is None or not profile.is_active:
+                return frozenset()
+            activations = (
+                await session.scalars(
+                    select(ToolActivationRow).where(ToolActivationRow.company_id == company_id)
+                )
+            ).all()
+
+        try:
+            tools = catalog_tools(profile.catalog_key)
+        except ValueError:
+            return frozenset()
+
+        enabled = {row.tool_name for row in activations if row.is_enabled and not row.deprecated}
+        disabled = {row.tool_name for row in activations if not row.is_enabled or row.deprecated}
+        if enabled or disabled:
+            tools = (tools - disabled) | (enabled & tools)
+        return frozenset(tools)
 
 
 def catalog_tools(catalog_key: str) -> frozenset[str]:
@@ -102,5 +145,5 @@ def catalog_tools(catalog_key: str) -> frozenset[str]:
     )
 
 
-def apply_tool_access(ctx: ToolContext, policy: ToolAccessPolicy) -> ToolContext:
-    return replace(ctx, allowed_tools=policy.allowed_tools(ctx))
+async def apply_tool_access(ctx: ToolContext, policy: ToolAccessPolicy) -> ToolContext:
+    return replace(ctx, allowed_tools=await policy.allowed_tools(ctx))
