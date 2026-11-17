@@ -200,6 +200,6 @@ Reloj fijo: **2026-11-13T10:00:00+01:00**.
 - Envío real de notificaciones (email/WhatsApp) y plantillas: v2.
 - Recalcular avisos si cambia `renewal_date`: nueva regla o actualización in situ (propuesta: nueva versión de regla).
 - Avisos en días hábiles (`business_days=true`) y hora configurable por tenant.
-- Implementado: cálculo de disparos con DST, filtrado de avisos pasados, confirmación vía `ToolContext.confirmed`, idempotencia en memoria y `ContractRepository` inyectable.
+- Implementado: cálculo de disparos con DST, filtrado de avisos pasados, confirmación vía `ToolContext.confirmed`, idempotencia central en el ejecutor con alias por contrato/fecha y `ContractRepository` inyectable.
 - Pendiente: persistencia real de contratos, `AlertRule`/`AlertEvent`, `AuditLog` y envío de notificaciones.
 - Recurrencia (renovaciones anuales automáticas) y `next_cycle`.
