@@ -15,6 +15,7 @@ class ToolResult[DataT: BaseModel](BaseModel):
     warnings: list[str] = Field(default_factory=lambda: [])
     metadata_extra: dict[str, Any] = Field(default_factory=lambda: {})
     summary: str | None = None
+    idempotency_aliases: tuple[str, ...] = ()
 
 
 def tool_result[DataT: BaseModel](
@@ -23,6 +24,7 @@ def tool_result[DataT: BaseModel](
     warnings: Sequence[str] = (),
     metadata_extra: Mapping[str, Any] | None = None,
     summary: str | None = None,
+    idempotency_aliases: Sequence[str] = (),
 ) -> ToolResult[DataT]:
     """Build a typed ToolResult without repeating generic parameters."""
     return ToolResult[DataT](
@@ -30,4 +32,5 @@ def tool_result[DataT: BaseModel](
         warnings=list(warnings),
         metadata_extra=dict(metadata_extra or {}),
         summary=summary,
+        idempotency_aliases=tuple(idempotency_aliases),
     )
