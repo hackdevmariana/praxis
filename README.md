@@ -13,7 +13,7 @@ Su valor no es la cantidad de herramientas, sino que cada resultado responda de 
 
 ## Estado
 
-**Fase 1 — Implementación (en curso).** La documentación de la fase 0 está cerrada y el toolchain de desarrollo configurado; las tools se incorporan por tandas. El estado detallado, con tareas marcadas, está en [`TODO.md`](TODO.md). El alcance canónico sigue en [`docs/02-mvp-scope.md`](docs/02-mvp-scope.md).
+**Fase 1 — Implementación (en curso).** Las 21 tools del MVP están registradas y expuestas por REST y MCP; el toolchain, la autenticación, el control de toolsets por tenant, la idempotencia, el registro de ejecución y el esquema RLS ya están implementados. Siguen pendientes los adaptadores reales de Google Calendar, OCR, renderizado PDF, almacenamiento de documentos, repositorio de contratos y envío de avisos; el estado detallado está en [`TODO.md`](TODO.md) y el alcance canónico en [`docs/02-mvp-scope.md`](docs/02-mvp-scope.md).
 
 ## Arquitectura en una frase
 
@@ -21,7 +21,7 @@ Su valor no es la cantidad de herramientas, sino que cada resultado responda de 
 
 ## Monorepo
 
-PRAXIS se distribuirá como monorepo con cuatro proyectos individuales. En esta fase 0 todavía no existen como directorios; se crean durante el MVP.
+PRAXIS se distribuirá como monorepo con cuatro proyectos individuales. Durante el MVP el código compartido vive en `app/`; los directorios de los paquetes se crearán cuando se separen responsabilidades.
 
 | Paquete | Responsabilidad |
 |---|---|
@@ -35,13 +35,13 @@ La capa de canal (WhatsApp/Telegram, routing, formatters) es externa al core y n
 ## Stack
 
 - **Backend:** FastAPI, Pydantic v2, `uv`.
-- **Base de datos:** PostgreSQL con `pgvector` (conocimiento) y PostGIS (geolocalización).
+- **Base de datos:** PostgreSQL con RLS por empresa; `pgvector` y PostGIS quedan previstos para capas posteriores.
 - **MCP:** SDK oficial `mcp` (streamable HTTP).
 - **Licencia:** MIT.
 
 ## Quickstart
 
-Requisitos: Python 3.12+ y [`uv`](https://docs.astral.sh/uv/).
+Requisitos: Python 3.12+ y [`uv`](https://docs.astral.sh/uv/). Para migraciones y tests de RLS, PostgreSQL y Docker.
 
 ```bash
 uv sync
@@ -65,7 +65,46 @@ curl -X POST http://127.0.0.1:8000/api/tools/finance.vat \
 
 El servidor MCP (streamable HTTP) escucha en `http://127.0.0.1:8000/mcp`.
 
-En local, `PRAXIS_AUTH_REQUIRED=false` permite probar sin credenciales. En producción, activa autenticación con `PRAXIS_AUTH_REQUIRED=true` y `PRAXIS_JWT_SECRET`, o configura `PRAXIS_API_KEYS_FILE`. Las tools con efectos exigen `X-PRAXIS-Confirm: true`. Ver [`07-security.md`](docs/07-security.md).
+### Base de datos
+
+El servidor arranca sin base de datos. Para crear el esquema RLS:
+
+```bash
+export DATABASE_URL='postgresql+asyncpg://praxis:praxis@localhost:5432/praxis'
+uv run alembic upgrade head
+```
+
+### Autenticación
+
+En local, `PRAXIS_AUTH_REQUIRED=false` permite probar sin credenciales. En producción, activa autenticación con `PRAXIS_AUTH_REQUIRED=true` y `PRAXIS_JWT_SECRET` (o configura `PRAXIS_API_KEYS_FILE`). Un token de desarrollo se emite con:
+
+```bash
+export PRAXIS_AUTH_REQUIRED=true
+export PRAXIS_JWT_SECRET='secret-de-al-menos-32-caracteres'
+uv run python scripts/issue_token.py \
+  --subject demo \
+  --company-id 11111111-1111-4111-8111-111111111111 \
+  --role admin \
+  --scope finance.calculate
+```
+
+Las tools con efectos exigen `X-PRAXIS-Confirm: true`. Ver [`07-security.md`](docs/07-security.md).
+
+### Tests y calidad
+
+```bash
+uv run ruff check .
+uv run ruff format --check .
+uv run pyright
+uv run pytest -q --cov=app --cov-report=term-missing
+uv run pytest -q -m integration  # requiere Docker
+```
+
+CI ejecuta lint, formato, tipos, tests y umbrales de cobertura: ≥ 80 % global y ≥ 90 % en lógica determinista.
+
+### Adaptadores pendientes
+
+`calendar.*`, `documents.*` y `alerts.contract_renewal` necesitan adaptadores inyectados para operar: sin ellos devuelven `connector_not_connected`, `provider_unavailable` o `contract_not_found`. Los tests de escenarios instalan adaptadores falsos; OAuth de Google, OCR con Tesseract, WeasyPrint, almacenamiento real y envío de avisos siguen en [`TODO.md`](TODO.md).
 
 ## Documentación
 
