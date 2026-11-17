@@ -16,6 +16,7 @@ from app import tools
 from app.audit import (
     ExecutionLogStore,
     NoopExecutionLogStore,
+    SqlAlchemyExecutionLogStore,
     set_execution_log_store,
 )
 from app.auth import (
@@ -26,12 +27,20 @@ from app.auth import (
     fallback_context,
     load_api_key_store,
 )
+from app.db.engine import create_db_engine
+from app.db.idempotency import SqlAlchemyIdempotencyStore
 from app.errors import ToolError
 from app.execution import error_envelope, execute_tool
+from app.idempotency import (
+    IdempotencyStore,
+    InMemoryIdempotencyStore,
+    set_idempotency_store,
+)
 from app.mcp_server import build_mcp_server
 from app.registry import ToolSpec, registry
 from app.tenancy import (
     AllowAllToolAccess,
+    SqlAlchemyToolAccessPolicy,
     ToolAccessPolicy,
     apply_tool_access,
 )
@@ -117,12 +126,36 @@ def create_app(
     api_key_store: ApiKeyStore | None = None,
     tool_access_policy: ToolAccessPolicy | None = None,
     execution_log_store: ExecutionLogStore | None = None,
+    idempotency_store: IdempotencyStore | None = None,
+    database_url: str | None = None,
 ) -> FastAPI:
     auth_settings = settings or AuthSettings.from_env()
     keys = api_key_store or load_api_key_store(auth_settings)
-    access_policy = tool_access_policy or AllowAllToolAccess()
-    audit_store = execution_log_store or NoopExecutionLogStore()
+    engine = create_db_engine(database_url)
+
+    if tool_access_policy is not None:
+        access_policy = tool_access_policy
+    elif engine is not None:
+        access_policy = SqlAlchemyToolAccessPolicy(engine)
+    else:
+        access_policy = AllowAllToolAccess()
+
+    if execution_log_store is not None:
+        audit_store = execution_log_store
+    elif engine is not None:
+        audit_store = SqlAlchemyExecutionLogStore(engine)
+    else:
+        audit_store = NoopExecutionLogStore()
+
+    if idempotency_store is not None:
+        idem_store = idempotency_store
+    elif engine is not None:
+        idem_store = SqlAlchemyIdempotencyStore(engine)
+    else:
+        idem_store = InMemoryIdempotencyStore()
+
     set_execution_log_store(audit_store)
+    set_idempotency_store(idem_store)
     if not auth_settings.required:
         logger.warning("PRAXIS_AUTH_REQUIRED=false: contexto de desarrollo con scope '*'")
     mcp_server = build_mcp_server(auth_settings, access_policy)
@@ -136,6 +169,8 @@ def create_app(
     async def lifespan(_app: FastAPI) -> AsyncGenerator[None]:
         async with mcp_app.router.lifespan_context(mcp_app):
             yield
+        if engine is not None:
+            await engine.dispose()
 
     app = FastAPI(
         title="PRAXIS",
@@ -159,6 +194,8 @@ def create_app(
     app.state.auth_settings = auth_settings
     app.state.tool_access_policy = access_policy
     app.state.execution_log_store = audit_store
+    app.state.idempotency_store = idem_store
+    app.state.engine = engine
     return app
 
 
