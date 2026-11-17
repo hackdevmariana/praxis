@@ -12,11 +12,13 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import create_async_engine
 from testcontainers.community.postgres import PostgresContainer
 
+from app.audit import ExecutionLogRecord, SqlAlchemyExecutionLogStore
 from app.db.models import (
     CompanyRow,
     DataSourceRow,
     IdempotencyRecordRow,
     TenantProfileRow,
+    ToolExecutionLogRow,
 )
 from app.db.rls import company_session
 
@@ -87,7 +89,25 @@ def test_rls_isolates_companies(postgres: PostgresContainer) -> None:
             session.add(TenantProfileRow(company_id=company_b, catalog_key="poligono"))
             await session.commit()
 
+        audit_store = SqlAlchemyExecutionLogStore(engine)
+        for company_id, tool_name in ((company_a, "finance.vat"), (company_b, "finance.discounts")):
+            await audit_store.record(
+                ExecutionLogRecord(
+                    request_id="req-rls",
+                    tool_name=tool_name,
+                    tool_version="1.0.0",
+                    user_id=None,
+                    company_id=str(company_id),
+                    channel="mcp",
+                    input_hash="hash",
+                    execution_time_ms=1,
+                    success=True,
+                )
+            )
+
         async with company_session(engine, company_a) as session:
+            logs = (await session.scalars(select(ToolExecutionLogRow))).all()
+            assert [log.tool_name for log in logs] == ["finance.vat"]
             profiles = (await session.scalars(select(TenantProfileRow))).all()
             records = (await session.scalars(select(IdempotencyRecordRow))).all()
             sources = (await session.scalars(select(DataSourceRow))).all()
