@@ -54,6 +54,7 @@ Variables principales (nunca en git):
 PRAXIS_ENV=production
 PRAXIS_SECRET_KEY=...
 DATABASE_URL=postgresql+asyncpg://...
+PRAXIS_DB_APP_PASSWORD=...   # rol no superusuario usado por la API
 REDIS_URL=redis://...
 # Autenticación (MVP)
 PRAXIS_AUTH_REQUIRED=true
@@ -82,7 +83,8 @@ FIELD_ENCRYPTION_KEYS=...   # versionadas
 ## Base de datos
 
 - **Extensiones:** `vector` (pgvector), `postgis`, `pgcrypto` (si aplica).
-- **Migraciones:** Alembic; `alembic-utils` para funciones, vistas y políticas RLS.
+- **Migraciones:** Alembic (`migrations/`). La migración inicial crea el esquema tenant, las políticas RLS y el rol `praxis_app`; se aplica con `uv run alembic upgrade head` y `DATABASE_URL`.
+- **RLS:** `app/db/rls.py` inyecta `praxis.company_id` por transacción. El código de aplicación debe usar `company_session(engine, company_id)` para cualquier consulta tenant.
 - **Seeders:** CLI independiente (no dentro de FastAPI), ejecutable por cron.
   - Idempotentes, versionados y auditables (`created_by: seeder`, `source`).
   - Datasets: festivos, tipos de IVA, plazos fiscales, municipios (8.131) y CNAE.
@@ -113,7 +115,7 @@ Pipeline mínimo:
 1. `ruff check` + `ruff format --check`.
 2. `pyright` (type checking estricto).
 3. `pytest` (unitarios + golden tests).
-4. Tests de integración con `testcontainers[postgres]` (RLS, PostGIS, pgvector).
+4. Tests de integración con `testcontainers[postgres]` (RLS, PostGIS, pgvector): `uv run pytest -m integration`.
 5. `pip-audit` / auditoría de dependencias.
 6. Build de imagen y despliegue a staging.
 7. Migraciones Alembic antes de arrancar la nueva versión.
