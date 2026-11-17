@@ -92,7 +92,7 @@ class ContractRenewalOutput(BaseModel):
 |---|---|---|
 | Renovación futura | hoy 2026-11-13, renovación 2027-03-31 | 3 avisos: 2027-01-30, 03-01, 03-16 |
 | Aviso ya pasado | renovación 2026-12-15 | 2 avisos (30 y 15 días), warning `notice_days_in_past` |
-| Renovación hoy | `renewal_date=2026-11-13` | `schedule=[]`, warning `no_future_triggers` |
+| Renovación hoy | `renewal_date=2026-11-13` | `schedule=[]`, warnings `notice_days_in_past` y `no_future_triggers` |
 | Renovación pasada | `renewal_date=2026-11-12` | error `invalid_params` |
 | Días duplicados | `[30,30]` | error `invalid_params` |
 | Canal email | `channel=email` | se almacena, no se envía (MVP) |
@@ -167,7 +167,7 @@ Reloj fijo: **2026-11-13T10:00:00+01:00**.
     "schedule": [],
     "deduplicated": false
   },
-  "metadata": { "warnings": ["no_future_triggers", "notice_days_in_past"] }
+  "metadata": { "warnings": ["notice_days_in_past", "no_future_triggers"] }
 }
 ```
 
