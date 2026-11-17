@@ -1,5 +1,6 @@
 import asyncio
 from datetime import datetime, timedelta
+from typing import Any
 from uuid import UUID
 
 import pytest
@@ -9,14 +10,21 @@ from pydantic import ValidationError
 from app.clock import MADRID
 from app.context import ToolContext
 from app.errors import ToolError
+from app.execution import execute_tool
 from app.providers.contracts import ContractRecord, set_contract_repository
+from app.registry import registry
 from app.tools.alerts.contract_renewal.schemas import (
     ContractRenewalInput,
     ContractRenewalOutput,
 )
 from app.tools.alerts.contract_renewal.tool import schedule_contract_renewal
 
-CTX = ToolContext(request_id="test", company_id="company-1", confirmed=True)
+CTX = ToolContext(
+    request_id="test",
+    company_id="company-1",
+    confirmed=True,
+    scopes=frozenset({"alerts.write"}),
+)
 CONTRACT_ID = UUID("11111111-1111-4111-8111-111111111111")
 OTHER_CONTRACT_ID = UUID("33333333-3333-4333-8333-333333333333")
 INACTIVE_CONTRACT_ID = UUID("55555555-5555-4555-8555-555555555555")
@@ -44,6 +52,11 @@ def run_result(**kwargs: object) -> ContractRenewalOutput:
     return asyncio.run(
         schedule_contract_renewal(ContractRenewalInput.model_validate(kwargs), CTX)
     ).data
+
+
+def run_envelope(**kwargs: object) -> dict[str, Any]:
+    spec = registry.get("alerts.contract_renewal")
+    return asyncio.run(execute_tool(spec, ContractRenewalInput.model_validate(kwargs), CTX))
 
 
 def test_future_renewal_golden() -> None:
@@ -233,31 +246,32 @@ def test_same_idempotency_key_is_deduplicated() -> None:
     }
 
     with time_machine.travel(FIXED_NOW, tick=False):
-        first = run_result(**payload)
-        second = run_result(**payload)
+        first = run_envelope(**payload)
+        second = run_envelope(**payload)
 
-    assert first.deduplicated is False
-    assert second.deduplicated is True
-    assert second.alert_rule_id == first.alert_rule_id
+    assert first["data"]["deduplicated"] is False
+    assert second["data"]["deduplicated"] is True
+    assert second["data"]["alert_rule_id"] == first["data"]["alert_rule_id"]
 
 
 def test_equivalent_rule_is_deduplicated_across_keys() -> None:
     install_repository(ContractRecord(id=CONTRACT_ID, company_id="company-1"))
 
     with time_machine.travel(FIXED_NOW, tick=False):
-        first = run_result(
+        first = run_envelope(
             contract_id=str(CONTRACT_ID),
             renewal_date="2027-03-31",
             idempotency_key="renovacion-clave-a-2027",
         )
-        second = run_result(
+        second = run_envelope(
             contract_id=str(CONTRACT_ID),
             renewal_date="2027-03-31",
             idempotency_key="renovacion-clave-b-2027",
         )
 
-    assert second.deduplicated is True
-    assert second.alert_rule_id == first.alert_rule_id
+    assert first["data"]["deduplicated"] is False
+    assert second["data"]["deduplicated"] is True
+    assert second["data"]["alert_rule_id"] == first["data"]["alert_rule_id"]
 
 
 def test_duplicate_or_out_of_range_notice_days_are_invalid() -> None:
