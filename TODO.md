@@ -99,12 +99,12 @@
 
 ## Cierre Fase 1
 
-- [ ] CI: `ruff check`, `ruff format --check`, `pyright`, `pytest`.
-- [ ] Cobertura ≥ 90 % en lógica determinista; ≥ 80 % global.
-- [ ] Escenario Hotel: agenda + cita con confirmación.
-- [ ] Escenario CEO/Polígono: IVA + factura PDF + comparación de ofertas.
-- [ ] Escenario Asociación: ahorro TPV + alerta de renovación.
-- [ ] Actualizar `README.md` (estado y quickstart definitivo).
+- [x] CI: `ruff check`, `ruff format --check`, `pyright`, `pytest`.
+- [x] Cobertura ≥ 90 % en lógica determinista; ≥ 80 % global.
+- [x] Escenario Hotel: agenda + cita con confirmación.
+- [x] Escenario CEO/Polígono: IVA + extracción de factura PDF + comparación de ofertas.
+- [x] Escenario Asociación: ahorro TPV + alerta de renovación.
+- [x] Actualizar `README.md` (estado y quickstart definitivo).
 
 ## Huecos y decisiones pendientes
 
