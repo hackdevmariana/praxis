@@ -12,7 +12,7 @@ from app.context import ToolContext
 from app.errors import ToolError
 from app.execution import execute_tool
 from app.idempotency import (
-    IdempotencyStore,
+    InMemoryIdempotencyStore,
     deduplicated_value,
     scoped_key,
 )
@@ -111,12 +111,12 @@ def test_scoped_key_includes_tool_and_company() -> None:
 
 
 def test_store_expires_entries() -> None:
-    store = IdempotencyStore(ttl=timedelta(minutes=5))
+    store = InMemoryIdempotencyStore(ttl=timedelta(minutes=5))
     start = datetime(2026, 11, 13, 10, 0, tzinfo=MADRID)
-    store.put("key", "value", input_hash="hash", at=start)
+    asyncio.run(store.put("key", "value", input_hash="hash", at=start))
 
-    assert store.get("key", at=start + timedelta(minutes=4)) is not None
-    assert store.get("key", at=start + timedelta(minutes=5)) is None
+    assert asyncio.run(store.get("key", at=start + timedelta(minutes=4))) is not None
+    assert asyncio.run(store.get("key", at=start + timedelta(minutes=5))) is None
 
 
 def test_deduplicated_value_marks_data_and_metadata() -> None:
