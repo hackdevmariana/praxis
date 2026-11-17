@@ -13,6 +13,11 @@ from fastapi import FastAPI, Request
 from pydantic import BaseModel
 
 from app import tools
+from app.audit import (
+    ExecutionLogStore,
+    NoopExecutionLogStore,
+    set_execution_log_store,
+)
 from app.auth import (
     ApiKeyStore,
     AuthMiddleware,
@@ -111,10 +116,13 @@ def create_app(
     settings: AuthSettings | None = None,
     api_key_store: ApiKeyStore | None = None,
     tool_access_policy: ToolAccessPolicy | None = None,
+    execution_log_store: ExecutionLogStore | None = None,
 ) -> FastAPI:
     auth_settings = settings or AuthSettings.from_env()
     keys = api_key_store or load_api_key_store(auth_settings)
     access_policy = tool_access_policy or AllowAllToolAccess()
+    audit_store = execution_log_store or NoopExecutionLogStore()
+    set_execution_log_store(audit_store)
     if not auth_settings.required:
         logger.warning("PRAXIS_AUTH_REQUIRED=false: contexto de desarrollo con scope '*'")
     mcp_server = build_mcp_server(auth_settings, access_policy)
@@ -150,6 +158,7 @@ def create_app(
     app.state.mcp = mcp_server
     app.state.auth_settings = auth_settings
     app.state.tool_access_policy = access_policy
+    app.state.execution_log_store = audit_store
     return app
 
 
