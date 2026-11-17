@@ -1,10 +1,13 @@
 from datetime import date, datetime, time, timedelta
+from typing import cast
 from uuid import uuid4
+
+from pydantic import BaseModel
 
 from app.clock import MADRID, now
 from app.context import ToolContext
 from app.errors import ErrorCode, ToolError
-from app.idempotency import idempotency_store
+from app.idempotency import deduplicated_value, idempotency_store, scoped_key
 from app.providers.contracts import get_contract_repository
 from app.registry import tool
 from app.result import ToolResult, tool_result
@@ -61,24 +64,21 @@ async def schedule_contract_renewal(
             details={"contract_id": str(params.contract_id)},
         )
 
-    key = f"alerts.contract_renewal:{company_id}:{params.idempotency_key}"
-    equivalent_key = (
-        f"alerts.contract_renewal:contract:{company_id}:"
-        f"{params.contract_id}:{params.renewal_date.isoformat()}"
+    equivalent_key = scoped_key(
+        "alerts.contract_renewal",
+        company_id,
+        "contract",
+        params.contract_id,
+        params.renewal_date.isoformat(),
     )
-    for lookup in (key, equivalent_key):
-        stored = idempotency_store.get(lookup)
-        if isinstance(stored, ContractRenewalOutput):
-            return tool_result(
-                stored.model_copy(update={"deduplicated": True}),
-                metadata_extra={
-                    "source": "internal",
-                    "source_type": "deterministic",
-                    "result_type": "mutation",
-                    "timezone": MADRID.key,
-                    "idempotency_key": params.idempotency_key,
-                    "effect": "deduplicated",
-                },
+    record = idempotency_store.get(equivalent_key)
+    stored_value = record.value if record is not None else None
+    if isinstance(stored_value, ToolResult):
+        stored = cast(ToolResult[BaseModel], cast(object, stored_value))
+        if isinstance(stored.data, ContractRenewalOutput):
+            return cast(
+                ToolResult[ContractRenewalOutput],
+                deduplicated_value(stored),
             )
 
     warnings: list[str] = []
@@ -113,8 +113,6 @@ async def schedule_contract_renewal(
         schedule=entries,
         deduplicated=False,
     )
-    idempotency_store.put(key, output)
-    idempotency_store.put(equivalent_key, output)
 
     return tool_result(
         output,
@@ -127,4 +125,5 @@ async def schedule_contract_renewal(
             "idempotency_key": params.idempotency_key,
             "effect": "alert_rule_created",
         },
+        idempotency_aliases=(equivalent_key,),
     )
