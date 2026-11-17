@@ -119,6 +119,11 @@ ToolExecutionLog
   created_at
 ```
 
+Implementación MVP (`0002_tool_execution_log`): tabla tenant con RLS; el ejecutor
+registra todas las ejecuciones con `input_hash` (nunca parámetros en claro),
+`execution_time_ms`, `success`, código de error, idempotencia y metadatos de fuente.
+`app/audit.py` expone stores in-memory, no-op y SQLAlchemy inyectables.
+
 ## Dominio 3 — Execution
 
 ```txt
