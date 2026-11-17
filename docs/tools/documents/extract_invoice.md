@@ -37,7 +37,7 @@ Reglas:
 - Importes como **string decimal** (2 decimales) y fechas ISO 8601.
 - `issuer_cif` se normaliza a mayúsculas sin espacios ni guiones.
 - `currency` ISO 4217; si no se detecta, `null` + warning `currency_not_detected`.
-- Una factura escaneada con OCR válido es aceptable; se marca `processor="tesseract"`.
+- El adaptador OCR está pendiente: un PDF sin capa de texto se devuelve con `needs_review=true`, `confidence=0.0` y warning `ocr_unavailable`; cuando se instale, se marcará `processor="tesseract"`.
 - No se usa un LLM para extraer importes en el MVP (determinismo y trazabilidad).
 
 ## 3. Contrato Pydantic
@@ -137,9 +137,12 @@ Fixture `invoice-F-2026-0042.pdf` (texto embebido, 2 líneas).
     "total": null,
     "currency": null,
     "needs_review": true,
-    "confidence": 0.41
+    "confidence": 0.0
   },
-  "metadata": { "warnings": ["low_confidence", "currency_not_detected"], "processor": "tesseract" }
+  "metadata": {
+    "warnings": ["low_confidence", "currency_not_detected", "ocr_unavailable"],
+    "processor": "pdfplumber"
+  }
 }
 ```
 
