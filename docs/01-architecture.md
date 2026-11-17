@@ -62,6 +62,7 @@ praxis-core/
 │   │       ├── tool.py       # Decorador @tool + @tool_impl
 │   │       ├── schemas.py    # Pydantic input/output
 │   │       └── tests/
+│   ├── audit.py              # ToolExecutionLog inyectable
 │   ├── db/                   # Base SQLAlchemy, sesiones tenant y RLS
 │   ├── providers/            # Clientes de APIs externas
 │   ├── metadata/             # Modelo de metadatos y helpers
@@ -80,6 +81,7 @@ Responsabilidades:
 | Componente | Responsabilidad |
 |---|---|
 | `tools/` | Lógica determinista y esquemas. Fuente de verdad de cada herramienta. |
+| `audit.py` | Registra cada ejecución con hash de entrada y resultado sin datos sensibles. |
 | `db/` | Modelos tenant, sesiones con `company_id` y helpers de RLS. |
 | `providers/` | Consultas a APIs externas con timeouts, reintentos, circuit breaker y caché. |
 | `metadata/` | Construcción del bloque `metadata` común a toda respuesta. |
