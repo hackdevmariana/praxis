@@ -1,6 +1,8 @@
 import asyncio
 from collections.abc import Iterator
+from decimal import Decimal
 from pathlib import Path
+from typing import cast
 from uuid import uuid4
 
 import pytest
@@ -13,14 +15,21 @@ from sqlalchemy.ext.asyncio import create_async_engine
 from testcontainers.community.postgres import PostgresContainer
 
 from app.audit import ExecutionLogRecord, SqlAlchemyExecutionLogStore
+from app.context import ToolContext
+from app.db.idempotency import SqlAlchemyIdempotencyStore
 from app.db.models import (
     CompanyRow,
     DataSourceRow,
     IdempotencyRecordRow,
     TenantProfileRow,
+    ToolActivationRow,
     ToolExecutionLogRow,
 )
 from app.db.rls import company_session
+from app.idempotency import scoped_key
+from app.result import ToolResult, tool_result
+from app.tenancy import SqlAlchemyToolAccessPolicy
+from app.tools.finance.vat.schemas import VatOutput
 
 pytestmark = pytest.mark.integration
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -120,6 +129,92 @@ def test_rls_isolates_companies(postgres: PostgresContainer) -> None:
             records = (await session.scalars(select(IdempotencyRecordRow))).all()
             assert [profile.company_id for profile in profiles] == [company_b]
             assert records == []
+
+        async with company_session(engine, company_a) as session:
+            session.add(TenantProfileRow(company_id=company_b, catalog_key="hotel"))
+            with pytest.raises(SQLAlchemyError):
+                await session.commit()
+
+    asyncio.run(scenario())
+    asyncio.run(engine.dispose())
+
+
+def test_persistent_stores_respect_tenant_context(postgres: PostgresContainer) -> None:
+    _run_migrations(postgres)
+    engine = create_async_engine(_app_database_url(postgres))
+    company_a = uuid4()
+    company_b = uuid4()
+
+    async def scenario() -> None:
+        async with company_session(engine, company_a) as session:
+            session.add(CompanyRow(id=company_a, name="Hotel persistente"))
+            session.add(TenantProfileRow(company_id=company_a, catalog_key="hotel"))
+            session.add(
+                ToolActivationRow(
+                    company_id=company_a,
+                    tool_name="finance.vat",
+                    version_installed="1.0.0",
+                    is_enabled=False,
+                    config={},
+                    limits_override={},
+                )
+            )
+            session.add(
+                ToolActivationRow(
+                    company_id=company_a,
+                    tool_name="procurement.compare_offers",
+                    version_installed="1.0.0",
+                    is_enabled=True,
+                    config={},
+                    limits_override={},
+                )
+            )
+            await session.commit()
+
+        async with company_session(engine, company_b) as session:
+            session.add(CompanyRow(id=company_b, name="Polígono persistente"))
+            session.add(TenantProfileRow(company_id=company_b, catalog_key="poligono"))
+            await session.commit()
+
+        policy = SqlAlchemyToolAccessPolicy(engine)
+        allowed_a = await policy.allowed_tools(
+            ToolContext(request_id="req", company_id=str(company_a))
+        )
+        allowed_b = await policy.allowed_tools(
+            ToolContext(request_id="req", company_id=str(company_b))
+        )
+        assert allowed_a is not None and "finance.vat" not in allowed_a
+        assert allowed_a is not None and "finance.discounts" in allowed_a
+        assert allowed_a is not None and "procurement.compare_offers" not in allowed_a
+        assert allowed_b is not None and "finance.vat" in allowed_b
+        assert allowed_b is not None and "calendar.create_event" not in allowed_b
+
+        idem = SqlAlchemyIdempotencyStore(engine)
+        result = tool_result(
+            VatOutput(
+                base_amount=Decimal("100.00"),
+                vat_rate=Decimal("21"),
+                vat_amount=Decimal("21.00"),
+                total_amount=Decimal("121.00"),
+                currency="EUR",
+            ),
+            warnings=["warning"],
+            metadata_extra={"source": "test"},
+            summary="ok",
+            idempotency_aliases=("alias",),
+        )
+        key_a = scoped_key("finance.vat", str(company_a), "hash-a")
+        await idem.put(key_a, result, input_hash="hash-a")
+        record = await idem.get(key_a)
+        assert record is not None and record.input_hash == "hash-a"
+        stored = cast(ToolResult[VatOutput], record.value)
+        assert isinstance(stored.data, VatOutput)
+        assert stored.data == result.data
+        assert stored.warnings == ["warning"]
+        assert stored.metadata_extra == {"source": "test"}
+        assert stored.summary == "ok"
+        assert stored.idempotency_aliases == ("alias",)
+        assert await idem.get(scoped_key("finance.vat", str(company_b), "hash-a")) is None
 
         async with company_session(engine, company_a) as session:
             session.add(TenantProfileRow(company_id=company_b, catalog_key="hotel"))
