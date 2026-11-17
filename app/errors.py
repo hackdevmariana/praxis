@@ -13,6 +13,7 @@ class ErrorCode(StrEnum):
     PERMISSION_DENIED = "permission_denied"
     TOOL_NOT_AVAILABLE = "tool_not_available"
     CONFIRMATION_REQUIRED = "confirmation_required"
+    CONFLICT = "conflict"
     PROVIDER_UNAVAILABLE = "provider_unavailable"
     RATE_LIMITED = "rate_limited"
     INTERNAL_ERROR = "internal_error"
