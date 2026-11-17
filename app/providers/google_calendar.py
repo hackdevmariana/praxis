@@ -8,7 +8,7 @@ from datetime import datetime
 from typing import Protocol
 
 from app.context import ToolContext
-from app.errors import ToolError
+from app.errors import ErrorCode, ToolError
 
 
 @dataclass(frozen=True, slots=True)
@@ -79,7 +79,7 @@ class UnconfiguredCalendarConnector:
         max_results: int,
     ) -> CalendarPage:
         raise ToolError(
-            "connector_not_connected",
+            ErrorCode.CONNECTOR_NOT_CONNECTED,
             "El usuario no tiene Google Calendar conectado.",
         )
 
@@ -99,7 +99,7 @@ class UnconfiguredCalendarConnector:
         recurrence_rrule: str | None,
     ) -> CreatedEventRecord:
         raise ToolError(
-            "connector_not_connected",
+            ErrorCode.CONNECTOR_NOT_CONNECTED,
             "El usuario no tiene Google Calendar conectado.",
         )
 
