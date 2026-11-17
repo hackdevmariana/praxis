@@ -16,7 +16,7 @@ from app.audit import ExecutionLogRecord, get_execution_log_store
 from app.context import ToolContext
 from app.envelope import Envelope
 from app.errors import ErrorCode, ToolError
-from app.idempotency import deduplicated_value, idempotency_store, scoped_key
+from app.idempotency import deduplicated_value, get_idempotency_store, scoped_key
 from app.metadata import build_metadata
 from app.registry import ToolSpec, registry
 from app.result import ToolResult
@@ -148,7 +148,7 @@ async def _execute(
     state.input_hash = _payload_hash(params)
     state.idempotency_key = _idempotency_key(spec, ctx, params)
     if state.idempotency_key is not None:
-        record = idempotency_store.get(state.idempotency_key)
+        record = await get_idempotency_store().get(state.idempotency_key)
         if record is not None:
             if record.input_hash != state.input_hash:
                 raise ToolError(
@@ -162,10 +162,11 @@ async def _execute(
     result = await spec.handler(params, ctx)
 
     if state.idempotency_key is not None:
-        idempotency_store.put(state.idempotency_key, result, input_hash=state.input_hash)
+        store = get_idempotency_store()
+        await store.put(state.idempotency_key, result, input_hash=state.input_hash)
         if isinstance(result, ToolResult):
             for alias in result.idempotency_aliases:
-                idempotency_store.put(alias, result, input_hash=state.input_hash)
+                await store.put(alias, result, input_hash=state.input_hash)
 
     return _envelope(spec, cast(object, result))
 
