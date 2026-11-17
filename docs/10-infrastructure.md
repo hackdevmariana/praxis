@@ -85,6 +85,7 @@ FIELD_ENCRYPTION_KEYS=...   # versionadas
 - **Extensiones:** `vector` (pgvector), `postgis`, `pgcrypto` (si aplica).
 - **Migraciones:** Alembic (`migrations/`). La migración inicial crea el esquema tenant, las políticas RLS y el rol `praxis_app`; se aplica con `uv run alembic upgrade head` y `DATABASE_URL`.
 - **RLS:** `app/db/rls.py` inyecta `praxis.company_id` por transacción. El código de aplicación debe usar `company_session(engine, company_id)` para cualquier consulta tenant.
+- La migración `0002_tool_execution_log` añade la tabla de auditoría de ejecuciones con la misma política RLS.
 - **Seeders:** CLI independiente (no dentro de FastAPI), ejecutable por cron.
   - Idempotentes, versionados y auditables (`created_by: seeder`, `source`).
   - Datasets: festivos, tipos de IVA, plazos fiscales, municipios (8.131) y CNAE.
