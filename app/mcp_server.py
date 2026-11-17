@@ -38,7 +38,7 @@ def _handler(
         try:
             ctx = current_context()
             if ctx is None:
-                ctx = apply_tool_access(
+                ctx = await apply_tool_access(
                     fallback_context(
                         settings,
                         request_id=uuid4().hex,
