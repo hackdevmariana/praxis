@@ -67,7 +67,8 @@ Reglas:
 ## Idempotencia y efectos
 
 - Tools de solo lectura: `idempotentHint: true`, sin efectos.
-- Tools con efectos (`calendar.create_event`, `documents.generate_invoice`, `alerts.contract_renewal`): requieren `idempotency_key`; el servidor deduplica por (`tool`, `company_id`, `idempotency_key`).
+- Tools con efectos (`calendar.create_event`, `documents.generate_invoice`, `alerts.contract_renewal`): requieren `idempotency_key`; el ejecutor deduplica por (`tool`, `company_id`, `idempotency_key`) antes de llamar al handler y guarda el resultado solo si tiene éxito.
+- La misma clave con distinto `input_hash` devuelve `conflict`. `alerts.contract_renewal` añade un alias por `(contract_id, renewal_date)` para deduplicar reglas equivalentes con claves distintas.
 - `destructiveHint` se marca en tools que modifican datos existentes.
 - El servidor MCP puede exigir confirmación humana antes de ejecutar tools con `requires_confirmation`.
 
@@ -88,7 +89,7 @@ Errores MCP:
 | `unsupported_currency` | Divisa fuera de la cesta de referencia del BCE |
 | `currency_mismatch` | Ofertas con divisas distintas en `procurement.compare_offers` |
 | `invalid_tax_id` | CIF/NIF español inválido en factura |
-| `conflict` | Número de documento duplicado |
+| `conflict` | Número de documento duplicado o idempotency_key reutilizada con otro input |
 | `document_not_found` | Documento inexistente o de otro tenant |
 | `unsupported_format` | Documento que no es un PDF legible |
 | `document_too_large` | Documento por encima del límite |
