@@ -185,6 +185,6 @@ class CreateEventOutput(BaseModel):
 - ¿Permitir crear en calendarios compartidos de empresa? Requiere rol y `calendar_id` autorizado (v1.1).
 - Política de `reminders` y `conferenceData` (Meet) en v1.1.
 - Recurrencia: interfaz amigable (`daily|weekly|monthly`) además de `RRULE`.
-- Implementado: confirmación vía `ToolContext.confirmed`, idempotencia de 30 días en memoria y conector inyectable.
+- Implementado: confirmación vía `ToolContext.confirmed`, idempotencia central de 30 días en el ejecutor y conector inyectable.
 - Pendiente: OAuth real, idempotencia persistente y `AuditLog`; el almacén en memoria se pierde al reiniciar.
 - Verificar el límite de asistentes de Google y el comportamiento con invitaciones externas.
