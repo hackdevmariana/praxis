@@ -7,7 +7,7 @@ from pydantic import BaseModel
 from app.clock import MADRID, now
 from app.context import ToolContext
 from app.errors import ErrorCode, ToolError
-from app.idempotency import deduplicated_value, idempotency_store, scoped_key
+from app.idempotency import deduplicated_value, get_idempotency_store, scoped_key
 from app.providers.contracts import get_contract_repository
 from app.registry import tool
 from app.result import ToolResult, tool_result
@@ -71,7 +71,7 @@ async def schedule_contract_renewal(
         params.contract_id,
         params.renewal_date.isoformat(),
     )
-    record = idempotency_store.get(equivalent_key)
+    record = await get_idempotency_store().get(equivalent_key)
     stored_value = record.value if record is not None else None
     if isinstance(stored_value, ToolResult):
         stored = cast(ToolResult[BaseModel], cast(object, stored_value))
