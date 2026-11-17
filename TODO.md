@@ -91,10 +91,10 @@
 
 - [x] API key con Argon2id + JWT simple.
 - [x] `ToolContext` construido desde el token; nunca aceptar `company_id` del cliente.
-- [x] Toolsets por `TenantProfile` (catálogo/activación inyectables; falta persistencia).
-- [x] Idempotencia central por (`tool`, `company_id`, `idempotency_key`) con `input_hash` (falta persistencia).
+- [x] Toolsets por `TenantProfile` (catálogo/activación inyectables y persistentes con RLS).
+- [x] Idempotencia central por (`tool`, `company_id`, `idempotency_key`) con `input_hash` (stores in-memory y SQLAlchemy con RLS).
 - [x] Confirmación humana en tools con `requires_confirmation` (cabecera `X-PRAXIS-Confirm`; UI real pendiente).
-- [x] Esquema mínimo y RLS en PostgreSQL con tests de aislamiento (seeders completos pendientes).
+- [x] Esquema mínimo y RLS en PostgreSQL con tests de aislamiento y seeder idempotente de demo.
 - [x] `ToolExecutionLog` con empresa, usuario, versión, fuente, `input_hash` y duración.
 
 ## Cierre Fase 1
@@ -105,6 +105,13 @@
 - [x] Escenario CEO/Polígono: IVA + extracción de factura PDF + comparación de ofertas.
 - [x] Escenario Asociación: ahorro TPV + alerta de renovación.
 - [x] Actualizar `README.md` (estado y quickstart definitivo).
+
+### Cierre Fase 2
+
+- [x] Stores SQLAlchemy de idempotencia y toolsets protegidos por RLS.
+- [x] Engine y wiring condicional desde `DATABASE_URL`.
+- [x] Seeder idempotente de tenants demo y fuentes de datos globales.
+- [x] Tests de integración RLS para stores persistentes.
 
 ## Huecos y decisiones pendientes
 
