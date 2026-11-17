@@ -86,9 +86,11 @@ FIELD_ENCRYPTION_KEYS=...   # versionadas
 - **Migraciones:** Alembic (`migrations/`). La migración inicial crea el esquema tenant, las políticas RLS y el rol `praxis_app`; se aplica con `uv run alembic upgrade head` y `DATABASE_URL`.
 - **RLS:** `app/db/rls.py` inyecta `praxis.company_id` por transacción. El código de aplicación debe usar `company_session(engine, company_id)` para cualquier consulta tenant.
 - La migración `0002_tool_execution_log` añade la tabla de auditoría de ejecuciones con la misma política RLS.
+- `create_app` usa stores SQLAlchemy cuando hay `DATABASE_URL`; sin ella mantiene los stores en memoria para desarrollo y tests.
 - **Seeders:** CLI independiente (no dentro de FastAPI), ejecutable por cron.
+  - `uv run python scripts/seed_demo.py` crea/actualiza los tres tenants demo y las fuentes globales con UUID fijos.
   - Idempotentes, versionados y auditables (`created_by: seeder`, `source`).
-  - Datasets: festivos, tipos de IVA, plazos fiscales, municipios (8.131) y CNAE.
+  - Datasets pendientes: festivos, tipos de IVA, plazos fiscales, municipios (8.131) y CNAE.
 - **Backups:** `pg_dump` diario + retención; probar restauración mensualmente.
 
 ## Observabilidad (MVP)
