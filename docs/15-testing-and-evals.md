@@ -98,10 +98,11 @@ Cada escenario valida JSON de salida, metadatos completos y registro en `ToolExe
 ## CI mínimo
 
 ```txt
-ruff check && ruff format --check
-pyright
-pytest -q              # unit + properties + respx
-pytest -q -m integration   # testcontainers
-schemathesis run       # contratos
-pip-audit
+uv sync --frozen
+uv run ruff check .
+uv run ruff format --check .
+uv run pyright
+uv run pytest -q --cov=app --cov-report=xml --cov-fail-under=80
+uv run coverage report --include="app/tools/finance/*,app/tools/datetime/*,app/tools/units/*,app/tools/validate/*,app/tools/procurement/*,app/money.py,app/business_days.py,app/holidays.py,app/clock.py" --fail-under=90
+uv run pytest -q -m integration   # testcontainers
 ```
