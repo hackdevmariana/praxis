@@ -332,7 +332,7 @@ class AuthMiddleware:
             await response(scope, receive, send)
             return
 
-        context = apply_tool_access(context, self.tool_access_policy)
+        context = await apply_tool_access(context, self.tool_access_policy)
         token = _CURRENT_CONTEXT.set(context)
         try:
             await self.app(scope, receive, send)
