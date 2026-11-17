@@ -95,7 +95,7 @@
 - [x] Idempotencia central por (`tool`, `company_id`, `idempotency_key`) con `input_hash` (falta persistencia).
 - [x] Confirmación humana en tools con `requires_confirmation` (cabecera `X-PRAXIS-Confirm`; UI real pendiente).
 - [x] Esquema mínimo y RLS en PostgreSQL con tests de aislamiento (seeders completos pendientes).
-- [ ] `ToolExecutionLog` con empresa, usuario, versión y fuente.
+- [x] `ToolExecutionLog` con empresa, usuario, versión, fuente, `input_hash` y duración.
 
 ## Cierre Fase 1
 
