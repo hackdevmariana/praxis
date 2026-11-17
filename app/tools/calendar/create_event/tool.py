@@ -2,7 +2,6 @@ from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from app.context import ToolContext
 from app.errors import ErrorCode, ToolError
-from app.idempotency import idempotency_store
 from app.providers.google_calendar import get_calendar_connector
 from app.registry import tool
 from app.result import ToolResult, tool_result
@@ -17,10 +16,6 @@ def _timezone(name: str) -> ZoneInfo:
         return ZoneInfo(name)
     except (ZoneInfoNotFoundError, ValueError) as error:
         raise ToolError(ErrorCode.INVALID_PARAMS, f"Zona horaria inválida: {name}") from error
-
-
-def _idempotency_key(ctx: ToolContext, key: str) -> str:
-    return f"calendar.create_event:{ctx.company_id or ''}:{key}"
 
 
 @tool(
@@ -48,21 +43,6 @@ async def create_event(params: CreateEventInput, ctx: ToolContext) -> ToolResult
         )
 
     timezone = _timezone(params.timezone)
-    store_key = _idempotency_key(ctx, params.idempotency_key)
-    stored = idempotency_store.get(store_key)
-    if isinstance(stored, CreateEventOutput):
-        return tool_result(
-            stored.model_copy(update={"deduplicated": True}),
-            metadata_extra={
-                "source": "google_calendar",
-                "source_type": "connector",
-                "result_type": "mutation",
-                "timezone": params.timezone,
-                "idempotency_key": params.idempotency_key,
-                "effect": "deduplicated",
-            },
-        )
-
     connector = get_calendar_connector(ctx)
     record = await connector.create_event(
         calendar_id=params.calendar_id,
@@ -87,7 +67,6 @@ async def create_event(params: CreateEventInput, ctx: ToolContext) -> ToolResult
         created=record.created,
         deduplicated=False,
     )
-    idempotency_store.put(store_key, output)
 
     return tool_result(
         output,
