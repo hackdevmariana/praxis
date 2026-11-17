@@ -13,7 +13,7 @@ Su valor no es la cantidad de herramientas, sino que cada resultado responda de 
 
 ## Estado
 
-**Fase 1 — Implementación (en curso).** Las 21 tools del MVP están registradas y expuestas por REST y MCP; el toolchain, la autenticación, el control de toolsets por tenant, la idempotencia, el registro de ejecución y el esquema RLS ya están implementados. Siguen pendientes los adaptadores reales de Google Calendar, OCR, renderizado PDF, almacenamiento de documentos, repositorio de contratos y envío de avisos; el estado detallado está en [`TODO.md`](TODO.md) y el alcance canónico en [`docs/02-mvp-scope.md`](docs/02-mvp-scope.md).
+**Fase 2 — Persistencia (en curso).** Las 21 tools del MVP están registradas y expuestas por REST y MCP; el toolchain, la autenticación, el control de toolsets por tenant, la idempotencia y el registro de ejecución funcionan con stores en memoria o SQLAlchemy protegidos por RLS. El esquema y el seeder demo ya están disponibles. Siguen pendientes las decisiones §8, los adaptadores reales de Google Calendar, OCR, renderizado PDF, almacenamiento de documentos, repositorio de contratos y envío de avisos; el estado detallado está en [`TODO.md`](TODO.md) y el alcance canónico en [`docs/02-mvp-scope.md`](docs/02-mvp-scope.md).
 
 ## Arquitectura en una frase
 
@@ -67,12 +67,15 @@ El servidor MCP (streamable HTTP) escucha en `http://127.0.0.1:8000/mcp`.
 
 ### Base de datos
 
-El servidor arranca sin base de datos. Para crear el esquema RLS:
+El servidor arranca sin base de datos y usa stores en memoria. Con `DATABASE_URL`, la app usa stores SQLAlchemy para idempotencia, toolsets y auditoría. Para crear el esquema RLS y cargar los tenants demo:
 
 ```bash
 export DATABASE_URL='postgresql+asyncpg://praxis:praxis@localhost:5432/praxis'
 uv run alembic upgrade head
+uv run python scripts/seed_demo.py
 ```
+
+El seeder es idempotente y crea los perfiles `hotel`, `poligono` y `asociacion` con UUID fijos, además de las fuentes de datos globales.
 
 ### Autenticación
 
