@@ -62,6 +62,7 @@ praxis-core/
 │   │       ├── tool.py       # Decorador @tool + @tool_impl
 │   │       ├── schemas.py    # Pydantic input/output
 │   │       └── tests/
+│   ├── db/                   # Base SQLAlchemy, sesiones tenant y RLS
 │   ├── providers/            # Clientes de APIs externas
 │   ├── metadata/             # Modelo de metadatos y helpers
 │   ├── auth.py               # API key, JWT, scopes y contexto HTTP
@@ -79,6 +80,7 @@ Responsabilidades:
 | Componente | Responsabilidad |
 |---|---|
 | `tools/` | Lógica determinista y esquemas. Fuente de verdad de cada herramienta. |
+| `db/` | Modelos tenant, sesiones con `company_id` y helpers de RLS. |
 | `providers/` | Consultas a APIs externas con timeouts, reintentos, circuit breaker y caché. |
 | `metadata/` | Construcción del bloque `metadata` común a toda respuesta. |
 | `auth.py` | Autentica API key/JWT, construye `ToolContext` y aplica scopes/confirmación. |
