@@ -1,3 +1,5 @@
+import asyncio
+
 import pytest
 
 from app import tools  # noqa: F401  # pyright: ignore[reportUnusedImport]
@@ -38,7 +40,7 @@ def test_policy_intersects_catalog_and_activation() -> None:
     )
     policy = InMemoryToolAccessPolicy({COMPANY: profile})
 
-    allowed = policy.allowed_tools(ToolContext(request_id="req", company_id=COMPANY))
+    allowed = asyncio.run(policy.allowed_tools(ToolContext(request_id="req", company_id=COMPANY)))
 
     assert allowed == frozenset({"finance.vat"})
 
@@ -46,7 +48,7 @@ def test_policy_intersects_catalog_and_activation() -> None:
 def test_policy_denies_unknown_company() -> None:
     policy = InMemoryToolAccessPolicy()
 
-    allowed = policy.allowed_tools(ToolContext(request_id="req", company_id=COMPANY))
+    allowed = asyncio.run(policy.allowed_tools(ToolContext(request_id="req", company_id=COMPANY)))
 
     assert allowed == frozenset()
 
@@ -55,7 +57,7 @@ def test_policy_denies_inactive_company() -> None:
     profile = TenantProfile(company_id=COMPANY, is_active=False)
     policy = InMemoryToolAccessPolicy({COMPANY: profile})
 
-    allowed = policy.allowed_tools(ToolContext(request_id="req", company_id=COMPANY))
+    allowed = asyncio.run(policy.allowed_tools(ToolContext(request_id="req", company_id=COMPANY)))
 
     assert allowed == frozenset()
 
@@ -63,20 +65,22 @@ def test_policy_denies_inactive_company() -> None:
 def test_policy_allows_all_without_tenant() -> None:
     policy = InMemoryToolAccessPolicy()
 
-    allowed = policy.allowed_tools(ToolContext(request_id="req"))
+    allowed = asyncio.run(policy.allowed_tools(ToolContext(request_id="req")))
 
     assert allowed is None
 
 
 def test_allow_all_policy_is_permissive() -> None:
-    assert AllowAllToolAccess().allowed_tools(ToolContext(request_id="req")) is None
+    allowed = asyncio.run(AllowAllToolAccess().allowed_tools(ToolContext(request_id="req")))
+
+    assert allowed is None
 
 
 def test_apply_tool_access_sets_allowed_tools() -> None:
     ctx = ToolContext(request_id="req", company_id=COMPANY)
     profile = TenantProfile(company_id=COMPANY, catalog_key="hotel")
 
-    resolved = apply_tool_access(ctx, InMemoryToolAccessPolicy({COMPANY: profile}))
+    resolved = asyncio.run(apply_tool_access(ctx, InMemoryToolAccessPolicy({COMPANY: profile})))
 
     assert resolved.allowed_tools == catalog_tools("hotel")
 
