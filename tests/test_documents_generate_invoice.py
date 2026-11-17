@@ -1,6 +1,7 @@
 import asyncio
 from datetime import date as Date
 from decimal import Decimal
+from typing import Any
 from uuid import UUID
 
 import pytest
@@ -8,14 +9,21 @@ from pydantic import ValidationError
 
 from app.context import ToolContext
 from app.errors import ToolError
+from app.execution import execute_tool
 from app.providers.documents import set_document_adapters
+from app.registry import registry
 from app.tools.documents.generate_invoice.schemas import (
     GenerateInvoiceInput,
     GenerateInvoiceOutput,
 )
 from app.tools.documents.generate_invoice.tool import generate_invoice
 
-CTX = ToolContext(request_id="test", company_id="company-1", confirmed=True)
+CTX = ToolContext(
+    request_id="test",
+    company_id="company-1",
+    confirmed=True,
+    scopes=frozenset({"documents.write"}),
+)
 CLIENT = {"name": "Hotel Sol S.L.", "cif": "B87654323"}
 
 
@@ -93,6 +101,11 @@ def install_adapters(
 
 def run_result(**kwargs: object) -> GenerateInvoiceOutput:
     return asyncio.run(generate_invoice(GenerateInvoiceInput.model_validate(kwargs), CTX)).data
+
+
+def run_envelope(**kwargs: object) -> dict[str, Any]:
+    spec = registry.get("documents.generate_invoice")
+    return asyncio.run(execute_tool(spec, GenerateInvoiceInput.model_validate(kwargs), CTX))
 
 
 def test_invoice_golden() -> None:
@@ -301,12 +314,12 @@ def test_same_idempotency_key_does_not_render_twice() -> None:
         "idempotency_key": "factura-idempotente-001",
     }
 
-    first = run_result(**payload)
-    second = run_result(**payload)
+    first = run_envelope(**payload)
+    second = run_envelope(**payload)
 
-    assert first.deduplicated is False
-    assert second.deduplicated is True
-    assert second.document_id == first.document_id
+    assert first["data"]["deduplicated"] is False
+    assert second["data"]["deduplicated"] is True
+    assert second["data"]["document_id"] == first["data"]["document_id"]
     assert len(renderer.html) == 1
     assert len(store.saved) == 1
 
