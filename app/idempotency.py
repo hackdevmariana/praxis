@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-from typing import Any, cast
+from typing import Any, Protocol, cast
 
 from pydantic import BaseModel
 
@@ -21,14 +21,29 @@ class IdempotencyRecord:
     value: Any
 
 
-class IdempotencyStore:
+class IdempotencyStore(Protocol):
     """Keep successful results for a bounded period."""
+
+    async def get(self, key: str, *, at: datetime | None = None) -> IdempotencyRecord | None: ...
+
+    async def put(
+        self,
+        key: str,
+        value: Any,
+        *,
+        input_hash: str,
+        at: datetime | None = None,
+    ) -> None: ...
+
+
+class InMemoryIdempotencyStore:
+    """Default process-local store used when no database is configured."""
 
     def __init__(self, ttl: timedelta = timedelta(days=30)) -> None:
         self._ttl = ttl
         self._entries: dict[str, IdempotencyRecord] = {}
 
-    def get(self, key: str, *, at: datetime | None = None) -> IdempotencyRecord | None:
+    async def get(self, key: str, *, at: datetime | None = None) -> IdempotencyRecord | None:
         entry = self._entries.get(key)
         if entry is None:
             return None
@@ -38,7 +53,7 @@ class IdempotencyStore:
             return None
         return entry
 
-    def put(
+    async def put(
         self,
         key: str,
         value: Any,
@@ -78,4 +93,13 @@ def _deduplicated_data(value: Any) -> Any:
     return value
 
 
-idempotency_store = IdempotencyStore()
+_store: IdempotencyStore = InMemoryIdempotencyStore()
+
+
+def set_idempotency_store(store: IdempotencyStore) -> None:
+    global _store
+    _store = store
+
+
+def get_idempotency_store() -> IdempotencyStore:
+    return _store
