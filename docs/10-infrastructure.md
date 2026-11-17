@@ -113,13 +113,12 @@ Métricas mínimas:
 
 Pipeline mínimo:
 
-1. `ruff check` + `ruff format --check`.
-2. `pyright` (type checking estricto).
-3. `pytest` (unitarios + golden tests).
-4. Tests de integración con `testcontainers[postgres]` (RLS, PostGIS, pgvector): `uv run pytest -m integration`.
-5. `pip-audit` / auditoría de dependencias.
-6. Build de imagen y despliegue a staging.
-7. Migraciones Alembic antes de arrancar la nueva versión.
+1. `uv sync --frozen`.
+2. `uv run ruff check .` + `uv run ruff format --check .`.
+3. `uv run pyright` (type checking estricto).
+4. `uv run pytest -q --cov=app --cov-report=xml --cov-fail-under=80` y cobertura ≥ 90 % en lógica determinista.
+5. Tests de integración con `testcontainers[postgres]` (RLS): `uv run pytest -m integration`.
+6. Pendiente de automatizar: `pip-audit`, build de imagen, despliegue a staging y migraciones Alembic antes de arrancar la nueva versión.
 
 Despliegue:
 
