@@ -9,12 +9,14 @@ from pydantic import ValidationError
 from app.clock import MADRID
 from app.context import ToolContext
 from app.errors import ToolError
+from app.execution import execute_tool
 from app.providers.google_calendar import (
     CalendarEventRecord,
     CalendarPage,
     CreatedEventRecord,
     set_calendar_connector,
 )
+from app.registry import registry
 from app.tools.calendar.create_event.schemas import (
     CreateEventInput,
     CreateEventOutput,
@@ -23,7 +25,12 @@ from app.tools.calendar.create_event.tool import create_event
 from app.tools.calendar.list_events.schemas import ListEventsInput, ListEventsOutput
 from app.tools.calendar.list_events.tool import list_events
 
-CTX = ToolContext(request_id="test", company_id="company-1", confirmed=True)
+CTX = ToolContext(
+    request_id="test",
+    company_id="company-1",
+    confirmed=True,
+    scopes=frozenset({"calendar.write"}),
+)
 
 EVENTS = (
     CalendarEventRecord(
@@ -60,6 +67,12 @@ EVENTS = (
         html_link=None,
     ),
 )
+
+
+def run_create_envelope(**kwargs: object) -> dict[str, Any]:
+    spec = registry.get("calendar.create_event")
+    return asyncio.run(execute_tool(spec, CreateEventInput.model_validate(kwargs), CTX))
+
 
 CREATED = CreatedEventRecord(
     event_id="evt_abc123",
@@ -323,12 +336,12 @@ def test_create_event_is_idempotent() -> None:
         "idempotency_key": "demo-2026-11-16",
     }
 
-    first = run_create(**payload)
-    second = run_create(**payload)
+    first = run_create_envelope(**payload)
+    second = run_create_envelope(**payload)
 
-    assert first.deduplicated is False
-    assert second.deduplicated is True
-    assert second.event_id == first.event_id
+    assert first["data"]["deduplicated"] is False
+    assert second["data"]["deduplicated"] is True
+    assert second["data"]["event_id"] == first["data"]["event_id"]
     assert len(connector.create_calls) == 1
 
 
