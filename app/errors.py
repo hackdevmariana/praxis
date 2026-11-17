@@ -14,6 +14,8 @@ class ErrorCode(StrEnum):
     TOOL_NOT_AVAILABLE = "tool_not_available"
     CONFIRMATION_REQUIRED = "confirmation_required"
     CONFLICT = "conflict"
+    CONNECTOR_NOT_CONNECTED = "connector_not_connected"
+    CONNECTOR_AUTH_EXPIRED = "connector_auth_expired"
     PROVIDER_UNAVAILABLE = "provider_unavailable"
     RATE_LIMITED = "rate_limited"
     INTERNAL_ERROR = "internal_error"
