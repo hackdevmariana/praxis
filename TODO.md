@@ -113,8 +113,13 @@
 - [x] Seeder idempotente de tenants demo y fuentes de datos globales.
 - [x] Tests de integración RLS para stores persistentes.
 
+### Cierre Fase 3
+
+- [x] Decisiones cerradas con defaults en las 42 specs (§8, o §5/§6 en backlog) y convención documentada en `docs/tools/README.md`.
+- [x] Contradicciones resueltas en `compare_offers`, `datetime.calc`, `validate.spanish_id` y `generate_invoice`.
+
 ## Huecos y decisiones pendientes
 
-- [ ] Cerrar las decisiones pendientes (§8) de cada ficha en [`docs/tools/`](docs/tools/README.md).
+- [x] Cerrar las decisiones §8 con defaults acordados en [`docs/tools/`](docs/tools/README.md); los restantes requieren producto, proveedor o validación legal.
 - [ ] Documentar/implementar el servicio de enlaces QR (`qr.generate`, v3) si se prioriza.
 - [ ] Revisar `docs/12-legal-notes.md` con validación profesional.
