@@ -171,6 +171,6 @@ Los campos omitidos en un golden toman el valor por defecto del contrato (`null`
 
 ## 8. Decisiones pendientes
 
-- ¿Soportar descuentos absolutos (€) mezclados con porcentuales? Propuesta: lista de objetos `{type, value}` en v1.1.
-- ¿Devolver el desglose por tramo (`10% = 100 €`, `5% = 45 €`)? Propuesta: campo `breakdown` opcional.
+- Decidido: descuentos absolutos (€) y porcentuales mezclados como lista de objetos `{type, value}` en v1.1.
+- Decidido: campo `breakdown` opcional con el desglose por tramo en v1.1.
 - Implementado: se redondea solo al final (no por tramo).

@@ -31,6 +31,8 @@ Cada spec incluye estas secciones, en este orden:
 7. **Composiciones** — tools relacionadas y puentes a `praxis-sim`.
 8. **Decisiones pendientes** — cuestiones abiertas antes de implementar.
 
+Nota: las specs en `backlog` pueden situar sus decisiones en §5/§6. Las decisiones cerradas se marcan con `- Decidido:` (o `- Implementado:` si está verificado en código); las abiertas se mantienen como `- Pendiente:`.
+
 ### Esqueleto
 
 ```markdown

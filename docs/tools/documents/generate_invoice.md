@@ -236,10 +236,11 @@ class GenerateInvoiceOutput(BaseModel):
 
 ## 8. Decisiones pendientes
 
-- Numeración fiscal por serie y ejercicio: confirmar requisitos con gestoría (¿reinicio anual?).
+- Pendiente: numeración fiscal por serie y ejercicio; validación con gestoría (¿reinicio anual?).
 - Implementado: cálculo por líneas y grupos de IVA, numeración delegada a `DocumentStore`, renderizado delegado a `InvoiceRenderer`, HTML saneado e idempotencia central en el ejecutor.
 - Pendiente: adaptadores reales de WeasyPrint, almacenamiento fuera del webroot, secuencia transaccional y persistencia de `Document`/`Invoice`/`AuditLog`.
-- Veri*factu / TicketBAI y firma electrónica: fuera del MVP; analizar en v2.
-- Plantillas por tenant (logo, colores, idioma): v1.1.
-- ¿Guardar PDF en `storage_path` con hash y permitir descarga firmada? v2 con S3/MinIO.
-- Abonos y facturas rectificativas: v1.1 (`document_type=credit_note`).
+- Pendiente: Veri*factu / TicketBAI y firma electrónica en v2; validación legal.
+- Pendiente: plantillas por tenant (logo, colores, idioma) en v1.1; decisión de producto.
+- Implementado: `pdf_path` y `document_hash_sha256` en la salida (v1).
+- Pendiente: descarga firmada y almacenamiento en S3/MinIO en v2; requiere proveedor.
+- Decidido: abonos y facturas rectificativas en v1.1 (`document_type=credit_note`).

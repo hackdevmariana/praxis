@@ -192,6 +192,6 @@ Los campos omitidos en un golden toman el valor por defecto del contrato (`null`
 
 ## 8. Decisiones pendientes
 
-- ¿Añadir cierre fiscal (`FiscalCalendarRule`) como periodo? Propuesta: tool separada `calendar.tax_deadline` en v2.
-- ¿Devolver también `weeks_remaining`? Propuesta: sí, campo opcional en v1.1.
+- Decidido: cierre fiscal (`FiscalCalendarRule`) como tool separada `calendar.tax_deadline` en v2.
+- Decidido: `weeks_remaining` como campo opcional en v1.1.
 - Implementado: el cómputo de días hábiles usa el mismo helper interno (`app.business_days.count_business_days`) que `datetime.business_days`.

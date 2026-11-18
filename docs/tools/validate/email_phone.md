@@ -172,6 +172,8 @@ Los campos omitidos en un golden toman el valor por defecto del contrato (`null`
 
 ## 8. Decisiones pendientes
 
-- ¿Añadir comprobación DNS/MX opcional (`check_dns`) en v2? Implicaría red y no determinismo; propuesta: tool separada.
-- Implementado: `phone_type` se devuelve como texto (`mobile`, `fixed_line`, `voip`, `toll_free`, `unknown`); evaluar enum cerrado en v1.1.
+- Decidido: comprobación DNS/MX en v2 como tool separada.
+- Pendiente: implementación de la tool de DNS/MX; requiere API/red.
+- Implementado: `phone_type` se devuelve como texto (`mobile`, `fixed_line`, `voip`, `toll_free`, `unknown`).
+- Pendiente: evaluar enum cerrado para `phone_type` en v1.1; decisión de producto.
 - Implementado: códigos `reason` estables (`invalid_format`, `invalid_length`, `invalid_country`, `parse_error`).

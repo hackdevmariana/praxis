@@ -179,6 +179,6 @@ Los campos omitidos en un golden toman el valor por defecto del contrato (`null`
 
 ## 8. Decisiones pendientes
 
-- Implementado en v1.0: además del mod-97 se valida el dígito de control nacional español (CCC) vía `stdnum.es.iban`.
-- ¿Soportar IBAN de países no europeos? `python-stdnum` ya cubre muchos; documentar límites.
+- Implementado: en v1.0, además del mod-97 se valida el dígito de control nacional español (CCC) vía `stdnum.es.iban`.
+- Decidido: documentar los límites de cobertura de `python-stdnum` para IBAN de países no europeos.
 - Implementado: códigos `reason` estables (`invalid_length`, `invalid_format`, `invalid_checksum`, `unknown_country`, `bic_country_mismatch`).

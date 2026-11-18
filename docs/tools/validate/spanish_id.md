@@ -181,6 +181,8 @@ Los campos omitidos en un golden toman el valor por defecto del contrato (`null`
 
 ## 8. Decisiones pendientes
 
-- ¿Validar también número de Seguridad Social y NIE de extranjeros sin NIF? (fuera de v1).
-- ¿Añadir consulta VIES opcional en v2 (implica red y no determinismo)? Propuesta: tool separada `validate.vies_eu`.
+- Implementado: validación de NIE en v1.
+- Pendiente: validar número de Seguridad Social; decisión de producto.
+- Decidido: consulta VIES en v2 como tool separada `validate.vies_eu`.
+- Pendiente: implementación de `validate.vies_eu`; requiere API externa.
 - Implementado: `reason` usa códigos estables (`invalid_length`, `invalid_format`, `invalid_checksum`, `type_mismatch`).

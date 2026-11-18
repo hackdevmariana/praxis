@@ -178,7 +178,7 @@ Fixture `contracts-2026-11-13.json`, reloj fijo **2026-11-13**.
 
 ## 8. Decisiones pendientes
 
-- Exportación a iCalendar (`.ics`) y vista por proveedor.
-- Renovaciones tácitas y preavisos legales por tipo de contrato.
-- Coste estimado real (facturas) frente a coste de contrato.
-- Sincronización con la agenda del usuario.
+- Pendiente: exportación a iCalendar (`.ics`) y vista por proveedor; decisión de producto.
+- Pendiente: renovaciones tácitas y preavisos legales por tipo de contrato; validación legal.
+- Pendiente: coste estimado real (facturas) frente a coste de contrato; dataset.
+- Pendiente: sincronización con la agenda del usuario; requiere API.

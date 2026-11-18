@@ -165,6 +165,6 @@ class CheapestHoursOutput(BaseModel):
 
 ## 8. Decisiones pendientes
 
-- Permitir ventanas de varias horas no contiguas agrupadas en bloques ("2 bloques de 2h").
-- Consumo no uniforme por hora (perfil horario del local) en v1.1.
-- Restricciones ("no antes de las 08:00", "máximo 2 bloques").
+- Pendiente: ventanas no contiguas agrupadas en bloques ("2 bloques de 2h"); decisión de producto.
+- Pendiente: consumo no uniforme por hora (perfil horario del local) en v1.1; dataset.
+- Pendiente: restricciones ("no antes de las 08:00", "máximo 2 bloques"); decisión de producto.

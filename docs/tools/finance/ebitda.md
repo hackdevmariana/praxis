@@ -142,7 +142,7 @@ class EbitdaOutput(BaseModel):
 
 ## 8. Decisiones pendientes
 
-- Ajustes normalizados por sector y por tamaño.
-- EBITDA por segmento de negocio.
-- Tratamiento de arrendamientos (IFRS 16) y comparabilidad con PYMES.
-- Validación con gestoría de las partidas no recurrentes.
+- Pendiente: ajustes normalizados por sector y por tamaño; decisión de producto.
+- Pendiente: EBITDA por segmento de negocio; decisión de producto.
+- Pendiente: tratamiento de arrendamientos (IFRS 16) y comparabilidad con PYMES; validación profesional.
+- Pendiente: validación con gestoría de las partidas no recurrentes; validación profesional.

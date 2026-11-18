@@ -160,7 +160,7 @@ class CompanyRiskOutput(BaseModel):
 
 ## 8. Decisiones pendientes
 
-- Contrato con el Registro Concursal y base legal para listas de morosidad.
-- Matching por nombre (fuzzy) y falsos positivos; exigir CIF para resultados fiables.
-- Score configurable por tenant y sector.
-- Historial de señales y evolución temporal.
+- Pendiente: contrato con el Registro Concursal y base legal para listas de morosidad; validación legal.
+- Decidido: exigir CIF para resultados fiables; el matching por nombre (fuzzy) se usa solo como apoyo.
+- Pendiente: score configurable por tenant y sector; decisión de producto.
+- Pendiente: historial de señales y evolución temporal; decisión de producto.

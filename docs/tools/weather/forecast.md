@@ -202,8 +202,8 @@ Fixture congelado `open-meteo-2026-11-13-madrid.json` (Madrid, 40.4168/−3.7038
 
 ## 8. Decisiones pendientes
 
-- Añadir `current` (condiciones actuales) como bloque opcional.
-- Histórico meteorológico: `weather.historical` en v2 con caché de 6 h.
-- Unidades imperiales: `unit_system=imperial` en v1.1.
+- Pendiente: añadir `current` (condiciones actuales) como bloque opcional; decisión de producto.
+- Pendiente: histórico meteorológico (`weather.historical` en v2 con caché de 6 h); requiere API.
+- Pendiente: unidades imperiales (`unit_system=imperial` en v1.1); decisión de producto.
 - Implementado: `relative_humidity_2m_mean` y `cloud_cover_mean` existen en la API real de Open-Meteo y se solicitan como agregados diarios.
 - Implementado: `metadata.units.shortwave_radiation` es `MJ/m²` en daily (suma) y `W/m²` en hourly (valor instantáneo).

@@ -172,7 +172,7 @@ class BusinessKpiOutput(BaseModel):
 
 ## 8. Decisiones pendientes
 
-- KPIs por sector y comparativas (benchmark) con `praxis-knowledge`.
-- DSO/DPO ponderados por importe y por vencimiento, no solo saldo medio.
-- Inclusión de impuestos/intereses para resultado neto y ROE/ROA.
-- Validar fórmulas con gestoría antes de publicar como referencia.
+- Pendiente: KPIs por sector y comparativas (benchmark) con `praxis-knowledge`; dataset.
+- Pendiente: DSO/DPO ponderados por importe y por vencimiento, no solo saldo medio; decisión de producto.
+- Pendiente: inclusión de impuestos/intereses para resultado neto y ROE/ROA; decisión de producto.
+- Pendiente: validar fórmulas con gestoría antes de publicar como referencia; validación profesional.

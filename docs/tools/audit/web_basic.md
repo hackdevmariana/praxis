@@ -91,8 +91,8 @@ class AuditOutput(BaseModel):
 
 ## 5. Decisiones pendientes
 
-- Comprobación de cookies (`Secure`, `HttpOnly`, `SameSite`).
-- Puertos alternativos y entornos de staging.
-- Integración con Lighthouse/axe para rendimiento y accesibilidad.
-- Alertas periódicas de cambios en cabeceras.
-- Promover a spec completa cuando entre en el MVP.
+- Pendiente: comprobación de cookies (`Secure`, `HttpOnly`, `SameSite`); decisión de producto.
+- Pendiente: puertos alternativos y entornos de staging; decisión de producto.
+- Pendiente: integración con Lighthouse/axe para rendimiento y accesibilidad; requiere API.
+- Pendiente: alertas periódicas de cambios en cabeceras; decidir canal y periodicidad.
+- Pendiente: promover a spec completa cuando entre en el MVP.

@@ -178,7 +178,7 @@ class HiringSimulatorOutput(BaseModel):
 
 ## 8. Decisiones pendientes
 
-- Bonificaciones de cotización y contratos formativos.
-- Coste por hora efectiva y absentismo.
-- Productividad por rol y curva de rampa no lineal.
-- Comparación de escenarios (headcount × salario) en una sola llamada.
+- Pendiente: bonificaciones de cotización y contratos formativos; validación legal.
+- Pendiente: coste por hora efectiva y absentismo; dataset.
+- Pendiente: productividad por rol y curva de rampa no lineal; dataset.
+- Pendiente: comparación de escenarios (headcount × salario) en una sola llamada; decisión de producto.

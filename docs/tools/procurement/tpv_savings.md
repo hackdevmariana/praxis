@@ -160,6 +160,6 @@ class TpvSavingsOutput(BaseModel):
 
 ## 8. Decisiones pendientes
 
-- Incluir cuota fija mensual, alquiler de terminal y coste de integración como campos opcionales en v1.1.
-- Soportar tramos de comisión (debit/credit, nacional/internacional) además del tipo único.
-- Verificar límites legales de comisiones (interchange) antes de afirmar ahorros.
+- Pendiente: incluir cuota fija mensual, alquiler de terminal y coste de integración como campos opcionales en v1.1.
+- Pendiente: soportar tramos de comisión (debit/credit, nacional/internacional) además del tipo único; decisión de producto.
+- Pendiente: verificar límites legales de comisiones (interchange) antes de afirmar ahorros; validación legal.

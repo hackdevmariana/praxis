@@ -182,9 +182,9 @@ class CreateEventOutput(BaseModel):
 
 ## 8. Decisiones pendientes
 
-- ¿Permitir crear en calendarios compartidos de empresa? Requiere rol y `calendar_id` autorizado (v1.1).
-- Política de `reminders` y `conferenceData` (Meet) en v1.1.
-- Recurrencia: interfaz amigable (`daily|weekly|monthly`) además de `RRULE`.
+- Pendiente: crear en calendarios compartidos de empresa; requiere rol y `calendar_id` autorizado (v1.1).
+- Pendiente: política de `reminders` y `conferenceData` (Meet) en v1.1; decisión de producto.
+- Pendiente: recurrencia amigable (`daily|weekly|monthly`) además de `RRULE`; decisión de producto.
 - Implementado: confirmación vía `ToolContext.confirmed`, idempotencia central de 30 días en el ejecutor y conector inyectable.
 - Pendiente: OAuth real, idempotencia persistente y `AuditLog`; el almacén en memoria se pierde al reiniciar.
-- Verificar el límite de asistentes de Google y el comportamiento con invitaciones externas.
+- Pendiente: verificar el límite de asistentes de Google y el comportamiento con invitaciones externas; requiere API.

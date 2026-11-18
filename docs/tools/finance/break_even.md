@@ -161,6 +161,6 @@ class BreakEvenOutput(BaseModel):
 
 ## 8. Decisiones pendientes
 
-- Punto de equilibrio multiproducto (mix de ventas y márgenes por producto).
-- Costes fijos escalonados (tramos) y economías de escala.
-- Incluir impuestos y coste financiero en una variante "break-even neto".
+- Pendiente: punto de equilibrio multiproducto (mix de ventas y márgenes por producto); decisión de producto.
+- Pendiente: costes fijos escalonados (tramos) y economías de escala; decisión de producto.
+- Pendiente: impuestos y coste financiero en una variante "break-even neto"; validación legal.

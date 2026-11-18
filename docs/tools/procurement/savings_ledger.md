@@ -178,7 +178,7 @@ Fixture `savings-ledger-2026.json` (tres registros del tenant).
 
 ## 8. Decisiones pendientes
 
-- Modelo de alta manual y aprobación de ahorros proyectados.
-- Amortización temporal del ahorro (mensual vs anualizado).
-- Evitar doble conteo entre herramientas que miden el mismo ahorro.
-- Moneda: ¿consolidar en EUR con `currency.convert` o exigir misma divisa?
+- Pendiente: modelo de alta manual y aprobación de ahorros proyectados; decisión de producto.
+- Pendiente: amortización temporal del ahorro (mensual vs anualizado); decisión de producto.
+- Pendiente: evitar doble conteo entre herramientas que miden el mismo ahorro; decisión de producto.
+- Pendiente: decidir si se consolida en EUR con `currency.convert` o se exige misma divisa.

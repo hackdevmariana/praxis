@@ -139,10 +139,10 @@ El seguimiento requiere un servicio HTTP propio, fuera del núcleo determinista;
 
 ## 6. Decisiones pendientes
 
-- Logo central y colores corporativos.
-- Dominio del servicio de enlaces (`qr.praxis.example` frente a dominio del tenant) y certificado.
-- Enlaces editables (cambiar el destino sin regenerar el QR).
-- Múltiples enlaces al mismo destino mediante `idempotency_key`.
-- Agregación y exportación de estadísticas; retención definitiva.
-- Límites de almacenamiento y caducidad de documentos.
-- Promover a spec completa cuando entre en el MVP.
+- Pendiente: logo central y colores corporativos; decisión de producto.
+- Pendiente: dominio del servicio de enlaces (`qr.praxis.example` frente a dominio del tenant) y certificado; requiere infraestructura.
+- Pendiente: enlaces editables (cambiar el destino sin regenerar el QR); decisión de producto.
+- Pendiente: múltiples enlaces al mismo destino mediante `idempotency_key`; decisión de producto.
+- Pendiente: agregación y exportación de estadísticas; retención definitiva; validación legal.
+- Pendiente: límites de almacenamiento y caducidad de documentos; validación legal.
+- Pendiente: promover a spec completa cuando entre en el MVP.

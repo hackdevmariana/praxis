@@ -170,6 +170,6 @@ Los campos omitidos en un golden toman el valor por defecto del contrato (`null`
 
 ## 8. Decisiones pendientes
 
-- ¿Añadir `add_business_days(start, days)` como operación? Propuesta: nueva operación en v1.1.
-- ¿Cómo tratar festivos que caen en fin de semana (traslado autonómico)? Depende del dataset por comunidad; documentar por año.
-- Cobertura de festivos locales: pendiente. El dataset actual no incluye locales y toda petición con `municipality_code` emite `local_holidays_unavailable`.
+- Decidido: añadir `add_business_days(start, days)` como operación en v1.1.
+- Pendiente: traslado autonómico de festivos en fin de semana; dataset por comunidad, documentar por año.
+- Pendiente: cobertura de festivos locales; dataset (toda petición con `municipality_code` emite `local_holidays_unavailable`).

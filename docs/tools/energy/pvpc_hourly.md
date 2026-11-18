@@ -158,6 +158,6 @@ Fixture `esios-pvpc-2026-11-13-peninsula.json` (precios `total`).
 
 ## 8. Decisiones pendientes
 
-- Token ESIOS: alta por email y almacenamiento cifrado por instalación.
-- ¿Soportar mercados OMIE además de PVPC? `energy.omie` en v2.
-- Confirmar tratamiento de festivos y cambios de hora (23/25 horas) en la serie.
+- Pendiente: token ESIOS: alta por email y almacenamiento cifrado por instalación; requiere API.
+- Pendiente: mercados OMIE además de PVPC (`energy.omie` en v2); requiere API.
+- Pendiente: confirmar tratamiento de festivos y cambios de hora (23/25 horas) en la serie; dataset.

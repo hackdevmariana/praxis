@@ -175,7 +175,7 @@ class SolarPaybackOutput(BaseModel):
 
 ## 8. Decisiones pendientes
 
-- Modelo horario con curva de consumo y precios PVPC.
-- Financiación, inflación de precios y fiscalidad (IVA, IBI, deducciones).
-- baterías y carga de vehículo eléctrico.
-- Factor CO₂ por comercializadora y año.
+- Pendiente: modelo horario con curva de consumo y precios PVPC; dataset.
+- Pendiente: financiación, inflación de precios y fiscalidad (IVA, IBI, deducciones); validación legal.
+- Pendiente: baterías y carga de vehículo eléctrico; decisión de producto.
+- Pendiente: factor CO₂ por comercializadora y año; dataset.

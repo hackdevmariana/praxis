@@ -164,7 +164,7 @@ Fixture `regcon-2026.json` (snapshot de prueba).
 
 ## 8. Decisiones pendientes
 
-- Scraping/actualización de REGCON y validación legal de los datos.
-- Tablas salariales por categoría y antigüedad, no solo mínimo.
-- Convenios de ámbito estatal vs. autonómico y concurrencia.
-- Búsqueda semántica de actividad con dataset propio (v3).
+- Pendiente: scraping/actualización de REGCON y validación legal de los datos.
+- Pendiente: tablas salariales por categoría y antigüedad, no solo mínimo; dataset.
+- Pendiente: convenios de ámbito estatal vs. autonómico y concurrencia; validación legal.
+- Pendiente: búsqueda semántica de actividad con dataset propio (v3); dataset.

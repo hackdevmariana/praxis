@@ -198,7 +198,7 @@ class CarbonOutput(BaseModel):
 
 ## 8. Decisiones pendientes
 
-- Factores oficiales por año y comunidad (MITECO) y factores de mercado (location-based vs market-based).
-- Alcance 3 ampliado (compras, viajes, cadena de suministro).
-- Verificación/auditoría del inventario y exportación a formatos GHG Protocol.
-- Evitar doble cómputo automáticamente cuando el combustible se usa para transporte.
+- Pendiente: factores oficiales por año y comunidad (MITECO) y factores de mercado (location-based vs market-based); dataset.
+- Pendiente: alcance 3 ampliado (compras, viajes, cadena de suministro); decisión de producto.
+- Pendiente: verificación/auditoría del inventario y exportación a formatos GHG Protocol; requiere auditoría externa.
+- Pendiente: evitar doble cómputo automáticamente cuando el combustible se usa para transporte; decisión de producto.

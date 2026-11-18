@@ -163,7 +163,7 @@ class Cashflow13wOutput(BaseModel):
 
 ## 8. Decisiones pendientes
 
-- Escenarios (optimista/base/pesimista) y comparación.
-- Fechas de cobro/pago por factura (vencimientos reales) en lugar de agregados semanales.
-- Impuestos, nóminas y financiación (confirming/factoring).
-- Exportación a Excel/CSV y gráficos.
+- Pendiente: escenarios (optimista/base/pesimista) y comparación; decisión de producto.
+- Pendiente: fechas de cobro/pago por factura (vencimientos reales) en lugar de agregados semanales; dataset.
+- Pendiente: impuestos, nóminas y financiación (confirming/factoring); validación legal.
+- Pendiente: exportación a Excel/CSV y gráficos; decisión de producto.

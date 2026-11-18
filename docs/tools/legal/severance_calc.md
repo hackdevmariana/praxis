@@ -200,7 +200,7 @@ class SeveranceOutput(BaseModel):
 
 ## 8. Decisiones pendientes
 
-- Mejoras voluntarias de convenio y límites por categoría.
-- Salario regulador con complementos variables y en especie.
-- Despido disciplinario procedente y nulidad (sin indemnización).
-- Validación legal obligatoria antes de publicar la tool como definitiva.
+- Pendiente: mejoras voluntarias de convenio y límites por categoría; validación legal.
+- Pendiente: salario regulador con complementos variables y en especie; validación legal.
+- Pendiente: despido disciplinario procedente y nulidad (sin indemnización); validación legal.
+- Pendiente: validación legal obligatoria antes de publicar la tool como definitiva.

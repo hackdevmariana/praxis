@@ -168,6 +168,6 @@ Fixture congelado `cartociudad-2026-11-13.json`.
 
 ## 8. Decisiones pendientes
 
-- ¿Añadir `country` y `bounding_box` a la salida? Propuesta: sí en v1.1.
-- Cobertura fuera de España (Nominatim como primario) y cumplimiento de su política de uso.
-- Validar reglas de redistribución de CartoCiudad (no cachear compartido entre tenants).
+- Decidido: añadir `country` y `bounding_box` a la salida en v1.1.
+- Pendiente: cobertura fuera de España con Nominatim y cumplimiento de su política de uso; requiere API y validación legal.
+- Pendiente: reglas de redistribución de CartoCiudad (no cachear compartido entre tenants); validación legal.

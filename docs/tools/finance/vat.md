@@ -179,6 +179,6 @@ Los campos omitidos en un golden toman el valor por defecto del contrato (`null`
 
 ## 8. Decisiones pendientes
 
-- ¿Soportar importes con más de 2 decimales (precios unitarios) y redondear solo en el total? Propuesta: parámetro `rounding` en v1.1.
-- ¿Añadir `operation=breakdown` para devolver el desglose por tipo en una factura? Propuesta: tool `finance.vat_breakdown` en v2.
-- `extract` y `remove` son equivalentes; mantener ambos por compatibilidad semántica.
+- Decidido: parámetro `rounding` en v1.1 para importes con más de 2 decimales.
+- Decidido: tool `finance.vat_breakdown` en v2 para el desglose por tipo.
+- Decidido: `extract` y `remove` son equivalentes; mantener ambos por compatibilidad semántica.

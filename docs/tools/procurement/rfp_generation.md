@@ -202,7 +202,7 @@ class RfpOutput(BaseModel):
 
 ## 8. Decisiones pendientes
 
-- Plantillas por sector y cláusulas legales revisadas.
-- Envío de invitaciones y portal de recepción de ofertas.
-- Firma electrónica y registro de comunicaciones.
-- Idiomas (ES/EN) y monedas múltiples.
+- Pendiente: plantillas por sector y cláusulas legales revisadas; validación legal.
+- Pendiente: envío de invitaciones y portal de recepción de ofertas; requiere API.
+- Pendiente: firma electrónica y registro de comunicaciones; validación legal.
+- Pendiente: idiomas (ES/EN) y monedas múltiples; decisión de producto.

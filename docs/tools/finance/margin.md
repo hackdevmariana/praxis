@@ -190,6 +190,6 @@ Los campos omitidos en un golden toman el valor por defecto del contrato (`null`
 
 ## 8. Decisiones pendientes
 
-- ¿Añadir `markup_pct` como entrada válida? Propuesta: sí en v1.1 (`{cost, markup_pct}` y `{price, markup_pct}`).
-- ¿Distinguir margen bruto de margen comercial (con o sin otros costes)? Propuesta: tool `finance.gross_margin` en v2.
+- Decidido: `markup_pct` como entrada válida en v1.1 (`{cost, markup_pct}` y `{price, markup_pct}`).
+- Decidido: tool `finance.gross_margin` en v2 para distinguir margen bruto de comercial.
 - Implementado: `price=0, cost>0` devuelve `margin_pct=null` con warning `margin_undefined`; `cost=0, price>0` devuelve `markup_pct=null` con warning `markup_undefined`.

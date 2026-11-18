@@ -202,7 +202,7 @@ class TariffSimulatorOutput(BaseModel):
 
 ## 8. Decisiones pendientes
 
-- Periodos horarios P1/P2/P3 (2.0TD/3.0TD) y potencias por periodo.
-- Impuestos (IVA, impuesto eléctrico) y excedentes de autoconsumo.
-- Tarifas indexadas con fórmula PVPC + margen.
-- Validar el perfil de consumo con datos reales del usuario (curva horaria).
+- Pendiente: periodos horarios P1/P2/P3 (2.0TD/3.0TD) y potencias por periodo; dataset.
+- Pendiente: impuestos (IVA, impuesto eléctrico) y excedentes de autoconsumo; validación legal.
+- Pendiente: tarifas indexadas con fórmula PVPC + margen; decisión de producto.
+- Pendiente: validar el perfil de consumo con datos reales del usuario (curva horaria); dataset.

@@ -179,6 +179,6 @@ Los campos omitidos en un golden toman el valor por defecto del contrato (`null`
 
 ## 8. Decisiones pendientes
 
-- ¿Añadir `add_business_days` aquí o mantenerlo en `datetime.business_days`? Propuesta: en `business_days`.
-- ¿Devolver `weekday_name` localizado según idioma del usuario? Propuesta: parámetro `language` en v1.1.
-- Implementado: nombres de día estables en castellano sin acentos (`miercoles`); `language` para otras lenguas queda en v2.
+- Decidido: `add_business_days` se mantiene en `datetime.business_days`.
+- Decidido: parámetro `language` para `weekday_name` localizado en v2.
+- Implementado: nombres de día estables en castellano sin acentos (`miercoles`).

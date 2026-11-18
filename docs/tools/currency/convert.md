@@ -162,6 +162,6 @@ Fixture congelado `ecb-2026-11-13.json` (para tests): `EUR/USD 1.0850`, `EUR/GBP
 ## 8. Decisiones pendientes
 
 - Implementado: caché TTL en memoria de 12 h por fecha solicitada; `rate_date` refleja la última publicación efectiva del BCE.
-- Decimales por divisa (JPY 0, BHD 3): v1 usa 2 decimales; propuesta de `minor_units` en v1.1.
-- ¿Añadir `inverse_rate` en la salida? Propuesta: sí, opcional.
-- Criptomonedas: fuera de v1; proveedor específico y disclaimer en v2.
+- Decidido: `minor_units` por divisa en v1.1 (v1 usa 2 decimales).
+- Decidido: `inverse_rate` opcional en la salida en v1.1.
+- Pendiente: criptomonedas en v2; proveedor específico (requiere API) y disclaimer.

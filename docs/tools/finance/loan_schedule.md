@@ -196,6 +196,6 @@ Los campos omitidos en un golden toman el valor por defecto del contrato (`null`
 
 ## 8. Decisiones pendientes
 
-- ¿Soportar carencia (periodo de gracia) y tipo variable? Propuesta: parámetros `grace_months` y `rate_schedule` en v2.
-- ¿Añadir `type=american` (solo intereses + devolución final)? Propuesta: v2.
+- Decidido: parámetros `grace_months` y `rate_schedule` en v2.
+- Decidido: `type=american` (solo intereses + devolución final) en v2.
 - Implementado: `(1+i)^−n` se calcula con `Decimal` y precisión 60; el redondeo se aplica por periodo al céntimo.

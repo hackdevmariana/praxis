@@ -197,7 +197,7 @@ class CompareOffersOutput(BaseModel):
 
 ## 8. Decisiones pendientes
 
-- Modelo de costes más rico (consumibles, formación, SLA, coste por usuario) en v1.1.
-- Tratamiento del coste de cancelación: ¿sumar siempre (peor caso) o solo si `years < permanence_months`?
-- Añadir `total_cost_3y` / `total_cost_5y` simultáneos para comparar horizontes distintos.
-- Verificar que `documents.extract_invoice` marca los importes con/sin IVA de forma fiable.
+- Pendiente: modelo de costes más rico (consumibles, formación, SLA, coste por usuario) en v1.1; decisión de producto.
+- Decidido: sumar siempre el coste de cancelación como coste de riesgo; `permanence_months` informativo (implementado en v1).
+- Pendiente: `total_cost_3y` / `total_cost_5y` simultáneos para comparar horizontes distintos; decisión de producto.
+- Pendiente: verificar que `documents.extract_invoice` marca los importes con/sin IVA de forma fiable.

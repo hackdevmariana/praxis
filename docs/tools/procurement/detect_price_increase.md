@@ -150,6 +150,6 @@ class PriceIncreaseOutput(BaseModel):
 
 ## 8. Decisiones pendientes
 
-- Detección estadística (media/mediana histórica, z-score) además del umbral fijo.
-- Comparación entre proveedores para el mismo producto.
-- Estacionalidad y variaciones de materia prima (índices públicos).
+- Pendiente: detección estadística (media/mediana histórica, z-score) además del umbral fijo; decisión de producto.
+- Pendiente: comparación entre proveedores para el mismo producto; decisión de producto.
+- Pendiente: estacionalidad y variaciones de materia prima (índices públicos); dataset.

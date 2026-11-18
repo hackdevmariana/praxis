@@ -104,8 +104,8 @@ class GrantsSearchOutput(BaseModel):
 
 ## 5. Decisiones pendientes
 
-- Alertas de nuevas convocatorias por perfil de empresa.
-- Requisitos de elegibilidad y documentación (no solo metadatos).
-- Subvenciones autonómicas y locales fuera de BDNS.
-- Detección de duplicados entre administraciones.
-- Promover a spec completa cuando entre en el MVP.
+- Pendiente: alertas de nuevas convocatorias por perfil de empresa; requiere feed BDNS.
+- Pendiente: requisitos de elegibilidad y documentación (no solo metadatos); dataset.
+- Pendiente: subvenciones autonómicas y locales fuera de BDNS; dataset.
+- Pendiente: detección de duplicados entre administraciones; dataset.
+- Pendiente: promover a spec completa cuando entre en el MVP.

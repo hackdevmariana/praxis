@@ -170,6 +170,6 @@ Notas:
 
 ## 8. Decisiones pendientes
 
-- ¿Añadir `units.convert_delta` para diferencias de temperatura? Propuesta: sí, backlog.
+- Decidido: `units.convert_delta` para diferencias de temperatura en backlog.
 - Implementado: `precision` por defecto 6 (máximo 12) para no perder exactitud en conversiones pequeñas.
 - Implementado: las unidades ambiguas se resuelven con el registro de `pint` (`gal` = US) y se documentan en `mcp_description`.
