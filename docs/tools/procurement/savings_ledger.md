@@ -117,7 +117,7 @@ class SavingsLedgerOutput(BaseModel):
 
 ## 5. Golden cases
 
-Fixture `savings-ledger-2026.json` (tres registros del tenant).
+Los golden cases están inline en esta spec; no hay fixture `savings-ledger-2026.json` en `tests/fixtures` ni implementación/tests para esta tool v2.
 
 ```json
 {

@@ -85,7 +85,7 @@ class ListEventsOutput(BaseModel):
 
 ## 5. Golden cases
 
-Fixture congelado `gcal-2026-11-13.json` (dos eventos en `primary`).
+Datos de prueba: eventos inline en `tests/test_calendar_events.py` inyectados con `set_calendar_connector`; no hay fixture `gcal-2026-11-13.json` en `tests/fixtures`.
 
 ```json
 {

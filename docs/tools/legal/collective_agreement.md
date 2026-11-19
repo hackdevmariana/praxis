@@ -89,7 +89,7 @@ class CollectiveAgreementOutput(BaseModel):
 
 ## 5. Golden cases
 
-Fixture `regcon-2026.json` (snapshot de prueba).
+Los golden cases están inline en esta spec; no hay fixture `regcon-2026.json` en `tests/fixtures` ni implementación/tests para esta tool v2.
 
 ```json
 {

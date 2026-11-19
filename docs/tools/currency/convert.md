@@ -77,7 +77,7 @@ class CurrencyConvertOutput(BaseModel):
 
 ## 5. Golden cases
 
-Fixture congelado `ecb-2026-11-13.json` (para tests): `EUR/USD 1.0850`, `EUR/GBP 0.8650`, `EUR/JPY 163.20`.
+Fixture congelado `ecb-2026-11-13.csv` (para tests): `EUR/USD 1.0850`, `EUR/GBP 0.8650`, `EUR/JPY 163.20`.
 
 ```json
 {
@@ -157,7 +157,7 @@ Fixture congelado `ecb-2026-11-13.json` (para tests): `EUR/USD 1.0850`, `EUR/GBP
 
 - Usada por `procurement.compare_offers` para ofertas en divisas distintas.
 - Usada por `documents.extract_invoice` cuando la factura no está en EUR.
-- Base de `finance.kpi` (v2) para consolidar importes multi-divisa.
+- Base de `finance.business_kpi` (v2) para consolidar importes multi-divisa.
 
 ## 8. Decisiones pendientes
 

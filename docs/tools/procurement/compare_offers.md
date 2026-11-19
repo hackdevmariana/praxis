@@ -38,7 +38,7 @@ Cálculo:
 5. `annual_cost = round(total_cost / years)`.
 6. `monthly_cost = round(total_cost / (years × 12))`.
 
-`cancelation_cost` se incluye como coste de riesgo (peor caso al no cumplir permanencia); no se descuenta.
+`cancellation_cost` se incluye como coste de riesgo (peor caso al no cumplir permanencia); no se descuenta.
 
 Normalización (`normalize_by`) solo cambia la ordenación y la métrica destacada, no los cálculos:
 

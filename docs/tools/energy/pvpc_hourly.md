@@ -87,7 +87,7 @@ class PvpcOutput(BaseModel):
 
 ## 5. Golden cases
 
-Fixture `esios-pvpc-2026-11-13-peninsula.json` (precios `total`).
+Los golden cases están inline en esta spec; no hay fixture `esios-pvpc-2026-11-13-peninsula.json` en `tests/fixtures` ni implementación/tests para esta tool v2.
 
 ```json
 {
@@ -153,7 +153,7 @@ Fixture `esios-pvpc-2026-11-13-peninsula.json` (precios `total`).
 ## 7. Composiciones
 
 - Base de `energy.cheapest_hours` y `energy.tariff_simulator`.
-- Alimenta `energy.autoconsumption_payback` con el precio de la electricidad.
+- Alimenta `energy.self_consumption_payback` con el precio de la electricidad.
 - Usada por `alerts.*` para avisar de picos de precio (v2).
 
 ## 8. Decisiones pendientes

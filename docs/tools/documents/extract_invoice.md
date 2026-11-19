@@ -15,7 +15,7 @@ tool: documents.extract_invoice
 | read_only | true |
 | idempotent | true (por documento + tipo + versión de extracción) |
 | requires_confirmation | false |
-| Provider | `pdfplumber` / `markitdown`; OCR `Tesseract` |
+| Provider | `pdfplumber`; `markitdown` no incluido; OCR `Tesseract` pendiente |
 | Caché | resultado persistido en `DocumentExtraction` |
 | Perfiles | `praxis-biz`, `praxis-knowledge` |
 
@@ -24,8 +24,8 @@ tool: documents.extract_invoice
 Extrae datos estructurados de una factura, albarán o presupuesto PDF ya subido.
 
 1. **Acceso:** el documento se busca por `document_id` **dentro del tenant** (RLS). Si no existe o es de otra empresa → `document_not_found`.
-2. **Validación:** tipo real PDF (`python-magic`, no por extensión) y tamaño dentro del límite configurado; si no → `unsupported_format` / `document_too_large`.
-3. **Texto:** extracción con `pdfplumber` (o `markitdown`). Si el texto es insuficiente (< 100 caracteres útiles) se aplica OCR con `Tesseract` (`spa+eng`).
+2. **Validación:** la cabecera PDF y el tamaño se validan en el adaptador; `python-magic` no está incluido en el MVP.
+3. **Texto:** extracción con `pdfplumber`. Si el texto es insuficiente (< 100 caracteres útiles) se devuelve `needs_review=true`, `confidence=0.0` y warning `ocr_unavailable`; OCR con `Tesseract` está pendiente.
 4. **Parseo:** heurísticas + regex sobre texto; se normalizan CIF/NIF, fechas ISO, importes `Decimal` y divisa.
 5. **Cuadre:** se comprueba `base + vat = total` (±0.02) y `Σ líneas = base`. Si no cuadra → warning `totals_mismatch` y baja confianza.
 6. **Confianza:** media ponderada de campos críticos (número, fecha, total, CIF). Si `< 0.70` → `needs_review=true`.
@@ -185,7 +185,7 @@ Fixture `invoice-F-2026-0042.pdf` (texto embebido, 2 líneas).
 
 - Alimenta `procurement.compare_offers` (presupuestos → `OfferInput`).
 - Alimenta `documents.generate_invoice` solo como referencia; no se reutiliza el PDF.
-- Usada por `finance.vat` para verificar cuotas y por `finance.kpi` (v2) para gastos.
+- Usada por `finance.vat` para verificar cuotas y por `finance.business_kpi` (v2) para gastos.
 
 ## 8. Decisiones pendientes
 

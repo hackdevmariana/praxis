@@ -18,7 +18,7 @@ tool: alerts.contract_renewal
 | Provider | determinista (planificación interna) |
 | Caché | n/a |
 | Perfiles | `praxis-biz` |
-| Efectos | crea `AlertRule` y `AlertEvent` pendientes; **no** envía notificaciones en el MVP |
+| Efectos | devuelve un plan de reglas/disparos en la salida; la persistencia real de `AlertRule`/`AlertEvent` está pendiente; **no** envía notificaciones en el MVP |
 
 ## 2. Semántica exacta
 
@@ -37,7 +37,7 @@ Programa recordatorios de renovación a N días del vencimiento.
 
 Reglas:
 
-- Cada disparo crea un `AlertEvent` con `status=pending`, `scheduled_at` y `channel`.
+- Cada disparo se representa en `schedule` con `status=pending`, `trigger_at` y `channel`; la creación persistente de `AlertEvent` está pendiente.
 - Si el contrato no está activo, se programa igualmente pero con warning `contract_not_active`.
 - Si `renewal_date` es hoy, todos los avisos quedan en el pasado → `schedule: []` y warning `no_future_triggers`.
 - No se envían notificaciones externas en el MVP; `channel` no implica entrega.

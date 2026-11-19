@@ -175,9 +175,9 @@ Los campos omitidos en un golden toman el valor por defecto del contrato (`null`
 
 ## 7. Composiciones
 
-- Usada por `documents.extract_invoice` para validar el CIF del emisor.
-- Usada por `procurement.compare_offers` para normalizar proveedores (v2).
-- Base de `legal.company_risk` (backlog) para cruzar con fuentes registrales.
+- Usada por `documents.generate_invoice` para validar el CIF del cliente.
+- Composición futura: usar `validate.spanish_id` en `procurement.compare_offers` para normalizar proveedores en v1.1.
+- Base de `legal.company_risk` (v2) para cruzar con fuentes registrales.
 
 ## 8. Decisiones pendientes
 

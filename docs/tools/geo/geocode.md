@@ -87,7 +87,7 @@ class GeocodeOutput(BaseModel):
 
 ## 5. Golden cases
 
-Fixture congelado `cartociudad-2026-11-13.json`.
+Datos de prueba: stubs inline servidos con `respx` en `tests/test_geo_geocode.py`; no hay fixture `cartociudad-2026-11-13.json` en `tests/fixtures`.
 
 ```json
 {

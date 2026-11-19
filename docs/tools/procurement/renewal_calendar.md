@@ -93,7 +93,7 @@ class RenewalCalendarOutput(BaseModel):
 
 ## 5. Golden cases
 
-Fixture `contracts-2026-11-13.json`, reloj fijo **2026-11-13**.
+Sin fixture en `tests/fixtures`; tool v2 sin tests propios. La tool MVP `alerts.contract_renewal` usa contratos inline en `tests/test_alerts_contract_renewal.py` con reloj fijo **2026-11-13**.
 
 ```json
 {

@@ -186,5 +186,5 @@ class CreateEventOutput(BaseModel):
 - Pendiente: política de `reminders` y `conferenceData` (Meet) en v1.1; decisión de producto.
 - Pendiente: recurrencia amigable (`daily|weekly|monthly`) además de `RRULE`; decisión de producto.
 - Implementado: confirmación vía `ToolContext.confirmed`, idempotencia central de 30 días en el ejecutor y conector inyectable.
-- Pendiente: OAuth real, idempotencia persistente y `AuditLog`; el almacén en memoria se pierde al reiniciar.
+- Pendiente: OAuth real y persistencia real de eventos/`AuditLog`; la idempotencia persistente ya existe cuando se configura `DATABASE_URL`.
 - Pendiente: verificar el límite de asistentes de Google y el comportamiento con invitaciones externas; requiere API.

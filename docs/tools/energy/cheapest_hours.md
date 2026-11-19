@@ -67,7 +67,7 @@ class CheapestHoursOutput(BaseModel):
 | Caso | Entrada | Resultado |
 |---|---|---|
 | Ventana de 4h | `hours_needed=4`, `contiguous=true` | 03:00–07:00, media 0.11650 |
-| 4h sueltas | `contiguous=false` | mismas horas en este fixture |
+| 4h sueltas | `contiguous=false` | mismas horas del caso anterior |
 | Ventana de 6h | `hours_needed=6`, contigua | 01:00–07:00, media 0.12317 |
 | 6h sueltas | `contiguous=false` | h2,3,4,5,6,13, media 0.12200 |
 | Coste con consumo | 4h + `consumption_kwh=10` | 1.17 EUR |
