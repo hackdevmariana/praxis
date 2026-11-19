@@ -9,6 +9,8 @@
 - [x] ADRs `001`–`008`.
 - [x] 42 specs de tools (21 MVP + 18 v2 + 3 backlog) enlazadas desde el índice.
 - [x] Verificación global de enlaces Markdown.
+- [x] Índices `docs/README.md`, `docs/adr/README.md` y `scripts/README.md`.
+- [x] Checker automático de Markdown en CI (`scripts/check_markdown.py`).
 - [ ] Validación legal de [`docs/12-legal-notes.md`](docs/12-legal-notes.md) (sigue en borrador).
 
 ## Fase 1 — Tanda 1: esqueleto + tools semana 1 + MCP

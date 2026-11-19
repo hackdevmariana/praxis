@@ -425,7 +425,7 @@ Salida: `{ alert_rule_id, renewal_date, next_trigger_at, schedule: [{days_before
 
 ## Backlog documentado
 
-Herramientas previstas para la comunidad, con estado `backlog` (sin fecha) o `v2`. No se implementan en el MVP; sirven de guía y deben cumplir los criterios de entrada de [`02-mvp-scope.md`](02-mvp-scope.md#criterios-de-entrada-para-herramientas-de-backlog).
+Herramientas previstas para la comunidad, con estado `backlog` (sin fecha) o `v2`. No se implementan en el MVP; sirven de guía y deben cumplir los criterios de entrada de [`02-mvp-scope.md`](02-mvp-scope.md#criterios-de-entrada-para-herramientas-de-backlog). Las specs completas están en el [índice de herramientas](tools/README.md).
 
 | Categoría | Ejemplos | Estado |
 |---|---|---|

@@ -75,4 +75,4 @@ El detalle y los criterios de corte están en [`02-mvp-scope.md`](02-mvp-scope.m
 
 ## Documentación
 
-El índice completo está en [`docs/`](.). Este fichero es el punto de entrada al marco del proyecto; el alcance está en [`02-mvp-scope.md`](02-mvp-scope.md) y la arquitectura en [`01-architecture.md`](01-architecture.md).
+El índice completo está en [`README.md`](README.md). Este fichero es el punto de entrada al marco del proyecto; el alcance está en [`02-mvp-scope.md`](02-mvp-scope.md) y la arquitectura en [`01-architecture.md`](01-architecture.md).

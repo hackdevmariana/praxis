@@ -111,7 +111,7 @@ CI ejecuta lint, formato, tipos, tests y umbrales de cobertura: ≥ 80 % global 
 
 ## Documentación
 
-Índice en [`docs/`](docs/):
+Índice maestro en [`docs/README.md`](docs/README.md). Índices específicos: [especificaciones de tools](docs/tools/README.md), [ADRs](docs/adr/README.md) y [scripts](scripts/README.md).
 
 - [`00-overview.md`](docs/00-overview.md) — qué es PRAXIS, por qué y para quién.
 - [`01-architecture.md`](docs/01-architecture.md) — verticales, capas y flujo de ejecución.

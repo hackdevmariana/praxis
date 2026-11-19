@@ -158,4 +158,4 @@ De este modo el LLM solo redacta el informe final; nunca calcula. El detalle se 
 
 ## Decisiones de arquitectura
 
-Las decisiones relevantes están registradas en [`adr/`](adr/). Las iniciales: MCP como interfaz primaria (ADR-001), core stateless (ADR-002), RLS (ADR-003), código como fuente de verdad (ADR-004), almacenamiento en VPS (ADR-005), Decimal (ADR-006), `praxis-sim` (ADR-007) e ingesta manual (ADR-008).
+Las decisiones relevantes están registradas en el [índice de ADRs](adr/README.md). Las iniciales: MCP como interfaz primaria (ADR-001), core stateless (ADR-002), RLS (ADR-003), código como fuente de verdad (ADR-004), almacenamiento en VPS (ADR-005), Decimal (ADR-006), `praxis-sim` (ADR-007) e ingesta manual (ADR-008).
