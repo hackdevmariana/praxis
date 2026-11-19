@@ -2,7 +2,11 @@ from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from app.context import ToolContext
 from app.errors import ErrorCode, ToolError
-from app.providers.google_calendar import get_calendar_connector
+from app.providers.google_calendar import (
+    PersistedEvent,
+    get_calendar_connector,
+    get_event_repository,
+)
 from app.registry import tool
 from app.result import ToolResult, tool_result
 from app.tools.calendar.create_event.schemas import (
@@ -56,6 +60,20 @@ async def create_event(params: CreateEventInput, ctx: ToolContext) -> ToolResult
         timezone=timezone.key,
         send_notifications=params.send_notifications,
         recurrence_rrule=params.recurrence_rrule,
+    )
+
+    await get_event_repository(ctx).save(
+        PersistedEvent(
+            company_id=ctx.company_id or "",
+            event_id=record.event_id,
+            calendar_id=params.calendar_id,
+            title=params.title,
+            start=record.start,
+            end=record.end,
+            html_link=record.html_link,
+            status=record.status,
+            idempotency_key=params.idempotency_key,
+        )
     )
 
     output = CreateEventOutput(

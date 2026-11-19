@@ -40,6 +40,27 @@ class CreatedEventRecord:
     created: datetime
 
 
+@dataclass(frozen=True, slots=True)
+class PersistedEvent:
+    company_id: str
+    event_id: str
+    calendar_id: str
+    title: str
+    start: str
+    end: str
+    html_link: str | None
+    status: str
+    idempotency_key: str | None
+
+
+class CalendarTokenProvider(Protocol):
+    async def get_access_token(self, ctx: ToolContext) -> str: ...
+
+
+class EventRepository(Protocol):
+    async def save(self, event: PersistedEvent) -> None: ...
+
+
 class CalendarConnector(Protocol):
     async def list_events(
         self,
@@ -104,7 +125,13 @@ class UnconfiguredCalendarConnector:
         )
 
 
+class NoopEventRepository:
+    async def save(self, event: PersistedEvent) -> None:
+        return None
+
+
 _connector: CalendarConnector = UnconfiguredCalendarConnector()
+_event_repository: EventRepository = NoopEventRepository()
 
 
 def get_calendar_connector(ctx: ToolContext) -> CalendarConnector:
@@ -114,3 +141,12 @@ def get_calendar_connector(ctx: ToolContext) -> CalendarConnector:
 def set_calendar_connector(connector: CalendarConnector | None) -> None:
     global _connector
     _connector = connector or UnconfiguredCalendarConnector()
+
+
+def get_event_repository(ctx: ToolContext) -> EventRepository:
+    return _event_repository
+
+
+def set_event_repository(repository: EventRepository | None) -> None:
+    global _event_repository
+    _event_repository = repository or NoopEventRepository()
