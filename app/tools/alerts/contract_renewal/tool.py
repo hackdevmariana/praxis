@@ -8,10 +8,18 @@ from app.clock import MADRID, now
 from app.context import ToolContext
 from app.errors import ErrorCode, ToolError
 from app.idempotency import deduplicated_value, get_idempotency_store, scoped_key
+from app.providers.alerts import (
+    AlertEventRecord,
+    AlertMessage,
+    AlertRuleRecord,
+    get_alert_notifier,
+    get_alert_rule_repository,
+)
 from app.providers.contracts import get_contract_repository
 from app.registry import tool
 from app.result import ToolResult, tool_result
 from app.tools.alerts.contract_renewal.schemas import (
+    Channel,
     ContractRenewalInput,
     ContractRenewalOutput,
     ScheduleEntry,
@@ -34,8 +42,8 @@ def _trigger(renewal_date: date, days_before: int) -> datetime:
     mcp_description=(
         "Programa recordatorios internos a 1-365 días antes de la renovación de "
         "un contrato, a las 09:00 de Europe/Madrid. Exige confirmación humana e "
-        "idempotency_key. No envía emails ni WhatsApp en el MVP; solo registra "
-        "la regla y sus disparos pendientes."
+        "idempotency_key. Regla y disparos se persisten; el notificador configurado "
+        "envía los avisos cuando llegan a su fecha."
     ),
 )
 async def schedule_contract_renewal(
@@ -106,8 +114,55 @@ async def schedule_contract_renewal(
     if not entries:
         warnings.append("no_future_triggers")
 
+    rule_id = uuid4()
+    events = tuple(
+        AlertEventRecord(
+            id=uuid4(),
+            company_id=company_id,
+            alert_rule_id=rule_id,
+            days_before=entry.days_before,
+            trigger_at=entry.trigger_at,
+            channel=entry.channel.value,
+            status=entry.status,
+        )
+        for entry in entries
+    )
+    await get_alert_rule_repository(ctx).save(
+        AlertRuleRecord(
+            id=rule_id,
+            company_id=company_id,
+            contract_id=params.contract_id,
+            renewal_date=params.renewal_date,
+            channel=params.channel.value,
+            next_trigger_at=entries[0].trigger_at if entries else None,
+            idempotency_key=params.idempotency_key,
+        ),
+        events,
+    )
+
+    notifications_sent = 0
+    if params.channel == Channel.email and params.recipient is not None:
+        notifier = get_alert_notifier(ctx)
+        for entry in entries:
+            if entry.trigger_at > moment:
+                continue
+            await notifier.send(
+                AlertMessage(
+                    company_id=company_id,
+                    contract_id=params.contract_id,
+                    recipient=str(params.recipient),
+                    subject=f"Renovación de contrato en {entry.days_before} días",
+                    body=(
+                        f"El contrato {params.contract_id} se renueva el "
+                        f"{params.renewal_date.isoformat()}."
+                    ),
+                    trigger_at=entry.trigger_at,
+                )
+            )
+            notifications_sent += 1
+
     output = ContractRenewalOutput(
-        alert_rule_id=str(uuid4()),
+        alert_rule_id=str(rule_id),
         renewal_date=params.renewal_date,
         next_trigger_at=entries[0].trigger_at if entries else None,
         schedule=entries,
@@ -124,6 +179,8 @@ async def schedule_contract_renewal(
             "timezone": MADRID.key,
             "idempotency_key": params.idempotency_key,
             "effect": "alert_rule_created",
+            "alert_rule_id": str(rule_id),
+            "notifications_sent": notifications_sent,
         },
         idempotency_aliases=(equivalent_key,),
     )

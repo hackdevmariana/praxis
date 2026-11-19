@@ -2,7 +2,7 @@ from datetime import date, datetime
 from enum import StrEnum
 from uuid import UUID
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, EmailStr, Field, field_validator
 
 
 class Channel(StrEnum):
@@ -18,6 +18,7 @@ class ContractRenewalInput(BaseModel):
         default_factory=lambda: [60, 30, 15], min_length=1, max_length=10
     )
     channel: Channel = Channel.none
+    recipient: EmailStr | None = None
     idempotency_key: str = Field(min_length=8, max_length=64, pattern=r"^[A-Za-z0-9_-]+$")
 
     @field_validator("notice_days")

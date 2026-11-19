@@ -1,10 +1,22 @@
 """Minimal tenant and global tables protected by the initial RLS migration."""
 
-from datetime import datetime
+from datetime import date, datetime
 from typing import Any
 from uuid import UUID, uuid4
 
-from sqlalchemy import Boolean, DateTime, ForeignKey, Index, Integer, String, Text, Uuid, func
+from sqlalchemy import (
+    Boolean,
+    Date,
+    DateTime,
+    ForeignKey,
+    Index,
+    Integer,
+    String,
+    Text,
+    UniqueConstraint,
+    Uuid,
+    func,
+)
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -78,6 +90,63 @@ class ToolExecutionLogRow(Base):
     result_type: Mapped[str | None] = mapped_column(String(50))
     warnings: Mapped[list[str]] = mapped_column(JSONB, default=list)
     summary: Mapped[str | None] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class CalendarEventRow(Base):
+    __tablename__ = "calendar_events"
+    __table_args__ = (
+        UniqueConstraint("company_id", "event_id", name="uq_calendar_events_company_event"),
+    )
+
+    id: Mapped[UUID] = mapped_column(Uuid, primary_key=True, default=uuid4)
+    company_id: Mapped[UUID] = mapped_column(ForeignKey("companies.id", ondelete="CASCADE"))
+    event_id: Mapped[str] = mapped_column(Text)
+    calendar_id: Mapped[str] = mapped_column(Text)
+    title: Mapped[str] = mapped_column(Text)
+    starts_at: Mapped[str] = mapped_column(Text)
+    ends_at: Mapped[str] = mapped_column(Text)
+    html_link: Mapped[str | None] = mapped_column(Text)
+    status: Mapped[str] = mapped_column(Text)
+    idempotency_key: Mapped[str | None] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class ContractRow(Base):
+    __tablename__ = "contracts"
+
+    id: Mapped[UUID] = mapped_column(Uuid, primary_key=True, default=uuid4)
+    company_id: Mapped[UUID] = mapped_column(ForeignKey("companies.id", ondelete="CASCADE"))
+    external_ref: Mapped[str | None] = mapped_column(Text)
+    title: Mapped[str] = mapped_column(Text)
+    renewal_date: Mapped[date | None] = mapped_column(Date)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class AlertRuleRow(Base):
+    __tablename__ = "alert_rules"
+
+    id: Mapped[UUID] = mapped_column(Uuid, primary_key=True, default=uuid4)
+    company_id: Mapped[UUID] = mapped_column(ForeignKey("companies.id", ondelete="CASCADE"))
+    contract_id: Mapped[UUID] = mapped_column(ForeignKey("contracts.id", ondelete="CASCADE"))
+    renewal_date: Mapped[date] = mapped_column(Date)
+    channel: Mapped[str] = mapped_column(String(20))
+    next_trigger_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    idempotency_key: Mapped[str | None] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class AlertEventRow(Base):
+    __tablename__ = "alert_events"
+
+    id: Mapped[UUID] = mapped_column(Uuid, primary_key=True, default=uuid4)
+    company_id: Mapped[UUID] = mapped_column(ForeignKey("companies.id", ondelete="CASCADE"))
+    alert_rule_id: Mapped[UUID] = mapped_column(ForeignKey("alert_rules.id", ondelete="CASCADE"))
+    days_before: Mapped[int] = mapped_column(Integer)
+    trigger_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    channel: Mapped[str] = mapped_column(String(20))
+    status: Mapped[str] = mapped_column(String(20))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 

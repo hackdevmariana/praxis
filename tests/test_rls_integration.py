@@ -18,7 +18,11 @@ from app.audit import ExecutionLogRecord, SqlAlchemyExecutionLogStore
 from app.context import ToolContext
 from app.db.idempotency import SqlAlchemyIdempotencyStore
 from app.db.models import (
+    AlertEventRow,
+    AlertRuleRow,
+    CalendarEventRow,
     CompanyRow,
+    ContractRow,
     DataSourceRow,
     IdempotencyRecordRow,
     TenantProfileRow,
@@ -67,6 +71,9 @@ def test_rls_isolates_companies(postgres: PostgresContainer) -> None:
     engine = create_async_engine(_app_database_url(postgres))
     company_a = uuid4()
     company_b = uuid4()
+    contract_id = uuid4()
+    alert_rule_id = uuid4()
+    event_id = uuid4()
 
     async def scenario() -> None:
         async with engine.begin() as connection:
@@ -82,6 +89,45 @@ def test_rls_isolates_companies(postgres: PostgresContainer) -> None:
         async with company_session(engine, company_a) as session:
             session.add(CompanyRow(id=company_a, name="Hotel A"))
             session.add(TenantProfileRow(company_id=company_a, catalog_key="hotel"))
+            session.add(
+                ContractRow(
+                    id=contract_id,
+                    company_id=company_a,
+                    external_ref="CTR-1",
+                    title="Contrato A",
+                )
+            )
+            session.add(
+                CalendarEventRow(
+                    company_id=company_a,
+                    event_id="google-1",
+                    calendar_id="primary",
+                    title="Cita A",
+                    starts_at="2026-11-20T10:00:00+01:00",
+                    ends_at="2026-11-20T11:00:00+01:00",
+                    status="confirmed",
+                )
+            )
+            session.add(
+                AlertRuleRow(
+                    id=alert_rule_id,
+                    company_id=company_a,
+                    contract_id=contract_id,
+                    renewal_date="2027-03-31",
+                    channel="email",
+                )
+            )
+            session.add(
+                AlertEventRow(
+                    id=event_id,
+                    company_id=company_a,
+                    alert_rule_id=alert_rule_id,
+                    days_before=30,
+                    trigger_at="2027-03-01T09:00:00+01:00",
+                    channel="email",
+                    status="pending",
+                )
+            )
             session.add(
                 IdempotencyRecordRow(
                     key="key-a",
@@ -129,6 +175,14 @@ def test_rls_isolates_companies(postgres: PostgresContainer) -> None:
             records = (await session.scalars(select(IdempotencyRecordRow))).all()
             assert [profile.company_id for profile in profiles] == [company_b]
             assert records == []
+            contracts = (await session.scalars(select(ContractRow))).all()
+            events = (await session.scalars(select(CalendarEventRow))).all()
+            rules = (await session.scalars(select(AlertRuleRow))).all()
+            alerts = (await session.scalars(select(AlertEventRow))).all()
+            assert contracts == []
+            assert events == []
+            assert rules == []
+            assert alerts == []
 
         async with company_session(engine, company_a) as session:
             session.add(TenantProfileRow(company_id=company_b, catalog_key="hotel"))
