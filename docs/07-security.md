@@ -68,14 +68,14 @@ Formato de `PRAXIS_API_KEYS_FILE` (solo hashes, nunca la clave en claro):
 - `Permission` asocia `tool_name` + `role` a `can_read`, `can_write` y `requires_confirmation`.
 - Toda tool declara `permissions`; el ejecutor comprueba que el contexto cubre **todos** los scopes y devuelve `permission_denied` si falta alguno.
 - El rechazo por credenciales ausentes o inválidas es HTTP `401` (`authentication_required` / `invalid_token`); el rechazo por scope o confirmación usa el sobre de error de la tool.
-- La intersección con `TenantProfile` y `ToolActivation` está implementada mediante `ToolAccessPolicy` inyectable; la persistencia en PostgreSQL sigue pendiente.
+- La intersección con `TenantProfile` y `ToolActivation` se resuelve mediante `ToolAccessPolicy` (`app/tenancy.py`): `SqlAlchemyToolAccessPolicy` lee ambas tablas bajo RLS cuando hay `DATABASE_URL`, y existen políticas inyectables en memoria para desarrollo/tests. Pendiente: overrides de catálogo/permisos por rol más ricos en base de datos.
 
 ## Multi-tenancy
 
 ### Aislamiento por RLS
 
 - Todas las tablas tenant-scoped llevan `company_id NOT NULL` y RLS activado.
-- Cada conexión fija `app.company_id` desde el `ToolContext` antes de ejecutar.
+- Cada conexión fija `praxis.company_id` desde el `ToolContext` antes de ejecutar (vía `app/db/rls.py:set_company_context` / `company_session`).
 - Sin contexto, las tablas tenant devuelven cero filas (deny by default).
 - Las tablas globales no tienen política y son de solo lectura para tenants.
 
@@ -83,7 +83,7 @@ Formato de `PRAXIS_API_KEYS_FILE` (solo hashes, nunca la clave en claro):
 ALTER TABLE document ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY tenant_isolation ON document
-  USING (company_id = current_setting('app.company_id')::uuid);
+  USING (company_id = NULLIF(current_setting('praxis.company_id', true), '')::uuid);
 ```
 
 - Se prueba con `testcontainers[postgres]`: un tenant nunca ve filas de otro.
@@ -97,7 +97,7 @@ CREATE POLICY tenant_isolation ON document
 ### Almacenamiento de documentos
 
 - MVP en el VPS, con nombres opacos (UUID) y ruta fuera del webroot.
-- Validación del tipo real con `python-magic` (no por extensión).
+- Validación de cabecera y tamaño en el adaptador (objetivo: `python-magic`, no incluido en el MVP).
 - Límite de tamaño y antivirus/escaneo en v2.
 - v2: S3/MinIO con URLs firmadas y cifrado en reposo.
 
@@ -137,7 +137,7 @@ CREATE POLICY tenant_isolation ON document
 | `Message` (contenido) | 6 meses | Borrado del contenido, metadatos |
 | Documentos | Mientras el tenant exista | Borrado con la empresa |
 | Caché operacional | TTL corto | Expiración automática |
-| `ConversationContext` | 5 min (Redis) | Expiración |
+| `ConversationContext` | 5 min (Redis; diseño objetivo) | Expiración |
 
 Estos plazos se documentan como configurables y se validan legalmente (ver [`12-legal-notes.md`](12-legal-notes.md)).
 
@@ -145,26 +145,25 @@ Estos plazos se documentan como configurables y se validan legalmente (ver [`12-
 
 - `is_read_only: false` obliga a declarar idempotencia y `idempotency_key`.
 - `requires_confirmation: true` en `calendar.create_event`, `documents.generate_invoice` y `alerts.contract_renewal`.
-- El ejecutor deduplica centralmente por `scoped_key(tool, company_id, idempotency_key)` con `input_hash` de los parámetros (sin la propia clave) y TTL de 30 días. Reutilizar una clave con parámetros distintos devuelve `conflict`; el almacén es en memoria hasta que exista PostgreSQL.
+- El ejecutor deduplica centralmente por `scoped_key(tool, company_id, idempotency_key)` con `input_hash` de los parámetros (sin la propia clave) y TTL de 30 días. Reutilizar una clave con parámetros distintos devuelve `conflict`. El almacén es `SqlAlchemyIdempotencyStore` (`idempotency_records`, bajo RLS) cuando hay `DATABASE_URL`; sin BD se usa `InMemoryIdempotencyStore` (desarrollo/tests).
 - Las escrituras se validan contra permisos y tenant antes de ejecutar.
 
 ## Rate limiting
 
-- `slowapi`/`fastapi-limiter` por usuario, empresa y herramienta.
-- Límites alineados con `ToolActivation.limits_override` y con los proveedores externos.
-- Protección contra bucles de un agente: presupuesto de llamadas por ventana.
+- *(Objetivo)* `slowapi`/`fastapi-limiter` por usuario, empresa y herramienta; no implementado en el MVP.
+- *(Objetivo)* Límites alineados con `ToolActivation.limits_override` y con los proveedores externos.
+- *(Objetivo)* Protección contra bucles de un agente: presupuesto de llamadas por ventana.
 
 ## Auditoría
 
 `ToolExecutionLog` y `AuditLog` registran:
 
 - Implementado: `execution_time_ms`, `success`, código de error, `input_hash`, idempotencia y fuente por ejecución. No se guardan parámetros ni salidas en claro en el store inyectable del MVP.
-- `request_id`, usuario, empresa, canal.
-- Tool, versión, `execution_method`, `cache_hit`, `provider_calls`.
-- `success`/`error`, `warnings`, `legal_disclaimer_shown`.
-- Para datos personales, acción y recurso accedido.
+- `request_id`, usuario, empresa, canal y tool/versión cuando están disponibles en el contexto.
+- `success`/`error` y `warnings`; `execution_method`, `cache_hit`, `provider_calls` y `legal_disclaimer_shown` son diseño objetivo.
+- Para datos personales, acción y recurso accedido: diseño objetivo.
 
-`asgi-correlation-id` propaga un `request_id` end-to-end en logs (`structlog` en JSON).
+`request_id` se propaga en el contexto/headers cuando aplica. La correlación end-to-end con `asgi-correlation-id` y logs `structlog` es objetivo de observabilidad.
 
 ## Checklist de seguridad del MVP
 

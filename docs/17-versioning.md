@@ -30,15 +30,14 @@ Reglas:
 ## Deprecación
 
 ```python
-@tool(
-    name="finance.vat",
-    version="1.3.0",
-    deprecated=True,
-    replaced_by="tax.vat_calculate",
-)
+# @tool no acepta deprecated/replaced_by (registry.tool):
+@tool(name="finance.vat", version="1.3.0", ...)
+
+# La deprecación se registra hoy por tenant:
+ToolActivationRow(..., deprecated=True, replaced_by="tax.vat_calculate")
 ```
 
-- La tool deprecada se mantiene anunciada con `deprecated: true` y `replaced_by`.
+- La deprecación se registra en `tool_activations.deprecated`/`replaced_by` y excluye la tool del toolset del tenant. El anuncio MCP con flags de deprecación requiere soporte futuro.
 - Se documenta la alternativa y la fecha de retirada.
 - Periodo mínimo de coexistencia: **una versión MINOR** o **90 días** (lo que sea mayor) para herramientas públicas.
 - La retirada exige un MAJOR del catálogo y notas de migración.
@@ -50,7 +49,7 @@ Checklist antes de un MAJOR:
 1. ADR o nota en el changelog que explique el motivo.
 2. Nueva tool/versión disponible y probada.
 3. Guía de migración (campos renombrados, unidades, redondeo).
-4. `replaced_by` y `deprecated: true` en la anterior.
+4. `replaced_by` y `deprecated` en la activación de la anterior.
 5. Actualización de catálogo, `intents.yaml` y documentación.
 6. Tests de ambas versiones durante la coexistencia.
 
@@ -65,7 +64,7 @@ Nunca se rompe el contrato de una tool publicada sin MAJOR.
 
 ## Compatibilidad MCP
 
-- El servidor anuncia las tools activas según `TenantProfile`.
+- El servidor filtra las tools anunciadas y ejecutables según `ToolAccessPolicy`: con `DATABASE_URL`, `TenantProfile` y `ToolActivation` bajo RLS; sin BD, política inyectable.
 - Una versión MCP se declara compatible si mantiene nombres y esquemas anunciados o si marca deprecación con antelación.
 - Los clientes deben tolerar campos nuevos en la salida (additive changes).
 - Los campos eliminados solo en MAJOR.
@@ -79,11 +78,10 @@ Nunca se rompe el contrato de una tool publicada sin MAJOR.
 ## Ejemplo de ciclo de vida
 
 ```txt
-finance.vat 1.0.0  → estable
-finance.vat 1.1.0  → añade operation="remove" (retrocompatible)
-finance.vat 1.1.1  → corrige redondeo en un caso límite
-finance.vat 1.2.0  → añade campo opcional currency
-finance.vat 2.0.0  → cambia importes de float a Decimal string (BREAKING)
+finance.vat 1.0.0  → estable; ya incluye operation="remove" y currency
+                     y serializa importes Decimal como string
+finance.vat 1.1.0  → ejemplo de cambio retrocompatible futuro
+finance.vat 2.0.0  → ejemplo de cambio BREAKING futuro
                      + tax.vat_calculate 1.0.0 como reemplazo
-finance.vat 1.2.0  → deprecada, coexistencia 90 días
+finance.vat 1.1.0  → deprecada, coexistencia 90 días
 ```

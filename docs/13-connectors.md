@@ -60,7 +60,7 @@ Todo conector implementa:
 1. **Autenticación:** OAuth o API key; credenciales cifradas.
 2. **Descubrimiento:** capacidades y scopes disponibles.
 3. **Sincronización:** full e incremental con cursores.
-4. **Errores:** backoff, reintentos (`stamina`) y circuit breaker.
+4. **Errores:** backoff y circuit breaker objetivo; reintentos con `stamina` pendientes de estandarizar.
 5. **Revocación:** limpieza de credenciales y datos asociados.
 6. **Auditoría:** `SyncLog` y `AuditLog`.
 

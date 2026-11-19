@@ -14,6 +14,6 @@ En el MVP, los documentos se almacenan en el **sistema de archivos del VPS**, co
 ## Consecuencias
 
 - Simplicidad de despliegue y menores dependencias.
-- Se debe validar el tipo real de archivo con `python-magic` y limitar tamaño.
+- Debe validarse el tipo real de archivo y limitarse el tamaño; el MVP valida cabecera/tamaño en el adaptador y deja `python-magic` como objetivo pendiente.
 - Requiere backups y política de retención propias.
 - La abstracción de almacenamiento debe permitir cambiar a S3 sin tocar las tools.

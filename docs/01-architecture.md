@@ -18,8 +18,9 @@ PRAXIS se organiza en **cuatro verticales** y **tres capas**. La regla central e
                  ┌───────────────▼──────────────────────────┐
                  │              praxis-core                  │
                  │   @tool · schemas · providers · metadata  │
-                 │              (stateless)                   │
-                 └───────┬───────────────┬──────────────────┘
+                  │  (casi stateless; stores inyectables)       │
+                  └───────┬───────────────┬──────────────────┘
+
                          │               │
         ┌────────────────▼───┐   ┌───────▼────────────────┐
         │  praxis-knowledge  │   │      praxis-biz         │
@@ -54,25 +55,26 @@ PRAXIS se organiza en **cuatro verticales** y **tres capas**. La regla central e
 
 ## Estructura interna de `praxis-core`
 
+Hoy este árbol se materializa en la raíz del repositorio (`app/`, `tests/`); los directorios `praxis-core/`, `praxis-biz/`, `praxis-knowledge/` y `praxis-sim/` son la separación futura prevista.
+
 ```txt
 praxis-core/
 ├── app/
 │   ├── tools/                # Una carpeta por tool: finance/vat/, ...
 │   │   └── <dominio>/<tool>/
-│   │       ├── tool.py       # Decorador @tool + @tool_impl
-│   │       ├── schemas.py    # Pydantic input/output
-│   │       └── tests/
+│   │       ├── tool.py       # Decorador @tool (registro de ToolSpec)
+│   │       └── schemas.py    # Pydantic input/output
+│   ├── tests/                # Tests centralizados (no por tool)
 │   ├── audit.py              # ToolExecutionLog inyectable
-│   ├── db/                   # Base SQLAlchemy, sesiones tenant y RLS
+│   ├── db/                   # Engine, modelos RLS y db/idempotency.py
 │   ├── providers/            # Clientes de APIs externas
-│   ├── metadata/             # Modelo de metadatos y helpers
+│   ├── metadata.py           # ResponseMetadata + build_metadata()
 │   ├── auth.py               # API key, JWT, scopes y contexto HTTP
 │   ├── tenancy.py            # Catálogos, activación y toolset por tenant
-│   ├── idempotency.py        # Deduplicación central de efectos por tenant
+│   ├── idempotency.py        # scoped_key, input_hash y stores inyectables
 │   ├── registry.py           # Descubrimiento y registro de tools
 │   ├── mcp_server.py         # Exposición MCP (SDK mcp)
-│   ├── api/                  # Endpoints REST auxiliares (/health, admin)
-│   └── main.py
+│   └── main.py               # /health y /api/tools/{name}; sin app/api/
 └── tests/
 ```
 
@@ -81,16 +83,16 @@ Responsabilidades:
 | Componente | Responsabilidad |
 |---|---|
 | `tools/` | Lógica determinista y esquemas. Fuente de verdad de cada herramienta. |
-| `audit.py` | Registra cada ejecución con hash de entrada y resultado sin datos sensibles. |
-| `db/` | Modelos tenant, sesiones con `company_id` y helpers de RLS. |
-| `providers/` | Consultas a APIs externas con timeouts, reintentos, circuit breaker y caché. |
-| `metadata/` | Construcción del bloque `metadata` común a toda respuesta. |
+| `audit.py` | Registra cada ejecución con `input_hash`, versión, fuente, duración y warnings, sin datos sensibles. |
+| `db/` | Engine, modelos tenant, sesiones con `company_id`, helpers de RLS y store SQL de idempotencia. |
+| `providers/` | Consultas a APIs externas con timeouts, circuit breaker y caché (reintentos estandarizados: objetivo). |
+| `metadata.py` | Construcción del bloque `metadata` común a toda respuesta. |
 | `auth.py` | Autentica API key/JWT, construye `ToolContext` y aplica scopes/confirmación. |
 | `tenancy.py` | Resuelve catálogo y activación por tenant; filtra tools anunciadas y ejecutables. |
 | `idempotency.py` | Deduplica efectos por `(tool, company_id, idempotency_key)` con `input_hash`. |
-| `registry.py` | Descubre tools y genera JSON Schema, catálogo MCP y documentación. |
-| `mcp_server.py` | Expone las tools activas según `TenantProfile`. |
-| `api/` | Solo operaciones auxiliares; la interfaz pública es MCP. |
+| `registry.py` | Descubre tools y genera JSON Schema y catálogo MCP; la documentación se mantiene en `docs/`. |
+| `mcp_server.py` | Filtra las tools anunciadas y ejecutables según `ToolAccessPolicy`. |
+| `main.py` | Registra `/api/tools/{name}` y `/health`; la interfaz pública es MCP **y** REST. |
 
 ## Flujo de ejecución
 
@@ -105,8 +107,8 @@ Responsabilidades:
    a. lógica determinista, o
    b. provider externo (con reintentos y fallback).
 8. Construye el bloque de metadatos (fuente, vigencia, unidades...).
-8. Registra la ejecución (ToolExecutionLog) con versión y fuente.
-9. Devuelve { success, tool, data, metadata }.
+9. Registra la ejecución (ToolExecutionLog) con versión y fuente.
+10. Devuelve { success, tool, data, metadata }.
 ```
 
 Si el mismo core se usa desde un canal humano, el gateway externo formatea el JSON con Babel y plantillas deterministas; el core no cambia.

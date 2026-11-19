@@ -12,7 +12,7 @@ Los cálculos financieros y fiscales exigen exactitud al céntimo. `float` intro
 - Usar `Decimal` para todos los importes y tipos impositivos.
 - Serializar importes como **string decimal** en JSON.
 - Redondear con `ROUND_HALF_UP` a 2 decimales en los límites definidos.
-- Cuando se use `numpy-financial`, documentar y testear el boundary `Decimal → float → Decimal`, con cuadre al céntimo.
+- No se usa `numpy-financial` en el MVP; si se incorpora, documentar y testear el boundary `Decimal → float → Decimal`, con cuadre al céntimo.
 
 ## Consecuencias
 

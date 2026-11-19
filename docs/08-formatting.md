@@ -19,7 +19,7 @@ Esto cumple los dos objetivos:
 | Modo | Consumidor | Salida |
 |---|---|---|
 | `json` | MCP / agente | Sobre JSON completo con metadatos |
-| `compact` | MCP / agente | JSON reducido + `summary` corto (ahorro de tokens) |
+| `compact` | MCP / agente | *(Planificado)* JSON reducido + `summary` corto; hoy se devuelve siempre el sobre completo. |
 | `text` | Canal humano | Texto determinista formateado con Babel |
 | `both` | Gateway / auditoría | JSON + texto |
 
@@ -114,7 +114,7 @@ La selección es por clave `(idioma, tono)`; no se elige al azar.
 
 | Canal | Formato | Notas |
 |---|---|---|
-| MCP / agente | `json` o `compact` | Sin texto decorativo |
+| MCP / agente | `json` (sobre completo; `summary` opcional) | Sin texto decorativo. `compact` planificado. |
 | WhatsApp / Telegram | `text`, `short` | Mensajes breves, sin tablas anchas |
 | Email | `text`, `normal`/`detailed` | Más contexto y atribución |
 | Web / panel | `json` + render en cliente | El backend no genera HTML de UI |
@@ -125,11 +125,11 @@ La selección es por clave `(idioma, tono)`; no se elige al azar.
 - Las tools legales, laborales y fiscales marcan `legal_disclaimer_required: true`.
 - El formateador inyecta siempre el aviso, en cualquier tono:
   > «Esta información es orientativa y no constituye asesoramiento jurídico, fiscal ni laboral. Verifique con un profesional.»
-- El aviso se registra en `ToolExecutionLog.legal_disclaimer_shown`.
+- El sobre puede incluir `warnings`; el campo `legal_disclaimer_shown` de `ToolExecutionLog` es diseño objetivo y aún no está implementado.
 
 ## Ahorro de tokens
 
-- `compact` elimina campos vacíos y anida solo lo esencial.
+- *(Planificado)* `compact` eliminará campos vacíos y anidará solo lo esencial; hoy el sobre incluye los metadatos estándar generados por `app/metadata.py`.
 - Se ofrecen resúmenes por tool pensados para el agente (p. ej. tabla de ofertas ya ordenada) para que el LLM no tenga que transformar datos.
 - Nunca se envía al LLM texto formateado más el JSON: se elige uno.
 - Se documenta el tamaño medio de respuesta por tool en [`11-success-metrics.md`](11-success-metrics.md).

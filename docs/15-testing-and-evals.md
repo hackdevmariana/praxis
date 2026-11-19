@@ -11,10 +11,10 @@ version: 0.1.0
 |---|---|---|
 | Unitario | `pytest` | Lógica determinista de cada tool |
 | Propiedades | `Hypothesis` | Casos límite y aleatorios de cálculo |
-| Integración | `pytest` + `testcontainers[postgres]` | RLS, PostGIS, pgvector, migraciones |
+| Integración | `pytest` + `testcontainers[postgres]` | RLS y migraciones (PostGIS/pgvector: objetivo) |
 | Contrato externo | `respx` | APIs externas simuladas |
 | Tiempo | `time-machine` | Fechas y zonas horarias |
-| API | `Schemathesis` | OpenAPI/MCP schemas |
+| API | *(Objetivo)* `Schemathesis` | OpenAPI/MCP schemas; no configurado aún |
 | UI/manual | — | Escenarios end-to-end del MVP |
 
 ## Golden tests por tool
@@ -29,12 +29,14 @@ Estructura:
 
 ```txt
 app/tools/finance/vat/
+├── __init__.py
 ├── tool.py
-├── schemas.py
-└── tests/
-    ├── test_vat_happy.py
-    ├── test_vat_edge.py
-    └── test_vat_errors.py
+└── schemas.py
+
+tests/
+├── test_finance_vat.py
+├── test_rls_integration.py
+└── ...  # suites centralizadas en tests/
 ```
 
 Los golden tests se generan/validan junto a la definición `@tool` para evitar divergencia entre esquema y prueba.
@@ -52,16 +54,16 @@ Con `Hypothesis`:
 Reglas de dinero:
 
 - Todo importe se compara con `Decimal`.
-- Se prueba el boundary `Decimal → float → Decimal` de `numpy-financial` al céntimo.
+- Los importes se serializan como string en la salida; no se usa `numpy-financial` en el MVP.
 
 ## Integración y RLS
 
 Con `testcontainers` (PostgreSQL real):
 
-- Un tenant **nunca** ve filas de otro (deny by default sin `app.company_id`).
+- Un tenant **nunca** ve filas de otro (deny by default sin contexto `praxis.company_id`).
 - Borrado GDPR por `company_id` elimina todas las filas tenant y anonimiza auditoría.
-- Índices y restricciones (`UNIQUE(user_id, company_id)`, `UNIQUE(company_id, number)`).
-- PostGIS: búsquedas por proximidad; pgvector: búsqueda híbrida.
+- Índices y restricciones del esquema implementado en migraciones `0001`/`0002`.
+- PostGIS (proximidad) y pgvector (búsqueda híbrida): objetivo de fases posteriores.
 
 ## APIs externas
 
@@ -92,7 +94,7 @@ Cada escenario valida JSON de salida, metadatos completos y registro en `ToolExe
 
 - `ruff` para lint/format.
 - `pyright` en modo estricto.
-- `pip-audit` para dependencias.
+- `pip-audit` para dependencias *(pendiente de automatizar)*.
 - Cobertura objetivo: ≥ 90 % en lógica determinista; ≥ 80 % global.
 
 ## CI mínimo
@@ -102,6 +104,7 @@ uv sync --frozen
 uv run ruff check .
 uv run ruff format --check .
 uv run pyright
+uv run python scripts/check_markdown.py
 uv run pytest -q --cov=app --cov-report=xml --cov-fail-under=80
 uv run coverage report --include="app/tools/finance/*,app/tools/datetime/*,app/tools/units/*,app/tools/validate/*,app/tools/procurement/*,app/money.py,app/business_days.py,app/holidays.py,app/clock.py" --fail-under=90
 uv run pytest -q -m integration   # testcontainers

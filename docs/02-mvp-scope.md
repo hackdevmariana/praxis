@@ -5,16 +5,18 @@ version: 0.1.0
 
 # Alcance del MVP
 
-Este documento define qué se construye, en qué orden y qué queda fuera. El objetivo del MVP es demostrar valor real en **4 semanas** con un único desarrollador, sobre una base escalable y documentada.
+Este documento define qué se construyó, en qué orden y qué queda fuera. El MVP se ejecutó con el objetivo de demostrar valor real en **4 semanas** con un único desarrollador, sobre una base escalable y documentada; el estado actual está resumido en `README.md` y `TODO.md`.
 
 ## Fases
 
 | Fase | Objetivo | Entregable |
 |---|---|---|
-| **Fase 0 — Documentación (actual)** | Cerrar arquitectura, modelos, catálogo y compatibilidades antes de codificar. | `docs/` completo y coherente. |
-| **Fase 1 — MVP (4 semanas)** | Implementar ~21 herramientas y el servidor MCP con multi-tenancy. | Backend ejecutable + tests. |
-| **Fase 2 — v2** | Conectores, routing semántico, canal WhatsApp/Telegram, simuladores. | Backlog priorizado. |
+| **Fase 0 — Documentación (completada)** | Cerrar arquitectura, modelos, catálogo y compatibilidades antes de codificar. | `docs/` completo y coherente (42 specs). |
+| **Fase 1 — MVP (completada)** | Implementar 21 herramientas y el servidor MCP con multi-tenancy. | Backend ejecutable + tests (verificado). |
+| **Fase 2 — v2 (roadmap)** | Conectores, routing semántico, canal WhatsApp/Telegram, simuladores. | Backlog priorizado. |
 | **Fase 3 — Futuro** | C-Level completo, SaaS por planes, comunidad de herramientas. | Roadmap abierto. |
+
+> En esta tabla, Fase 2/3 significan el roadmap de producto. `TODO.md` usa “Fase 2” para persistencia y “Fase 3” para cierre de decisiones; son hitos de ejecución ya completados.
 
 ## Herramientas del MVP
 
@@ -37,7 +39,7 @@ Este documento define qué se construye, en qué orden y qué queda fuera. El ob
 | 13 | `weather.forecast` (Open-Meteo) | ext | hotel, poligono | 2 |
 | 14 | `geo.geocode` (CartoCiudad) | ext | all | 2 |
 | 15 | `procurement.tpv_savings` (ahorro de comisiones TPV) | biz | asociacion | 3 |
-| 16 | `procurement.compare_offers` (3-5 presupuestos → tabla normalizada) | biz | asociacion | 3 |
+| 16 | `procurement.compare_offers` (2-5 presupuestos → tabla normalizada) | biz | asociacion | 3 |
 | 17 | `calendar.list_events` (OAuth por usuario) | biz | all | 3 |
 | 18 | `calendar.create_event` (con confirmación humana) | biz | all | 3 |
 | 19 | `documents.extract_invoice` (PDF → JSON) | biz | all | 3 |
@@ -48,15 +50,15 @@ Este documento define qué se construye, en qué orden y qué queda fuera. El ob
 
 ### Herramientas documentadas pero fuera del MVP
 
-Se documentan íntegramente en [`03-tools-catalog.md`](03-tools-catalog.md) como pistas para la comunidad, con su estado (`backlog` o `v2`), esquema previsto y criterios de entrada. Incluyen:
+Sus specs completas (42 en total: 21 MVP, 18 v2 y 3 backlog) están en el [índice de herramientas](tools/README.md); [`03-tools-catalog.md`](03-tools-catalog.md) ofrece un resumen por categoría y los criterios de entrada. Incluyen:
 
 - **Energía:** PVPC/OMIE horario, horas más baratas, simulador de tarifa, optimizador de potencia, autoconsumo, huella de carbono.
 - **Tesorería y finanzas:** previsor a 13 semanas, escenarios de estrés, DSO/DPO/DIO, cash conversion cycle, factoring.
 - **Datos de empresa avanzados:** EBITDA, cash flow, break-even, ratios, KPIs con semáforos, presupuestos vs. real.
 - **Compras:** detector de subidas anómalas, RFP centralizada, registro de ahorro, calendario de renovaciones unificado.
 - **Legal/regulatorio:** concursos (BORME/Registro Concursal), lista de morosos, convenio colectivo, indemnización por despido, obligaciones por CNAE.
-- **RR. HH., ESG, estadística, analítica, marketing, operaciones y calidad.**
-- **Utilidades:** QR, auditoría web (WHOIS/SSL), procesador de imágenes de producto, subvenciones (BDNS).
+- **RR. HH., ESG, estadística, analítica, marketing, operaciones y calidad** (ideas de backlog sin spec aún).
+- **Utilidades:** QR, auditoría web (WHOIS/SSL) y subvenciones (BDNS).
 - **Simuladores compuestos:** rentabilidad de placas solares, simulador de contratación de comercial → `praxis-sim` (v2).
 
 ## Fuera de alcance explícito

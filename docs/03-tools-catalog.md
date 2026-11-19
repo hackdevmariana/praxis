@@ -5,7 +5,7 @@ version: 0.1.0
 
 # Catálogo de herramientas
 
-Este documento describe las **21 herramientas del MVP** y el backlog documentado para la comunidad. La definición canónica vive en código (decorador `@tool`); este catálogo es su reflejo navegable.
+Este documento describe las **21 herramientas del MVP** y el backlog documentado para la comunidad. La definición canónica vive en código (decorador `@tool`); este catálogo es su reflejo navegable. El índice de las 42 specs (21 MVP, 18 v2 y 3 backlog) está en [`tools/README.md`](tools/README.md).
 
 ## Convenciones
 
@@ -60,7 +60,7 @@ Días hábiles entre dos fechas excluyendo festivos nacionales, autonómicos y l
 
 - `read_only: true`, `idempotent: true`
 - Permiso: `datetime.read` · Clasificación: `public`
-- Proveedor: dataset de festivos (seeder) · Caché: n/a
+- Proveedor: dataset versionado `app/data/holidays_es.json` (generado por `scripts/generate_holidays.py`) · Caché: n/a
 
 | Entrada | Tipo | Notas |
 |---|---|---|
@@ -357,7 +357,7 @@ Salida: `{ event_id, html_link, status, start, end, created, deduplicated }`.
 
 ## Documentos
 
-Almacenamiento en el VPS en el MVP (S3/MinIO en v2). Validación de tipo real con `python-magic`. Ver [`07-security.md`](07-security.md).
+Almacenamiento en el VPS en el MVP (S3/MinIO en v2). Validación de tipo en el adaptador inyectable; `python-magic` no está incluido en el MVP. Ver [`07-security.md`](07-security.md).
 
 ### `documents.extract_invoice` — v1.0.0
 
@@ -365,7 +365,7 @@ Extrae datos estructurados de una factura o albarán en PDF.
 
 - `read_only: true`, `idempotent: true`
 - Permiso: `documents.read` · Clasificación: `business`
-- Procesadores: `pdfplumber` / `markitdown`; OCR (`Tesseract`) si es escaneado.
+- Procesador: `pdfplumber`; OCR (`Tesseract`) pendiente de adaptador; `markitdown` no está incluido.
 - Si la confianza es baja, `needs_review: true`.
 
 | Entrada | Tipo |
@@ -427,7 +427,7 @@ Salida: `{ alert_rule_id, renewal_date, next_trigger_at, schedule: [{days_before
 
 Herramientas previstas para la comunidad, con estado `backlog` (sin fecha) o `v2`. No se implementan en el MVP; sirven de guía y deben cumplir los criterios de entrada de [`02-mvp-scope.md`](02-mvp-scope.md#criterios-de-entrada-para-herramientas-de-backlog). Las specs completas están en el [índice de herramientas](tools/README.md).
 
-| Categoría | Ejemplos | Estado |
+| Categoría | Ejemplos (aspiracionales; solo algunos tienen spec) | Estado |
 |---|---|---|
 | Energía | PVPC/OMIE horario, horas baratas, simulador de tarifa, optimizador de potencia, autoconsumo, huella de carbono | v2 |
 | Tesorería | previsor 13 semanas, escenarios de estrés, DSO/DPO/DIO, cash conversion cycle, factoring | v2 |
@@ -442,4 +442,4 @@ Herramientas previstas para la comunidad, con estado `backlog` (sin fecha) o `v2
 | Utilidades | QR, auditoría web (WHOIS/SSL), subvenciones (BDNS), imágenes de producto | backlog |
 | Simuladores | rentabilidad solar, contratación de comercial → `praxis-sim` | v2 |
 
-El catálogo completo aspiracional (energía, tesorería, RR. HH., ESG, etc.) se mantiene como referencia en el repositorio de `praxis-knowledge` cuando exista.
+Las 42 specs (21 MVP, 18 v2 y 3 backlog) se mantienen en el [índice de herramientas](tools/README.md) de este repositorio.

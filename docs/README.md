@@ -38,4 +38,4 @@ Punto de entrada único de la documentación de PRAXIS. El alcance canónico del
 
 ## Estado
 
-El tablero de ejecución vivo está en [`../TODO.md`](../TODO.md) y el resumen para usuarios en [`../README.md`](../README.md).
+El tablero de ejecución vivo está en [`../TODO.md`](../TODO.md), el resumen para usuarios en [`../README.md`](../README.md), el historial en [`../CHANGELOG.md`](../CHANGELOG.md) y la licencia en [`../LICENSE`](../LICENSE).

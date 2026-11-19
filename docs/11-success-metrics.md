@@ -42,7 +42,7 @@ PRAXIS se mide por **fiabilidad y ahorro**, no por número de herramientas.
 
 ## Métricas de adopción
 
-- Tenants activos por `catalog_key` (`hotel`, `poligono`, `asociacion`).
+- Tenants activos por `catalog_key` (`hotel`, `poligono`, `asociacion`, más `general` por defecto).
 - Tools más usadas por perfil.
 - Usuarios activos por empresa.
 - Alertas generadas y atendidas.
@@ -73,4 +73,4 @@ Cuando exista capa de canal/routing:
 | Adopción | tenants, tools/semana | Semanal |
 | Negocio | ahorro calculado | Mensual |
 
-Los datos salen de `ToolExecutionLog` y `UsageRecord`. Ver modelos en [`05-data-models.md`](05-data-models.md).
+Los datos salen de `ToolExecutionLog` (`tool_execution_logs`; ver modelos en [`05-data-models.md`](05-data-models.md)). `UsageRecord` es un modelo previsto para planes SaaS, aún no implementado.

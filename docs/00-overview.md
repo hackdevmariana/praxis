@@ -23,8 +23,8 @@ Si el sistema garantiza esa trazabilidad, tiene mucho más valor empresarial que
 1. **MCP como interfaz primaria.** PRAXIS expone herramientas vía Model Context Protocol. El LLM y sus tokens los pone y los paga el arnés del cliente (Claude, GPT, Gemini, agentes locales con Ollama). PRAXIS no aloja el "cerebro".
 2. **Core determinista y stateless.** `praxis-core` recibe argumentos tipados (Pydantic), ejecuta lógica determinista o consulta APIs externas y devuelve JSON + metadatos. Cero NLP, cero semantic-router, cero plantillas conversacionales.
 3. **Multi-tenancy desde el día 1.** Todo dato de empresa está aislado por `company_id` con Row-Level Security de PostgreSQL. El software es self-hosted con licencia MIT; no se comercializa como SaaS en el MVP, pero la arquitectura lo permite.
-4. **El código es la fuente de verdad de las herramientas.** La definición canónica vive en el decorador `@tool`; de ahí se generan JSON Schema, OpenAPI, catálogo MCP, documentación y golden tests. La base de datos solo guarda activación, configuración, límites y permisos.
-5. **Metadatos obligatorios.** Toda respuesta incluye fuente, momento de consulta, vigencia, unidad, moneda, zona horaria, estimación y errores.
+4. **El código es la fuente de verdad de las herramientas.** La definición canónica vive en el decorador `@tool`; de ahí se derivan JSON Schema y catálogo MCP. La documentación y los golden tests se mantienen a mano. La base de datos guarda activación, configuración, límites y permisos por tenant y, cuando se configura `DATABASE_URL`, también idempotencia (`idempotency_records`) y auditoría (`tool_execution_logs`).
+5. **Metadatos obligatorios.** Toda respuesta incluye el bloque `metadata` con fuente, momento de consulta, vigencia, unidad, zona horaria, estimación y errores; la moneda viaja en `data`/`metadata_extra` cuando la herramienta aplica.
 6. **MIT y self-hosted.** Cada instalación usa sus propias claves de APIs externas y cumple sus términos de servicio.
 
 ## Para quién
@@ -43,7 +43,7 @@ Tras consolidar el MVP, PRAXIS se abre a agentes manejados por CEOs de PyMEs y a
 
 ## Las cuatro verticales
 
-PRAXIS es un monorepo con cuatro proyectos individuales.
+PRAXIS se organiza alrededor de cuatro verticales. Durante el MVP el código compartido vive en `app/`; los directorios separados de cada paquete se crearán cuando se separen responsabilidades.
 
 | Vertical | Responsabilidad | Qué NO hace |
 |---|---|---|
@@ -59,7 +59,7 @@ La **capa de canal** (WhatsApp/Telegram, semantic-router, formatters) es externa
 El MVP combina el top-3 real del cliente con un conjunto de herramientas deterministas que demuestran valor sin ser triviales:
 
 - **Documentos:** extracción de facturas (PDF → JSON) y generación de facturas/albaranes.
-- **Agenda:** consultar y agendar citas con Google Calendar vía OAuth **por usuario** (agenda personal y de empresa separadas).
+- **Agenda:** consultar y agendar citas con Google Calendar vía OAuth **por usuario** (agenda personal y de empresa separadas); el conector es inyectable y el OAuth real está pendiente.
 - **Comparativas de negocio:** comparación de ofertas y precios y calculadora de ahorro de comisiones TPV. El cálculo de KPIs sobre datos contables llega en v2 con conectores.
 - **Calculadoras deterministas:** IVA, márgenes, préstamos, descuentos, fechas, validaciones, unidades, divisas, clima, geocoding.
 - **Alertas mínimas:** renovaciones de contratos a 60/30/15 días.
@@ -75,4 +75,4 @@ El detalle y los criterios de corte están en [`02-mvp-scope.md`](02-mvp-scope.m
 
 ## Documentación
 
-El índice completo está en [`README.md`](README.md). Este fichero es el punto de entrada al marco del proyecto; el alcance está en [`02-mvp-scope.md`](02-mvp-scope.md) y la arquitectura en [`01-architecture.md`](01-architecture.md).
+El índice maestro está en [`docs/README.md`](README.md); los índices específicos son [especificaciones de tools](tools/README.md), [ADRs](adr/README.md) y [scripts](../scripts/README.md). Este fichero es el punto de entrada al marco del proyecto; el alcance está en [`02-mvp-scope.md`](02-mvp-scope.md) y la arquitectura en [`01-architecture.md`](01-architecture.md).

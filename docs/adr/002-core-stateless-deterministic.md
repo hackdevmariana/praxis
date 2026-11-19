@@ -9,7 +9,7 @@ El objetivo es evitar alucinaciones y ahorrar tokens. Mezclar NLP, routing semá
 
 ## Decisión
 
-`praxis-core` es un motor **casi stateless y determinista**. Recibe argumentos tipados, ejecuta lógica determinista o consulta APIs externas y devuelve JSON + metadatos. No contiene NLP, semantic-router ni plantillas conversacionales.
+`praxis-core` es un motor **casi stateless y determinista**. Recibe argumentos tipados, ejecuta lógica determinista o consulta APIs externas y devuelve JSON + metadatos. No contiene NLP, semantic-router ni plantillas conversacionales. Hoy se materializa en este repositorio como el paquete `app/`, con stores SQLAlchemy inyectables para idempotencia y control de acceso cuando hay `DATABASE_URL`.
 
 Los datos de tenant, conocimiento y conectores viven en `praxis-biz` y `praxis-knowledge`.
 

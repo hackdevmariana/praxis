@@ -36,12 +36,12 @@ La capa de canal (WhatsApp/Telegram, routing, formatters) es externa al core y n
 
 - **Backend:** FastAPI, Pydantic v2, `uv`.
 - **Base de datos:** PostgreSQL con RLS por empresa; `pgvector` y PostGIS quedan previstos para capas posteriores.
-- **MCP:** SDK oficial `mcp` (streamable HTTP).
-- **Licencia:** MIT.
+- **MCP:** `MCPServer` (antes FastMCP) del SDK oficial `mcp` 2.x (streamable HTTP).
+- **Licencia:** [MIT](LICENSE). Historial de cambios en [`CHANGELOG.md`](CHANGELOG.md).
 
 ## Quickstart
 
-Requisitos: Python 3.12+ y [`uv`](https://docs.astral.sh/uv/). Para migraciones y tests de RLS, PostgreSQL y Docker.
+Requisitos: Python 3.12+ y [`uv`](https://docs.astral.sh/uv/). Las migraciones y los tests de integración RLS usan PostgreSQL/testcontainers; los tests de integración se omiten localmente si Docker no está disponible y se ejecutan en CI.
 
 ```bash
 uv sync
@@ -100,7 +100,7 @@ uv run ruff check .
 uv run ruff format --check .
 uv run pyright
 uv run pytest -q --cov=app --cov-report=term-missing
-uv run pytest -q -m integration  # requiere Docker
+uv run pytest -q -m integration  # se omite si no hay Docker; se ejecuta en CI
 ```
 
 CI ejecuta lint, formato, tipos, tests y umbrales de cobertura: ≥ 80 % global y ≥ 90 % en lógica determinista.

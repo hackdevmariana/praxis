@@ -10,7 +10,7 @@ PRAXIS expone sus herramientas mediante el **Model Context Protocol**. El MCP es
 ## Transporte
 
 - **MCP sobre HTTP** (streamable HTTP) para uso remoto, servido por FastAPI.
-- **stdio** para uso local en agentes de escritorio.
+- **stdio** *(planificado)*: el SDK lo soporta, pero la app no expone hoy un entrypoint stdio (`app/main.py` monta solo streamable HTTP en `/mcp`).
 - Implementación con el SDK oficial `mcp` y transporte streamable HTTP.
 - El servidor MCP se monta en `app/main.py` en `/mcp`, junto a `/health` y las rutas REST auxiliares.
 - `fastapi-mcp` se evaluó, pero su versión 0.4 no es compatible con `mcp` 2.x; el registro se expone directamente con el SDK.
@@ -49,9 +49,9 @@ Reglas:
 - `app/tenancy.py` define `TenantProfile`, `ToolAccessPolicy`, `InMemoryToolAccessPolicy` y `SqlAlchemyToolAccessPolicy`.
 - El catálogo se resuelve por `catalog_key` (`hotel`, `poligono`, `asociacion`, `general`) y se intersecta con `TenantProfile.enabled_tools` si está definido.
 - `ToolContext.allowed_tools` transporta el resultado; el ejecutor devuelve `tool_not_available` si la tool no está permitida.
-- `MCPServer.list_tools` filtra el anuncio con el mismo contexto autenticado, de modo que el agente no ve tools fuera de su perfil.
+- `PraxisMCPServer.list_tools` (`app/mcp_server.py`, subclase de `MCPServer`) filtra el anuncio con el mismo contexto autenticado, de modo que el agente no ve tools fuera de su perfil.
 - En el MVP los scopes del JWT/API key representan los `Permission` del rol. Sin `TenantProfile` para una empresa autenticada, el toolset es vacío (deny by default).
-- Con `DATABASE_URL`, `TenantProfile`/`ToolActivation` se resuelven bajo RLS; sin DB se usa la política inyectable en memoria.
+- Con `DATABASE_URL`, `TenantProfile`/`ToolActivation` se resuelven bajo RLS con `SqlAlchemyToolAccessPolicy`. Sin DB y sin política inyectada, `create_app` usa `AllowAllToolAccess` (desarrollo); se puede inyectar `InMemoryToolAccessPolicy` u otra `ToolAccessPolicy` en tests/arranque.
 - Pendiente: overrides de catálogo y permisos por rol en base de datos.
 
 ## Autenticación y autorización
@@ -79,7 +79,7 @@ Se devuelve el sobre descrito en [`08-formatting.md`](08-formatting.md):
 
 - `content`: JSON serializado (texto estructurado) para el agente.
 - Metadatos accesibles para trazabilidad.
-- En modo `compact`, se omite lo prescindible para ahorrar tokens.
+- *(Planificado)* En modo `compact` se omitiría lo prescindible para ahorrar tokens; hoy se devuelve siempre el sobre JSON completo.
 
 Errores MCP:
 
@@ -110,7 +110,7 @@ Errores MCP:
 
 - `name`: estable y con namespace (`dominio.accion`).
 - La versión viaja en el sobre (`tool_version`), no en el nombre anunciado.
-- Herramientas deprecadas se mantienen anunciadas con `deprecated: true` y `replaced_by` hasta su retirada (ver [`17-versioning.md`](17-versioning.md)).
+- La deprecación se registra en `tool_activations.deprecated`/`replaced_by` y ya excluye la tool del toolset del tenant; el anuncio MCP con flags de deprecación requiere soporte futuro (ver [`17-versioning.md`](17-versioning.md)).
 
 ## Ejemplo de definición (conceptual)
 

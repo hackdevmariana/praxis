@@ -12,12 +12,12 @@ version: 0.1.0
 | Lenguaje | Python 3.12+ |
 | Backend | FastAPI, Pydantic v2 |
 | MCP | SDK oficial `mcp` |
-| Persistencia | PostgreSQL + `pgvector` + PostGIS, SQLAlchemy 2, Alembic |
-| Caché | Redis (`cashews`) |
-| Clientes HTTP | `httpx` + `stamina` (reintentos) |
-| Tareas | `arq` (Redis) para seeders/alertas; sin Celery en MVP |
-| Servidor ASGI | `granian` (producción), `uvicorn[standard]` (desarrollo) |
-| Config | `pydantic-settings`, `.env` |
+| Persistencia | PostgreSQL, SQLAlchemy 2, Alembic; `pgvector`/PostGIS *(objetivo de capas posteriores)* |
+| Caché | *(Objetivo)* Redis (`cashews`); sin dependencia/uso en el MVP actual |
+| Clientes HTTP | `httpx`; reintentos estandarizados con `stamina` *(objetivo)* |
+| Tareas | *(Objetivo)* `arq`/Redis; hoy no hay worker (seeders por CLI, p. ej. `scripts/seed_demo.py`) |
+| Servidor ASGI | `uvicorn[standard]`; `granian` *(objetivo producción)* |
+| Config | Variables de entorno / `.env` leídas en código; `pydantic-settings` *(objetivo)* |
 | Calidad | `uv`, `ruff`, `pyright`, `pytest` |
 | Contenedores | Docker Compose (VPS) |
 
@@ -25,22 +25,24 @@ version: 0.1.0
 
 | Entorno | Uso | Datos |
 |---|---|---|
-| `local` | Desarrollo | PostgreSQL/Redis en Docker, datos demo |
+| `local` | Desarrollo | Sin BD por defecto; PostgreSQL/testcontainers para integración, datos demo opcionales |
 | `staging` | Validación | Datos sintéticos |
 | `production` | Clientes | VPS por instalación, datos reales |
 
 Cada instalación es independiente (self-hosted): sus claves, su base de datos, sus datos.
 
-## Servicios (Docker Compose MVP)
+## Servicios (objetivo Docker Compose)
 
 ```txt
 services:
-  api        # FastAPI + MCP (granian)
-  worker     # arq: seeders, alertas, sincronizaciones
-  db         # PostgreSQL + pgvector + PostGIS
-  redis      # caché y colas
-  reverse    # Caddy/Traefik: TLS y proxy
+  api        # FastAPI + MCP (ASGI; uvicorn hoy, granian objetivo)
+  worker     # (objetivo) arq: seeders, alertas, sincronizaciones
+  db         # PostgreSQL (+ extensiones según despliegue)
+  redis      # (objetivo) caché y colas
+  reverse    # (objetivo) Caddy/Traefik: TLS y proxy
 ```
+
+> No hay `Dockerfile` ni `docker-compose*.yml` versionados en el estado actual; el arranque local funciona sin base de datos.
 
 - **Volúmenes:** `db-data`, `redis-data`, `documents` (almacenamiento local de documentos, ADR-005).
 - **Red:** solo el proxy expone puertos; `db`/`redis` en red interna.
@@ -48,7 +50,7 @@ services:
 
 ## Configuración (`.env`)
 
-Variables principales (nunca en git):
+Variables principales (nunca en git). En el MVP read-from-env cubre autenticación y `DATABASE_URL`; el resto son configuración objetivo o de instalaciones futuras (algunas URLs de proveedor están hoy fijas en código):
 
 ```txt
 PRAXIS_ENV=production
@@ -78,7 +80,7 @@ GOOGLE_REDIRECT_URI=...
 FIELD_ENCRYPTION_KEYS=...   # versionadas
 ```
 
-`AuthSettings.from_env` valida el entorno al arrancar y falla rápido si falta el secreto JWT o la configuración es inválida.
+`AuthSettings.from_env` valida la configuración de autenticación cuando se construye y falla rápido si `PRAXIS_AUTH_REQUIRED=true` y falta el secreto JWT o es inválido.
 
 ## Base de datos
 
@@ -93,15 +95,15 @@ FIELD_ENCRYPTION_KEYS=...   # versionadas
   - Datasets pendientes: festivos, tipos de IVA, plazos fiscales, municipios (8.131) y CNAE.
 - **Backups:** `pg_dump` diario + retención; probar restauración mensualmente.
 
-## Observabilidad (MVP)
+## Observabilidad (estado actual / objetivo)
 
-| Aspecto | Herramienta | Nota |
+| Aspecto | Estado actual | Objetivo |
 |---|---|---|
-| Logs | `structlog` (JSON) | A stdout; rotación por el runtime |
-| Correlación | `asgi-correlation-id` | `request_id` end-to-end |
-| Errores | `sentry-sdk` | Opcional, activable por `.env` |
-| Métricas | `prometheus-client` | Latencia, errores, cache hit, llamadas externas |
-| Tracing | OpenTelemetry | v2; MVP con logs correlacionados |
+| Logs | Logging estándar en puntos concretos | `structlog` JSON a stdout |
+| Correlación | `request_id` en contexto/headers cuando aplica | `asgi-correlation-id` end-to-end |
+| Errores | No integrado | `sentry-sdk` opcional |
+| Métricas | No integrado | `prometheus-client` |
+| Tracing | No integrado | OpenTelemetry (v2) |
 
 Métricas mínimas:
 
@@ -118,23 +120,24 @@ Pipeline mínimo:
 1. `uv sync --frozen`.
 2. `uv run ruff check .` + `uv run ruff format --check .`.
 3. `uv run pyright` (type checking estricto).
-4. `uv run pytest -q --cov=app --cov-report=xml --cov-fail-under=80` y cobertura ≥ 90 % en lógica determinista.
-5. Tests de integración con `testcontainers[postgres]` (RLS): `uv run pytest -m integration`.
-6. Pendiente de automatizar: `pip-audit`, build de imagen, despliegue a staging y migraciones Alembic antes de arrancar la nueva versión.
+4. `uv run python scripts/check_markdown.py` (enlaces, anclas y frontmatter).
+5. `uv run pytest -q --cov=app --cov-report=xml --cov-fail-under=80` y cobertura ≥ 90 % en lógica determinista.
+6. Tests de integración con `testcontainers[postgres]` (RLS): `uv run pytest -m integration`.
+7. Pendiente de automatizar: `pip-audit`, build de imagen, despliegue a staging y migraciones Alembic antes de arrancar la nueva versión.
 
 Despliegue:
 
 - Imágenes versionadas; sin cambios destructivos sin migración previa.
-- Healthcheck `/health` y readiness que valide DB/Redis.
+- Healthcheck `/health` implementado (estado/versión/nº de tools). Readiness con validación de DB/Redis pendiente.
 - Rolling restart con el proxy manteniendo conexiones.
 
 ## Rendimiento y límites
 
-- `orjson` como `default_response_class`.
-- `httpx` con timeouts, reintentos (`stamina`) y límites de concurrencia por proveedor.
-- `polars` para procesamiento de CSV/Excel en lugar de Pandas.
-- Rate limiting (`slowapi`) por usuario/empresa/tool.
-- Presupuesto de llamadas externas por ventana para evitar bucles de agentes.
+- `httpx` disponible para clientes externos; timeouts, reintentos (`stamina`) y límites por proveedor: *(objetivo, pendiente de estandarizar)*.
+- `orjson` como `default_response_class`: *(objetivo)*, no configurado en `create_app`.
+- `polars` para CSV/Excel: *(objetivo)*, no es dependencia actual.
+- Rate limiting (`slowapi`/`fastapi-limiter`) por usuario/empresa/tool: *(objetivo)*, no implementado.
+- Presupuesto de llamadas externas por ventana para evitar bucles de agentes: *(objetivo)*.
 
 ## Escalado (futuro)
 

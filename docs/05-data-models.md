@@ -5,7 +5,7 @@ version: 0.1.0
 
 # Modelos de datos y dominios
 
-Este documento consolida los dominios del backend, las correcciones de compatibilidad y las reglas de aislamiento multi-tenant. Los modelos definitivos viven en `praxis-biz` (datos de tenant) y `praxis-knowledge` (conocimiento); `praxis-core` es casi stateless.
+Este documento consolida el diseño objetivo de dominios, compatibilidad y aislamiento multi-tenant. La implementación MVP real vive en el paquete `app/`: esquema mínimo en `app/db/models.py` y migraciones `0001_initial_rls`/`0002_tool_execution_log` (`companies`, `tenant_profiles`, `tool_activations`, `idempotency_records`, `tool_execution_logs`, `data_sources`). El resto de entidades descritas son diseño/backlog y aún no están materializadas como modelos/tablas. La separación futura en `praxis-biz`/`praxis-knowledge` sigue siendo un objetivo arquitectónico.
 
 ## Convenciones
 
@@ -108,15 +108,16 @@ Se eliminan del modelo los campos canónicos (`input_schema`, `output_schema`, `
 Consumo y auditoría:
 
 ```txt
-ToolExecutionLog
-  id, request_id, tool_name, tool_version,
-  user_id, company_id, channel,
-  input_hash, input_params JSONB, output_data JSONB,
-  execution_time_ms, execution_method,
-  success, error, cache_hit, provider_calls JSONB,
-  cost_actual NUMERIC(12,6), idempotency_key,
-  partial_result, warnings JSONB, legal_disclaimer_shown,
-  created_at
+ToolExecutionLog (implementado: app/db/models.py::ToolExecutionLogRow, migración 0002)
+  id UUID, request_id, tool_name, tool_version,
+  user_id NULL, company_id UUID NOT NULL, channel,
+  input_hash, execution_time_ms, success,
+  error JSONB NULL, idempotency_key TEXT NULL, idempotency_hit BOOL,
+  source NULL, source_type NULL, result_type NULL,
+  warnings JSONB, summary TEXT NULL, created_at
+
+Diseño objetivo (no implementado aún): input_params/output_data, execution_method,
+cache_hit, provider_calls, cost_actual, partial_result, legal_disclaimer_shown, etc.
 ```
 
 Implementación MVP (`0002_tool_execution_log`): tabla tenant con RLS; el ejecutor
@@ -124,7 +125,7 @@ registra todas las ejecuciones con `input_hash` (nunca parámetros en claro),
 `execution_time_ms`, `success`, código de error, idempotencia y metadatos de fuente.
 `app/audit.py` expone stores in-memory, no-op y SQLAlchemy inyectables.
 
-## Dominio 3 — Execution
+## Dominio 3 — Execution (diseño objetivo; no implementado)
 
 ```txt
 ExecutionRequest
@@ -143,18 +144,14 @@ ConversationContext
   last_result_summary, expires_at   # Redis TTL 5 min
 ```
 
-## Dominio 4 — Data (fuentes y caché)
+## Dominio 4 — Data (diseño objetivo salvo `DataSource`)
 
 ```txt
-DataSource
-  id, name, source_type, base_url, api_key_env,
-  rate_limit_per_minute, rate_limit_per_day,
-  cache_ttl_default, is_reliable, is_active,
-  terms_of_service_url, redistribution_allowed,
-  attribution_required, personal_data_collected,
-  cost_per_call, fallback_source_id,
-  circuit_breaker_state, circuit_breaker_failures,
-  circuit_breaker_opened_at
+DataSource (implementado: app/db/models.py::DataSourceRow, migración 0001)
+  id UUID, name, source_type, base_url NULL, is_active, created_at
+
+Diseño objetivo (no implementado aún): api_key_env, rate limits, cache_ttl_default,
+fiabilidad, términos/licencia, atribución/PII, coste, fallback, circuit breaker, etc.
 
 DataCacheEntry       # metadatos; el valor vive en Redis
   id, source_id, cache_key, valid_until,
@@ -199,7 +196,7 @@ DocumentComparison
   differences JSONB, created_at
 ```
 
-`storage_path` apunta al VPS en el MVP (ADR-005). Validación de tipo real con `python-magic`.
+`storage_path` apunta al VPS en el MVP (ADR-005). Validación de cabecera/tamaño en el adaptador; `python-magic` queda como objetivo pendiente.
 
 ## Dominio 7 — Energy
 
@@ -460,10 +457,10 @@ Ver «Impuestos y normativa» en el Dominio 8 (`LegalNorm`, `RuleParameter`, `Fi
 ALTER TABLE document ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY tenant_isolation ON document
-  USING (company_id = current_setting('app.company_id')::uuid);
+  USING (company_id = NULLIF(current_setting('praxis.company_id', true), '')::uuid);
 ```
 
-- Cada conexión fija `app.company_id` desde el `ToolContext`.
+- Cada conexión fija `praxis.company_id` desde el `ToolContext` (vía `app/db/rls.py:set_company_context` / `company_session`).
 - Las tablas globales no tienen política; las tenant devuelven cero filas sin contexto.
 - Los tests de integración con `testcontainers` verifican que sin `company_id` no se filtra nada.
 

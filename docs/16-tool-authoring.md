@@ -21,11 +21,10 @@ Comprueba:
 app/tools/<dominio>/<tool>/
 ├── __init__.py
 ├── tool.py         # @tool + implementación
-├── schemas.py      # Pydantic input/output
-└── tests/
-    ├── test_happy.py
-    ├── test_edge.py
-    └── test_errors.py
+└── schemas.py      # Pydantic input/output
+
+tests/
+└── test_<dominio>_<tool>.py  # suites centralizadas en tests/
 ```
 
 Formatters, si aplican, viven **fuera** del core (capa de canal); la tool no genera texto humano.
@@ -33,22 +32,10 @@ Formatters, si aplican, viven **fuera** del core (capa de canal); la tool no gen
 ## Definición con `@tool`
 
 ```python
-from decimal import Decimal
-from pydantic import BaseModel, Field
-from praxis_core.tools import tool, ToolContext
-from praxis_core.metadata import build_metadata
-
-class VatInput(BaseModel):
-    amount: Decimal = Field(gt=0)
-    rate: Decimal = Field(default=Decimal("21"), ge=0, le=100)
-    operation: str = Field(default="add", pattern="^(add|extract|remove)$")
-
-class VatOutput(BaseModel):
-    base_amount: Decimal
-    vat_rate: Decimal
-    vat_amount: Decimal
-    total_amount: Decimal
-    currency: str = "EUR"
+from app.context import ToolContext
+from app.registry import tool
+from app.result import ToolResult, tool_result
+from app.tools.finance.vat.schemas import VatInput, VatOutput
 
 @tool(
     name="finance.vat",
@@ -58,13 +45,15 @@ class VatOutput(BaseModel):
     data_classification="business",
     read_only=True,
     idempotent=True,
+    requires_confirmation=False,
     mcp_description=(
-        "Calcula IVA español. Usar para sumar, extraer o restar IVA de un importe. "
-        "No usar para IRPF ni impuesto de sociedades."
+        "Suma, extrae o resta IVA de un importe con redondeo al céntimo. "
+        "No usar para IRPF, impuesto de sociedades ni retenciones."
     ),
 )
-async def calculate_vat(params: VatInput, ctx: ToolContext) -> VatOutput:
+async def calculate_vat(params: VatInput, ctx: ToolContext) -> ToolResult[VatOutput]:
     ...
+    return tool_result(VatOutput(...))
 ```
 
 Reglas del decorador:
@@ -76,18 +65,18 @@ Reglas del decorador:
 - `read_only`, `idempotent`, `requires_confirmation`.
 - `mcp_description`: verbo + caso de uso + cuándo **no** usar.
 
-De la definición se generan `inputSchema`, `outputSchema`, anotaciones MCP, documentación y esqueleto de golden tests.
+De la definición se generan `inputSchema`, `outputSchema` y anotaciones MCP. La documentación y los golden tests se mantienen junto al código.
 
 ## Dinero y precisión
 
 - Usa `Decimal` para importes; nunca `float`.
 - Redondea con `ROUND_HALF_UP` a 2 decimales al final.
-- Si usas `numpy-financial`, documenta el boundary `Decimal → float → Decimal` y añade test de cuadre al céntimo.
+- No se usa `numpy-financial` en el MVP; si se incorpora, documenta el boundary `Decimal → float → Decimal` y añade test de cuadre al céntimo.
 - Serializa importes como string en JSON.
 
 ## Metadatos
 
-Toda salida se envuelve con el sobre común. Usa `build_metadata(...)` y rellena:
+Toda salida se envuelve con el sobre común. Los metadatos base los construye el ejecutor con `app.metadata.build_metadata(...)`; la tool puede aportar `warnings`, `summary` y `metadata_extra` vía `ToolResult`:
 
 - `source`, `source_type`, `retrieved_at`, `valid_until`.
 - `is_estimated`, `confidence` (si aplica).
@@ -101,7 +90,7 @@ No construyas el sobre a mano si existe el helper común.
 Si la tool consulta una API:
 
 1. Añade una **ficha de proveedor** YAML (ver [`06-external-apis.md`](06-external-apis.md)).
-2. Usa `httpx` con timeouts y `stamina` para reintentos.
+2. Usa `httpx` con timeouts; reintentos con `stamina` son objetivo pendiente de estandarizar.
 3. Respeta rate limits y define caché por `valid_until`.
 4. Declara `fallback_providers` y circuit breaker.
 5. No incluyas claves; se leen de `.env`.

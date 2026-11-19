@@ -15,7 +15,7 @@ Crear una vertical específica, `praxis-sim`, que contiene **pipelines y simulad
 2. Ejecuta cada paso conservando metadatos intermedios.
 3. Devuelve un resultado compuesto con trazabilidad de cada cálculo y fuente.
 
-No duplica lógica de cálculo: la compone a partir de `praxis-core`.
+No duplica lógica de cálculo: la compone a partir de `praxis-core` (hoy materializado como el paquete `app/` en este repositorio).
 
 ## Consecuencias
 

@@ -12,7 +12,7 @@ PRAXIS es multi-tenant desde el primer momento y aspira a ser adoptado por gesto
 Usar **Row-Level Security** de PostgreSQL como mecanismo principal de aislamiento.
 
 - Todas las tablas tenant-scoped llevan `company_id NOT NULL` y RLS.
-- Cada conexión fija `app.company_id` desde el `ToolContext`.
+- Cada conexión fija `praxis.company_id` desde el `ToolContext` (`app/db/rls.py`, migraciones RLS).
 - Sin contexto, las tablas tenant niegan el acceso (deny by default).
 - Las tablas globales no tienen política.
 
