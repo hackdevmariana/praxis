@@ -105,9 +105,18 @@ uv run pytest -q -m integration  # se omite si no hay Docker; se ejecuta en CI
 
 CI ejecuta lint, formato, tipos, tests y umbrales de cobertura: ≥ 80 % global y ≥ 90 % en lógica determinista.
 
-### Adaptadores pendientes
+### Adaptadores reales
 
-`calendar.*`, `documents.*` y `alerts.contract_renewal` necesitan adaptadores inyectados para operar: sin ellos devuelven `connector_not_connected`, `provider_unavailable` o `contract_not_found`. Los tests de escenarios instalan adaptadores falsos; OAuth de Google, OCR con Tesseract, WeasyPrint, almacenamiento real y envío de avisos siguen en [`TODO.md`](TODO.md).
+`calendar.*`, `documents.*` y `alerts.contract_renewal` siguen fallando cerrado si no se activan: devuelven `connector_not_connected`, `provider_unavailable` o `contract_not_found`. Los adaptadores reales se instalan en `create_app` desde `app/providers/adapters.py`:
+
+```bash
+export PRAXIS_CALENDAR_ADAPTER=google GOOGLE_REFRESH_TOKEN=...  # OAuth + espejo SQL
+export PRAXIS_EVENT_REPOSITORY=sql PRAXIS_CONTRACT_REPOSITORY=sql PRAXIS_ALERT_REPOSITORY=sql
+export PRAXIS_DOCUMENTS_ADAPTER=local PRAXIS_PDF_RENDERER=weasyprint
+export PRAXIS_OCR_ADAPTER=tesseract PRAXIS_ALERT_NOTIFIER=smtp SMTP_HOST=...
+```
+
+Las credenciales, binarios del sistema (`tesseract`, librerías nativas de WeasyPrint) y el directorio de documentos deben provisionarse por entorno; el inventario completo está en [`.env.example`](.env.example) y [`docs/10-infrastructure.md`](docs/10-infrastructure.md). Sin flags, los tests de escenarios instalan adaptadores falsos.
 
 ## Documentación
 
@@ -116,7 +125,7 @@ CI ejecuta lint, formato, tipos, tests y umbrales de cobertura: ≥ 80 % global 
 - [`00-overview.md`](docs/00-overview.md) — qué es PRAXIS, por qué y para quién.
 - [`01-architecture.md`](docs/01-architecture.md) — verticales, capas y flujo de ejecución.
 - [`02-mvp-scope.md`](docs/02-mvp-scope.md) — alcance, herramientas y criterios de corte.
-- [`03-tools-catalog.md`](docs/03-tools-catalog.md) — catálogo de las 21 herramientas del MVP y backlog.
+- [`03-tools-catalog.md`](docs/03-tools-catalog.md) — catálogo de las 25 herramientas implementadas y backlog.
 - [`04-routing.md`](docs/04-routing.md) — capa de canal y `intents.yaml` (v2).
 - [`05-data-models.md`](docs/05-data-models.md) — dominios, RLS y modelos.
 - [`06-external-apis.md`](docs/06-external-apis.md) — proveedores, límites y fallbacks.

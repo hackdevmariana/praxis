@@ -341,7 +341,7 @@ Salida: `{ years, normalize_by, currency, ranking, normalized_table }`. La tabla
 
 ## Agenda
 
-OAuth de Google **por usuario**: cada persona conecta su cuenta. Los eventos de empresa y personales viven en calendarios separados. Ver [`13-connectors.md`](13-connectors.md).
+OAuth de Google **por usuario**: cada persona conecta su cuenta. Los eventos de empresa y personales viven en calendarios separados; la escritura también persiste un espejo en `calendar_events`. Ver [`13-connectors.md`](13-connectors.md).
 
 ### `calendar.list_events` — v1.0.0
 
@@ -397,7 +397,7 @@ Extrae datos estructurados de una factura o albarán en PDF.
 
 - `read_only: true`, `idempotent: true`
 - Permiso: `documents.read` · Clasificación: `business`
-- Procesador: `pdfplumber`; OCR (`Tesseract`) pendiente de adaptador; `markitdown` no está incluido.
+- Procesador: `pdfplumber`, con OCR `Tesseract` opcional cuando se activa `PRAXIS_OCR_ADAPTER=tesseract`; `markitdown` no está incluido.
 - Si la confianza es baja, `needs_review: true`.
 
 | Entrada | Tipo |

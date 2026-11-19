@@ -15,7 +15,7 @@ tool: documents.extract_invoice
 | read_only | true |
 | idempotent | true (por documento + tipo + versión de extracción) |
 | requires_confirmation | false |
-| Provider | `pdfplumber`; `markitdown` no incluido; OCR `Tesseract` pendiente |
+| Provider | `pdfplumber`; OCR `Tesseract` opcional; `markitdown` no incluido |
 | Caché | resultado persistido en `DocumentExtraction` |
 | Perfiles | `praxis-biz`, `praxis-knowledge` |
 
@@ -25,7 +25,7 @@ Extrae datos estructurados de una factura, albarán o presupuesto PDF ya subido.
 
 1. **Acceso:** el documento se busca por `document_id` **dentro del tenant** (RLS). Si no existe o es de otra empresa → `document_not_found`.
 2. **Validación:** la cabecera PDF y el tamaño se validan en el adaptador; `python-magic` no está incluido en el MVP.
-3. **Texto:** extracción con `pdfplumber`. Si el texto es insuficiente (< 100 caracteres útiles) se devuelve `needs_review=true`, `confidence=0.0` y warning `ocr_unavailable`; OCR con `Tesseract` está pendiente.
+3. **Texto:** extracción con `pdfplumber`. Si el texto es insuficiente (< 100 caracteres útiles) se intenta OCR con `Tesseract` cuando se activa `PRAXIS_OCR_ADAPTER=tesseract`; sin OCR se devuelve `needs_review=true`, `confidence=0.0` y warning `ocr_unavailable`.
 4. **Parseo:** heurísticas + regex sobre texto; se normalizan CIF/NIF, fechas ISO, importes `Decimal` y divisa.
 5. **Cuadre:** se comprueba `base + vat = total` (±0.02) y `Σ líneas = base`. Si no cuadra → warning `totals_mismatch` y baja confianza.
 6. **Confianza:** media ponderada de campos críticos (número, fecha, total, CIF). Si `< 0.70` → `needs_review=true`.
@@ -37,7 +37,7 @@ Reglas:
 - Importes como **string decimal** (2 decimales) y fechas ISO 8601.
 - `issuer_cif` se normaliza a mayúsculas sin espacios ni guiones.
 - `currency` ISO 4217; si no se detecta, `null` + warning `currency_not_detected`.
-- El adaptador OCR está pendiente: un PDF sin capa de texto se devuelve con `needs_review=true`, `confidence=0.0` y warning `ocr_unavailable`; cuando se instale, se marcará `processor="tesseract"`.
+- Con `PRAXIS_OCR_ADAPTER=tesseract`, un PDF sin capa de texto se rasteriza con `pdfplumber` y se procesa con Tesseract; la respuesta marca `processor="tesseract"` y `ocr_used=true`. Sin el adaptador se mantiene `ocr_unavailable`.
 - No se usa un LLM para extraer importes en el MVP (determinismo y trazabilidad).
 
 ## 3. Contrato Pydantic
@@ -193,5 +193,6 @@ Fixture `invoice-F-2026-0042.pdf` (texto embebido, 2 líneas).
 - Pendiente: facturas multi-página, abonos y rectificativas en v1.1; decisión de producto.
 - Pendiente: OCR de tablas complejas; evaluar `camelot`/`tabula` antes de ampliar heurísticas.
 - Implementado: validación de PDF por magic bytes y tamaño, extracción con `pdfplumber`, heurísticas para CIF, fechas, líneas y totales, caché de 30 días y advertencias de cuadre/confianza.
-- Pendiente: OCR con Tesseract, `python-magic`, almacenamiento persistente de `DocumentExtraction` y soporte multi-página avanzado.
+- Implementado: OCR con Tesseract como adaptador opcional y caché de extracción de 30 días.
+- Pendiente: `python-magic`, almacenamiento persistente de `DocumentExtraction` y soporte multi-página avanzado.
 - Decidido: almacenar solo campos y hashes, no el texto extraído completo; minimización de datos.

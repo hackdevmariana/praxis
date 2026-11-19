@@ -197,9 +197,9 @@ Reloj fijo: **2026-11-13T10:00:00+01:00**.
 
 ## 8. Decisiones pendientes
 
-- Pendiente: envío real de notificaciones (email/WhatsApp) y plantillas en v2; requiere proveedor externo.
+- Implementado: envío SMTP real cuando se activa `PRAXIS_ALERT_NOTIFIER=smtp` y el aviso llega a su fecha; WhatsApp sigue en v2.
 - Implementado: cambiar `renewal_date` crea una nueva versión de regla (idempotencia por contrato/fecha).
 - Pendiente: avisos en días hábiles (`business_days=true`) y hora configurable por tenant; decisión de producto.
 - Implementado: cálculo de disparos con DST, filtrado de avisos pasados, confirmación vía `ToolContext.confirmed`, idempotencia central en el ejecutor con alias por contrato/fecha y `ContractRepository` inyectable.
-- Pendiente: persistencia real de contratos, `AlertRule`/`AlertEvent` y `AuditLog`.
+- Implementado: persistencia SQL de contratos, `AlertRule`/`AlertEvent` con RLS cuando se activan `PRAXIS_CONTRACT_REPOSITORY=sql` y `PRAXIS_ALERT_REPOSITORY=sql`; la auditoría central usa `DATABASE_URL`.
 - Pendiente: recurrencia (renovaciones anuales automáticas) y `next_cycle`; decisión de producto.

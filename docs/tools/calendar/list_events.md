@@ -178,5 +178,6 @@ Datos de prueba: eventos inline en `tests/test_calendar_events.py` inyectados co
 - Pendiente: paginación completa con `page_token` de entrada en v1.1.
 - Pendiente: filtro por `attendee` o `q` (texto) en v1.1; decisión de producto.
 - Pendiente: Microsoft 365 / Outlook como conector alternativo en v2 (misma interfaz); requiere API.
-- Implementado: conector inyectable (`CalendarConnector`) y caché TTL de 60 s por usuario/tenant/calendario/rango.
-- Pendiente: OAuth real con `authlib`, almacenamiento cifrado de tokens y cifrado de la caché en reposo.
+- Implementado: conector inyectable (`CalendarConnector`), OAuth refresh de Google con `httpx` y caché TTL de 60 s por usuario/tenant/calendario/rango.
+- Implementado: `PRAXIS_CALENDAR_ADAPTER=google` con refresh token o access token provisionado; 401 se traduce a `connector_auth_expired`.
+- Pendiente: almacenamiento cifrado de tokens por usuario y cifrado de la caché en reposo.

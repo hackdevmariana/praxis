@@ -37,6 +37,7 @@ from app.idempotency import (
     set_idempotency_store,
 )
 from app.mcp_server import build_mcp_server
+from app.providers.adapters import configure_adapters
 from app.registry import ToolSpec, registry
 from app.tenancy import (
     AllowAllToolAccess,
@@ -132,6 +133,7 @@ def create_app(
     auth_settings = settings or AuthSettings.from_env()
     keys = api_key_store or load_api_key_store(auth_settings)
     engine = create_db_engine(database_url)
+    configure_adapters(engine)
 
     if tool_access_policy is not None:
         access_policy = tool_access_policy

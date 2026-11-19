@@ -5,7 +5,7 @@ version: 0.1.0
 
 # Modelos de datos y dominios
 
-Este documento consolida el diseño objetivo de dominios, compatibilidad y aislamiento multi-tenant. La implementación MVP real vive en el paquete `app/`: esquema mínimo en `app/db/models.py` y migraciones `0001_initial_rls`/`0002_tool_execution_log` (`companies`, `tenant_profiles`, `tool_activations`, `idempotency_records`, `tool_execution_logs`, `data_sources`). El resto de entidades descritas son diseño/backlog y aún no están materializadas como modelos/tablas. La separación futura en `praxis-biz`/`praxis-knowledge` sigue siendo un objetivo arquitectónico.
+Este documento consolida el diseño objetivo de dominios, compatibilidad y aislamiento multi-tenant. La implementación real vive en el paquete `app/`: esquema mínimo en `app/db/models.py` y migraciones `0001_initial_rls`, `0002_tool_execution_log` y `0003_integration_persistence` (`companies`, `tenant_profiles`, `tool_activations`, `idempotency_records`, `tool_execution_logs`, `data_sources`, `calendar_events`, `contracts`, `alert_rules`, `alert_events`). El resto de entidades descritas son diseño/backlog y aún no están materializadas como modelos/tablas. La separación futura en `praxis-biz`/`praxis-knowledge` sigue siendo un objetivo arquitectónico.
 
 ## Convenciones
 

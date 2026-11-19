@@ -238,7 +238,8 @@ class GenerateInvoiceOutput(BaseModel):
 
 - Pendiente: numeración fiscal por serie y ejercicio; validación con gestoría (¿reinicio anual?).
 - Implementado: cálculo por líneas y grupos de IVA, numeración delegada a `DocumentStore`, renderizado delegado a `InvoiceRenderer`, HTML saneado e idempotencia central en el ejecutor.
-- Pendiente: adaptadores reales de WeasyPrint, almacenamiento fuera del webroot, secuencia transaccional y persistencia de `Document`/`Invoice`/`AuditLog`.
+- Implementado: renderizado real con WeasyPrint (`PRAXIS_PDF_RENDERER=weasyprint`) y almacén local con numeración persistente fuera del webroot (`PRAXIS_DOCUMENTS_ADAPTER=local`).
+- Pendiente: persistencia de `Document`/`Invoice`/`AuditLog` y secuencia fiscal transaccional en base de datos.
 - Pendiente: Veri*factu / TicketBAI y firma electrónica en v2; validación legal.
 - Pendiente: plantillas por tenant (logo, colores, idioma) en v1.1; decisión de producto.
 - Implementado: `pdf_path` y `document_hash_sha256` en la salida (v1).

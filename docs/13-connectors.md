@@ -21,12 +21,11 @@ Ver [`05-data-models.md`](05-data-models.md).
 
 - **Por usuario:** cada persona conecta su cuenta. Permite separar agenda personal y de empresa.
 - Scopes mínimos: lectura y escritura de eventos (`calendar.events`).
-- Flujo OAuth 2.0 con `authlib`; redirección registrada por instalación.
-- Tokens cifrados con envelope encryption; `refresh_token` con rotación.
+- Flujo OAuth 2.0 implementado con refresh token provisionado por instalación; la consola de consentimiento y el almacenamiento cifrado de tokens por usuario son responsabilidad del despliegue.
 - El `calendar_id` distingue calendario (personal, empresa, recurso).
-- Escritura (`calendar.create_event`) requiere `requires_confirmation: true` e `idempotency_key`.
+- Escritura (`calendar.create_event`) requiere `requires_confirmation: true`, `idempotency_key` y guarda un espejo en `calendar_events` cuando se activa `PRAXIS_EVENT_REPOSITORY=sql`.
 - Las tools consumen un `CalendarConnector` inyectable. Sin conector configurado fallan con `connector_not_connected`; token caducado → `connector_auth_expired`.
-- En esta fase el conector real con `authlib`, tokens cifrados y rotación de `refresh_token` sigue pendiente; los tests usan un conector falso.
+- Activación: `PRAXIS_CALENDAR_ADAPTER=google` con `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` y `GOOGLE_REFRESH_TOKEN`, o `PRAXIS_GOOGLE_ACCESS_TOKEN` para cuentas de servicio.
 
 ### Sincronización
 

@@ -50,7 +50,7 @@ services:
 
 ## Configuración (`.env`)
 
-Variables principales (nunca en git). En el MVP read-from-env cubre autenticación y `DATABASE_URL`; el resto son configuración objetivo o de instalaciones futuras (algunas URLs de proveedor están hoy fijas en código):
+Variables principales (nunca en git). La aplicación lee autenticación, `DATABASE_URL` y los flags de adaptadores reales; si no se activan, los providers permanecen no configurados y las tools fallan cerrado:
 
 ```txt
 PRAXIS_ENV=production
@@ -71,10 +71,34 @@ PRAXIS_API_KEYS_FILE=/etc/praxis/api_keys.json
 OPEN_METEO_BASE_URL=https://api.open-meteo.com/v1
 CARTOCIUDAD_BASE_URL=https://www.cartociudad.es/geocoder/api
 
-# Google Calendar (OAuth por usuario)
+# Google Calendar (refresh token provisionado por instalación)
+PRAXIS_CALENDAR_ADAPTER=google
+PRAXIS_GOOGLE_ACCESS_TOKEN=...   # alternativa para cuentas de servicio
 GOOGLE_CLIENT_ID=...
 GOOGLE_CLIENT_SECRET=...
-GOOGLE_REDIRECT_URI=...
+GOOGLE_REFRESH_TOKEN=...
+GOOGLE_TOKEN_URL=https://oauth2.googleapis.com/token
+
+# Persistencia de integraciones
+PRAXIS_EVENT_REPOSITORY=sql
+PRAXIS_CONTRACT_REPOSITORY=sql
+PRAXIS_ALERT_REPOSITORY=sql
+
+# Documentos y OCR
+PRAXIS_DOCUMENTS_ADAPTER=local
+PRAXIS_DOCUMENTS_DIR=/var/lib/praxis/documents
+PRAXIS_PDF_RENDERER=weasyprint
+PRAXIS_OCR_ADAPTER=tesseract
+PRAXIS_TESSERACT_LANGUAGES=spa+eng
+
+# Avisos
+PRAXIS_ALERT_NOTIFIER=smtp
+SMTP_HOST=...
+SMTP_PORT=587
+SMTP_USER=...
+SMTP_PASSWORD=...
+SMTP_SENDER=praxis@localhost
+SMTP_USE_TLS=true
 
 # Cifrado de campos sensibles
 FIELD_ENCRYPTION_KEYS=...   # versionadas
@@ -87,8 +111,8 @@ FIELD_ENCRYPTION_KEYS=...   # versionadas
 - **Extensiones:** `vector` (pgvector), `postgis`, `pgcrypto` (si aplica).
 - **Migraciones:** Alembic (`migrations/`). La migración inicial crea el esquema tenant, las políticas RLS y el rol `praxis_app`; se aplica con `uv run alembic upgrade head` y `DATABASE_URL`.
 - **RLS:** `app/db/rls.py` inyecta `praxis.company_id` por transacción. El código de aplicación debe usar `company_session(engine, company_id)` para cualquier consulta tenant.
-- La migración `0002_tool_execution_log` añade la tabla de auditoría de ejecuciones con la misma política RLS.
-- `create_app` usa stores SQLAlchemy cuando hay `DATABASE_URL`; sin ella mantiene los stores en memoria para desarrollo y tests.
+- La migración `0002_tool_execution_log` añade la tabla de auditoría de ejecuciones con la misma política RLS; la `0003_integration_persistence` añade eventos, contratos, reglas de aviso y disparos con la misma política.
+- `create_app` usa stores SQLAlchemy cuando hay `DATABASE_URL`; sin ella mantiene los stores en memoria para desarrollo y tests. Los adaptadores reales se instalan desde `app/providers/adapters.py` según los flags anteriores.
 - **Seeders:** CLI independiente (no dentro de FastAPI), ejecutable por cron.
   - `uv run python scripts/seed_demo.py` crea/actualiza los tres tenants demo y las fuentes globales con UUID fijos.
   - Idempotentes, versionados y auditables (`created_by: seeder`, `source`).

@@ -87,11 +87,11 @@
 
 - [x] `procurement.tpv_savings`.
 - [x] `procurement.compare_offers`.
-- [ ] `calendar.list_events` (tool y conector inyectable listos; falta OAuth real).
-- [ ] `calendar.create_event` (tool, confirmación e idempotencia listos; faltan OAuth real y persistencia).
-- [ ] `documents.extract_invoice` (pdfplumber y caché listos; falta OCR/Tesseract).
-- [ ] `documents.generate_invoice` (cálculo, numeración, idempotencia y adaptadores listos; falta WeasyPrint/almacenamiento real).
-- [ ] `alerts.contract_renewal` (tool, avisos y tests listos; faltan repositorio persistente y envío real).
+- [x] `calendar.list_events` — conector Google Calendar con OAuth refresh (`PRAXIS_CALENDAR_ADAPTER=google`).
+- [x] `calendar.create_event` — OAuth, confirmación, idempotencia y espejo persistente (`PRAXIS_EVENT_REPOSITORY=sql`).
+- [x] `documents.extract_invoice` — pdfplumber, caché y OCR Tesseract opcional (`PRAXIS_OCR_ADAPTER=tesseract`).
+- [x] `documents.generate_invoice` — WeasyPrint y almacén local con numeración persistente (`PRAXIS_DOCUMENTS_ADAPTER=local`).
+- [x] `alerts.contract_renewal` — repositorio SQL y notificador SMTP (`PRAXIS_ALERT_NOTIFIER=smtp`).
 
 ### Seguridad, tenants y efectos
 
@@ -147,3 +147,4 @@
 - [x] Cerrar las decisiones §8 con defaults acordados en [`docs/tools/`](docs/tools/README.md); los restantes requieren producto, proveedor o validación legal.
 - [ ] Documentar/implementar el servicio de enlaces QR (`qr.generate`, v3) si se prioriza.
 - [ ] Revisar `docs/12-legal-notes.md` con validación profesional.
+- [ ] Provisión por entorno de secretos y binarios de sistema (OAuth/Google, Tesseract, WeasyPrint y SMTP).

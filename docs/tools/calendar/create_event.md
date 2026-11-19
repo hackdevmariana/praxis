@@ -185,6 +185,6 @@ class CreateEventOutput(BaseModel):
 - Pendiente: crear en calendarios compartidos de empresa; requiere rol y `calendar_id` autorizado (v1.1).
 - Pendiente: política de `reminders` y `conferenceData` (Meet) en v1.1; decisión de producto.
 - Pendiente: recurrencia amigable (`daily|weekly|monthly`) además de `RRULE`; decisión de producto.
-- Implementado: confirmación vía `ToolContext.confirmed`, idempotencia central de 30 días en el ejecutor y conector inyectable.
-- Pendiente: OAuth real y persistencia real de eventos/`AuditLog`; la idempotencia persistente ya existe cuando se configura `DATABASE_URL`.
+- Implementado: confirmación vía `ToolContext.confirmed`, idempotencia central de 30 días en el ejecutor, conector OAuth inyectable y espejo persistente en `calendar_events` con `PRAXIS_EVENT_REPOSITORY=sql`.
+- Implementado: OAuth refresh de Google con `httpx` y mapeo de 401 a `connector_auth_expired`; la auditoría central ya existe con `DATABASE_URL`.
 - Pendiente: verificar el límite de asistentes de Google y el comportamiento con invitaciones externas; requiere API.
