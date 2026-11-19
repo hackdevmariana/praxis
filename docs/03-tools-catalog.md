@@ -5,7 +5,7 @@ version: 0.1.0
 
 # Catálogo de herramientas
 
-Este documento describe las **21 herramientas del MVP** y el backlog documentado para la comunidad. La definición canónica vive en código (decorador `@tool`); este catálogo es su reflejo navegable. El índice de las 42 specs (21 MVP, 18 v2 y 3 backlog) está en [`tools/README.md`](tools/README.md).
+Este documento describe las **25 herramientas implementadas** (21 MVP y 4 v2) y el backlog documentado para la comunidad. La definición canónica vive en código (decorador `@tool`); este catálogo es su reflejo navegable. El índice de las 42 specs (21 MVP, 18 v2 —4 implementadas— y 3 backlog) está en [`tools/README.md`](tools/README.md).
 
 ## Convenciones
 
@@ -17,14 +17,14 @@ Este documento describe las **21 herramientas del MVP** y el backlog documentado
 - **Importes:** `Decimal` serializado como string; nunca `float`.
 - **Permisos:** scopes del tipo `dominio.accion`.
 
-## Resumen del MVP
+## Resumen de tools implementadas
 
 Cada nombre enlaza a su spec detallada en [`docs/tools/`](tools/README.md).
 
 | Dominio | Tools |
 |---|---|
 | Fechas | [`datetime.calc`](tools/datetime/calc.md), [`datetime.business_days`](tools/datetime/business_days.md), [`calendar.deadline_remaining`](tools/calendar/deadline_remaining.md) |
-| Finanzas | [`finance.vat`](tools/finance/vat.md), [`finance.margin`](tools/finance/margin.md), [`finance.loan_schedule`](tools/finance/loan_schedule.md), [`finance.discounts`](tools/finance/discounts.md) |
+| Finanzas | [`finance.vat`](tools/finance/vat.md), [`finance.margin`](tools/finance/margin.md), [`finance.loan_schedule`](tools/finance/loan_schedule.md), [`finance.discounts`](tools/finance/discounts.md), [`finance.business_kpi`](tools/finance/business_kpi.md), [`finance.ebitda`](tools/finance/ebitda.md), [`finance.break_even`](tools/finance/break_even.md), [`finance.cashflow_13w`](tools/finance/cashflow_13w.md) |
 | Validación | [`validate.spanish_id`](tools/validate/spanish_id.md), [`validate.iban`](tools/validate/iban.md), [`validate.email_phone`](tools/validate/email_phone.md), [`units.convert`](tools/units/convert.md) |
 | Datos externos | [`currency.convert`](tools/currency/convert.md), [`weather.forecast`](tools/weather/forecast.md), [`geo.geocode`](tools/geo/geocode.md) |
 | Compras | [`procurement.tpv_savings`](tools/procurement/tpv_savings.md), [`procurement.compare_offers`](tools/procurement/compare_offers.md) |
@@ -155,6 +155,38 @@ Descuentos sucesivos y cálculo del precio original.
 | `operation` | enum: `apply`, `reverse` |
 
 Salida: `{ original_amount, final_amount, discount_amount, effective_discount_pct, currency }`.
+
+### `finance.business_kpi` — v0.1.0 (v2)
+
+Márgenes, rentabilidad, ciclo de caja y liquidez desde un estado financiero resumido.
+
+- `read_only: true`, `idempotent: true` · Permiso: `finance.read` · Clasificación: `business`
+- Entradas no negativas y `period_days` 30–366; ver [spec](tools/finance/business_kpi.md).
+- Salida: márgenes, EBIT/EBITDA, DSO/DPO/DIO, CCC, `current_ratio` y `working_capital`; ratios `null` con `undefined_ratio`.
+
+### `finance.ebitda` — v0.1.0 (v2)
+
+EBITDA, EBITDA ajustado y EBIT con márgenes.
+
+- `read_only: true`, `idempotent: true` · Permiso: `finance.read` · Clasificación: `business`
+- Partidas no recurrentes: ingresos se restan y gastos se suman; ver [spec](tools/finance/ebitda.md).
+- Salida: `{ ebitda, adjusted_ebitda, ebit, ebitda_margin_pct, adjusted_ebitda_margin_pct, ebit_margin_pct, currency }`.
+
+### `finance.break_even` — v0.1.0 (v2)
+
+Punto de equilibrio unitario, objetivo de beneficio y margen de seguridad.
+
+- `read_only: true`, `idempotent: true` · Permiso: `finance.read` · Clasificación: `business`
+- `contribution_margin_per_unit <= 0` devuelve `invalid_params`; ver [spec](tools/finance/break_even.md).
+- Salida: margen de contribución, unidades e ingresos de equilibrio, unidades para objetivo y margen de seguridad.
+
+### `finance.cashflow_13w` — v0.1.0 (v2)
+
+Previsión de tesorería a 13 semanas a partir de flujos agregados.
+
+- `read_only: true`, `idempotent: true` · Permiso: `finance.read` · Clasificación: `business`
+- Listas de exactamente 13 importes no negativos; `opening_balance` puede ser negativo; ver [spec](tools/finance/cashflow_13w.md).
+- Salida: saldo semanal, `end_balance`, `min_balance`, `min_week` y `weeks_with_negative_balance`.
 
 ---
 
@@ -425,13 +457,13 @@ Salida: `{ alert_rule_id, renewal_date, next_trigger_at, schedule: [{days_before
 
 ## Backlog documentado
 
-Herramientas previstas para la comunidad, con estado `backlog` (sin fecha) o `v2`. No se implementan en el MVP; sirven de guía y deben cumplir los criterios de entrada de [`02-mvp-scope.md`](02-mvp-scope.md#criterios-de-entrada-para-herramientas-de-backlog). Las specs completas están en el [índice de herramientas](tools/README.md).
+Herramientas previstas para la comunidad, con estado `backlog` (sin fecha) o `v2`. Las cuatro tools v2 ya implementadas están en el resumen anterior; esta tabla recoge el resto del backlog. Sirven de guía y deben cumplir los criterios de entrada de [`02-mvp-scope.md`](02-mvp-scope.md#criterios-de-entrada-para-herramientas-de-backlog). Las specs completas están en el [índice de herramientas](tools/README.md).
 
 | Categoría | Ejemplos (aspiracionales; solo algunos tienen spec) | Estado |
 |---|---|---|
 | Energía | PVPC/OMIE horario, horas baratas, simulador de tarifa, optimizador de potencia, autoconsumo, huella de carbono | v2 |
-| Tesorería | previsor 13 semanas, escenarios de estrés, DSO/DPO/DIO, cash conversion cycle, factoring | v2 |
-| Finanzas empresa | EBITDA, cash flow, break-even, ratios, presupuestos vs. real, KPIs con semáforos | v2 |
+| Tesorería | escenarios de estrés, factoring, vencimientos por factura | v2 |
+| Finanzas empresa | ratios avanzados, presupuestos vs. real, KPIs con semáforos, segmentos | v2 |
 | Compras | detector de subidas anómalas, RFP centralizada, registro de ahorro, renovaciones unificadas | v2 |
 | Legal/regulatorio | concursos (BORME/Registro Concursal), lista de morosos, convenio colectivo, indemnización, obligaciones por CNAE | v2 |
 | RR. HH. | vacaciones, absentismo, coste laboral, rotación | backlog |
@@ -442,4 +474,4 @@ Herramientas previstas para la comunidad, con estado `backlog` (sin fecha) o `v2
 | Utilidades | QR, auditoría web (WHOIS/SSL), subvenciones (BDNS), imágenes de producto | backlog |
 | Simuladores | rentabilidad solar, contratación de comercial → `praxis-sim` | v2 |
 
-Las 42 specs (21 MVP, 18 v2 y 3 backlog) se mantienen en el [índice de herramientas](tools/README.md) de este repositorio.
+Las 42 specs (21 MVP, 18 v2 —4 implementadas— y 3 backlog) se mantienen en el [índice de herramientas](tools/README.md) de este repositorio.

@@ -13,7 +13,7 @@ Su valor no es la cantidad de herramientas, sino que cada resultado responda de 
 
 ## Estado
 
-**Fase 3 — Cierre de decisiones (en curso).** Las 21 tools del MVP están registradas y expuestas por REST y MCP; el toolchain, la autenticación, el control de toolsets por tenant, la idempotencia y el registro de ejecución funcionan con stores en memoria o SQLAlchemy protegidos por RLS. El esquema, el seeder demo y los defaults §8 ya están cerrados. Siguen pendientes la validación legal, el QR v3 y los adaptadores reales de Google Calendar, OCR, renderizado PDF, almacenamiento de documentos, repositorio de contratos y envío de avisos; el estado detallado está en [`TODO.md`](TODO.md) y el alcance canónico en [`docs/02-mvp-scope.md`](docs/02-mvp-scope.md).
+**Fase 2 — v2 (en curso).** Las 21 tools del MVP y 4 tools v2 de finanzas determinista (`finance.business_kpi`, `finance.ebitda`, `finance.break_even` y `finance.cashflow_13w`) están registradas y expuestas por REST y MCP; el toolchain, la autenticación, el control de toolsets por tenant, la idempotencia y el registro de ejecución funcionan con stores en memoria o SQLAlchemy protegidos por RLS. El esquema, el seeder demo y los defaults §8 del MVP están cerrados. Siguen pendientes la validación legal, el QR v3, el resto del roadmap v2 y los adaptadores reales de Google Calendar, OCR, renderizado PDF, almacenamiento de documentos, repositorio de contratos y envío de avisos; el estado detallado está en [`TODO.md`](TODO.md) y el alcance canónico en [`docs/02-mvp-scope.md`](docs/02-mvp-scope.md).
 
 ## Arquitectura en una frase
 
@@ -52,10 +52,10 @@ Comprobar el estado del servidor:
 
 ```bash
 curl http://127.0.0.1:8000/health
-# {"status":"ok","service":"praxis","version":"0.1.0","tools":21}
+# {"status":"ok","service":"praxis","version":"0.1.0","tools":25}
 ```
 
-El catálogo incluye las 21 tools del MVP y se puede invocar por REST:
+El catálogo incluye 25 tools (21 del MVP y 4 v2) y se puede invocar por REST:
 
 ```bash
 curl -X POST http://127.0.0.1:8000/api/tools/finance.vat \

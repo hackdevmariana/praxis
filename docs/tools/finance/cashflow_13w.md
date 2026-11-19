@@ -167,3 +167,5 @@ class Cashflow13wOutput(BaseModel):
 - Pendiente: fechas de cobro/pago por factura (vencimientos reales) en lugar de agregados semanales; dataset.
 - Pendiente: impuestos, nóminas y financiación (confirming/factoring); validación legal.
 - Pendiente: exportación a Excel/CSV y gráficos; decisión de producto.
+- Implementado: 13 semanas exactas, saldos con `ROUND_HALF_UP`, mínimo y primera semana en empate, warning `negative_balance_risk` y `week_start` opcional.
+- Implementado: salida con metadatos `user_input`, `is_estimated=true` y disclaimer; tests golden, límites y propiedades en `tests/`.

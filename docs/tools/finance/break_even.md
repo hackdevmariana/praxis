@@ -164,3 +164,5 @@ class BreakEvenOutput(BaseModel):
 - Pendiente: punto de equilibrio multiproducto (mix de ventas y márgenes por producto); decisión de producto.
 - Pendiente: costes fijos escalonados (tramos) y economías de escala; decisión de producto.
 - Pendiente: impuestos y coste financiero en una variante "break-even neto"; validación legal.
+- Implementado: punto de equilibrio unitario con `ceil`, margen de contribución positivo obligatorio y `invalid_params` si no lo es.
+- Implementado: `margin_of_safety` nulo sin `expected_units` o con `expected_units=0`; tests golden, errores y propiedades en `tests/`.

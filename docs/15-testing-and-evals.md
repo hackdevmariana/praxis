@@ -48,6 +48,10 @@ Con `Hypothesis`:
 - `finance.vat`: `base + vat == total` (con redondeo controlado).
 - `finance.discounts`: aplicar y revertir recupera el importe original (dentro de tolerancia).
 - `finance.loan_schedule`: suma de amortización == principal; último saldo == 0.
+- `finance.business_kpi`: `ebit = gross_profit − opex`; `ebitda = ebit + D&A`.
+- `finance.ebitda`: `ebit = ebitda − D&A`.
+- `finance.break_even`: `break_even_units × price ≥ fixed_costs`; unidades objetivo ≥ unidades de equilibrio.
+- `finance.cashflow_13w`: `end_balance = opening_balance + Σ(neto semanal)`; cierres negativos y warning coinciden.
 - `datetime.business_days`: nunca cuenta festivos; simétrico salvo extremos.
 - `units.convert`: convertir ida y vuelta recupera el valor (tolerancia).
 

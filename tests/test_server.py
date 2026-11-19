@@ -52,6 +52,23 @@ def test_rest_tool_returns_envelope() -> None:
     assert body["metadata"]["warnings"] == []
 
 
+def test_rest_v2_finance_tool_returns_envelope() -> None:
+    with TestClient(create_app(AuthSettings())) as client:
+        response = client.post(
+            "/api/tools/finance.business_kpi",
+            json={"revenue": "1000", "cogs": "600", "operating_expenses": "250"},
+            headers={"x-request-id": "req-v2-finance"},
+        )
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["success"] is True
+    assert body["tool"] == "finance.business_kpi"
+    assert body["data"]["gross_profit"] == "400.00"
+    assert body["metadata"]["source"] == "user_input"
+    assert body["metadata"]["legal_disclaimer_required"] is True
+
+
 def test_rest_validation_error_returns_422() -> None:
     with TestClient(create_app(AuthSettings())) as client:
         response = client.post("/api/tools/finance.vat", json={"amount": "-1"})

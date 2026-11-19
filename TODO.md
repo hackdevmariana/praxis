@@ -124,6 +124,24 @@
 - [x] Decisiones cerradas con defaults en las 42 specs (§8, o §5/§6 en backlog) y convención documentada en `docs/tools/README.md`.
 - [x] Contradicciones resueltas en `compare_offers`, `datetime.calc`, `validate.spanish_id` y `generate_invoice`.
 
+## Fase 2 — v2 (en curso)
+
+### Finanzas determinista
+
+- [x] `finance.business_kpi` — KPIs con datos aportados y ratios sin denominador definido.
+- [x] `finance.ebitda` — EBITDA, EBITDA ajustado y EBIT.
+- [x] `finance.break_even` — equilibrio unitario, objetivo y margen de seguridad.
+- [x] `finance.cashflow_13w` — previsión semanal a 13 semanas.
+- [x] Tests golden, límites, errores, propiedades y smoke REST para las 4 tools.
+- [x] Specs §8 y catálogo actualizados con las decisiones implementadas.
+
+### Pendiente del roadmap v2
+
+- [ ] Conectores contables y bancarios (PSD2) para KPIs sobre datos reales del tenant.
+- [ ] ESIOS/OMIE y cadena de herramientas de energía.
+- [ ] Routing semántico y gateway WhatsApp/Telegram.
+- [ ] S3/MinIO, OIDC y simuladores `praxis-sim`.
+
 ## Huecos y decisiones pendientes
 
 - [x] Cerrar las decisiones §8 con defaults acordados en [`docs/tools/`](docs/tools/README.md); los restantes requieren producto, proveedor o validación legal.

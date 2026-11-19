@@ -109,6 +109,8 @@ tool: dominio.accion
 
 ### Extras v2
 
+Las cuatro tools de finanzas determinista ya están implementadas; el resto sigue en roadmap.
+
 | Tool | Spec |
 |---|---|
 | `energy.pvpc_hourly` | [`energy/pvpc_hourly.md`](energy/pvpc_hourly.md) |

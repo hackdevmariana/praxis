@@ -146,3 +146,5 @@ class EbitdaOutput(BaseModel):
 - Pendiente: EBITDA por segmento de negocio; decisión de producto.
 - Pendiente: tratamiento de arrendamientos (IFRS 16) y comparabilidad con PYMES; validación profesional.
 - Pendiente: validación con gestoría de las partidas no recurrentes; validación profesional.
+- Implementado: EBITDA, EBITDA ajustado, EBIT y márgenes a 2 decimales con `undefined_ratio` si `revenue=0`.
+- Implementado: salida con metadatos `user_input`, `is_estimated=true` y disclaimer; tests golden, límites e invariantes en `tests/`.

@@ -176,3 +176,5 @@ class BusinessKpiOutput(BaseModel):
 - Pendiente: DSO/DPO ponderados por importe y por vencimiento, no solo saldo medio; decisión de producto.
 - Pendiente: inclusión de impuestos/intereses para resultado neto y ROE/ROA; decisión de producto.
 - Pendiente: validar fórmulas con gestoría antes de publicar como referencia; validación profesional.
+- Implementado: cálculo base con entradas no negativas, `period_days` 30–366, ratios a 2 decimales y `null` + `undefined_ratio` cuando el denominador es 0.
+- Implementado: salida con metadatos `user_input`, `is_estimated=true` y disclaimer; tests golden, límites y propiedades en `tests/`.
