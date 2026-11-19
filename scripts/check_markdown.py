@@ -16,7 +16,12 @@ EXTERNAL_PREFIXES = ("http://", "https://", "mailto:", "tel:")
 
 
 def _targets() -> list[Path]:
-    files = [ROOT / "README.md", ROOT / "TODO.md"]
+    files = [
+        ROOT / "README.md",
+        ROOT / "TODO.md",
+        ROOT / "CHANGELOG.md",
+        ROOT / "tests" / "fixtures" / "README.md",
+    ]
     files.extend(sorted((ROOT / "docs").rglob("*.md")))
     return files
 
