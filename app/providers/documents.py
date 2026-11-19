@@ -65,6 +65,10 @@ class InvoiceRenderer(Protocol):
     def render_pdf(self, html: str) -> bytes: ...
 
 
+class InvoiceOcr(Protocol):
+    async def extract_text(self, *, content: bytes, language: str | None) -> str: ...
+
+
 class _UnconfiguredDocumentStore:
     async def number_exists(
         self,
@@ -115,9 +119,18 @@ class _UnconfiguredInvoiceRenderer:
         )
 
 
+class _UnconfiguredInvoiceOcr:
+    async def extract_text(self, *, content: bytes, language: str | None) -> str:
+        raise ToolError(
+            ErrorCode.PROVIDER_UNAVAILABLE,
+            "El OCR de facturas no está configurado.",
+        )
+
+
 _store: DocumentStore = _UnconfiguredDocumentStore()
 _renderer: InvoiceRenderer = _UnconfiguredInvoiceRenderer()
 _repository: DocumentRepository = _UnconfiguredDocumentRepository()
+_ocr: InvoiceOcr = _UnconfiguredInvoiceOcr()
 
 
 def get_document_store(ctx: ToolContext) -> DocumentStore:
@@ -132,13 +145,19 @@ def get_document_repository(ctx: ToolContext) -> DocumentRepository:
     return _repository
 
 
+def get_invoice_ocr(ctx: ToolContext) -> InvoiceOcr:
+    return _ocr
+
+
 def set_document_adapters(
     store: DocumentStore | None = None,
     renderer: InvoiceRenderer | None = None,
+    ocr: InvoiceOcr | None = None,
 ) -> None:
-    global _store, _renderer
+    global _store, _renderer, _ocr
     _store = store or _UnconfiguredDocumentStore()
     _renderer = renderer or _UnconfiguredInvoiceRenderer()
+    _ocr = ocr or _UnconfiguredInvoiceOcr()
 
 
 def set_document_repository(repository: DocumentRepository | None) -> None:

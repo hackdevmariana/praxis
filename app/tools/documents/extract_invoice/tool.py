@@ -9,10 +9,10 @@ from decimal import Decimal, InvalidOperation
 import pdfplumber
 
 from app.context import ToolContext
-from app.errors import ToolError
+from app.errors import ErrorCode, ToolError
 from app.money import quantize_money
 from app.providers.cache import TTLCache
-from app.providers.documents import get_document_repository
+from app.providers.documents import get_document_repository, get_invoice_ocr
 from app.registry import tool
 from app.result import ToolResult, tool_result
 from app.tools.documents.extract_invoice.schemas import (
@@ -163,8 +163,10 @@ def _confidence(fields: dict[str, bool]) -> float:
     return round(0.93 * coverage, 2)
 
 
-def _extract(text: str) -> tuple[ExtractInvoiceOutput, list[str]]:
+def _extract(text: str, *, ocr_used: bool = False) -> tuple[ExtractInvoiceOutput, list[str]]:
     if len(text.strip()) < 100:
+        warnings = ["low_confidence", "currency_not_detected"]
+        warnings.append("ocr_no_text" if ocr_used else "ocr_unavailable")
         return (
             ExtractInvoiceOutput(
                 issuer=None,
@@ -180,7 +182,7 @@ def _extract(text: str) -> tuple[ExtractInvoiceOutput, list[str]]:
                 needs_review=True,
                 confidence=0.0,
             ),
-            ["low_confidence", "currency_not_detected", "ocr_unavailable"],
+            warnings,
         )
 
     issuer = _issuer(text)
@@ -313,13 +315,28 @@ async def extract_invoice(
             "unsupported_format",
             "No se pudo leer el PDF.",
         ) from error
+    ocr_used = False
+    if len(text.strip()) < 100:
+        try:
+            ocr_text = await get_invoice_ocr(ctx).extract_text(
+                content=document.content,
+                language=params.language,
+            )
+        except ToolError as error:
+            if error.code != ErrorCode.PROVIDER_UNAVAILABLE:
+                raise
+        else:
+            if ocr_text.strip():
+                text = ocr_text
+                ocr_used = True
+
     processing_time_ms = int((time.perf_counter() - started) * 1000)
 
     language = params.language
     if language is None and re.search(r"(?i)\b(factura|albar[aá]n|presupuesto)\b", text):
         language = "es"
 
-    output, warnings = _extract(text)
+    output, warnings = _extract(text, ocr_used=ocr_used)
     cached = _CACHE.set(
         cache_key,
         _CachedExtraction(
@@ -337,15 +354,15 @@ async def extract_invoice(
         metadata_extra={
             "source": "document",
             "source_type": "extraction",
-            "source_detail": "pdfplumber",
+            "source_detail": "tesseract" if ocr_used else "pdfplumber",
             "valid_until": cached.valid_until,
             "result_type": "extraction",
             "confidence": output.confidence,
-            "processor": "pdfplumber",
+            "processor": "tesseract" if ocr_used else "pdfplumber",
             "extraction_version": _EXTRACTION_VERSION,
             "language_detected": language,
             "processing_time_ms": processing_time_ms,
-            "ocr_used": False,
+            "ocr_used": ocr_used,
             "extraction_cached": False,
         },
     )

@@ -17,6 +17,7 @@ dependencies = [
     "python-stdnum>=2.2",
     "sqlalchemy[asyncio]>=2.0.44",
     "uvicorn[standard]>=0.54.0",
+    "weasyprint>=66.0",
 ]
 
 [dependency-groups]
