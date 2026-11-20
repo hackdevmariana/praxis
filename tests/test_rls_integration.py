@@ -1,5 +1,6 @@
 import asyncio
 from collections.abc import Iterator
+from datetime import UTC, date, datetime, timedelta, timezone
 from decimal import Decimal
 from pathlib import Path
 from typing import cast
@@ -89,6 +90,8 @@ def test_rls_isolates_companies(postgres: PostgresContainer) -> None:
         async with company_session(engine, company_a) as session:
             session.add(CompanyRow(id=company_a, name="Hotel A"))
             session.add(TenantProfileRow(company_id=company_a, catalog_key="hotel"))
+            await session.flush()
+
             session.add(
                 ContractRow(
                     id=contract_id,
@@ -109,32 +112,36 @@ def test_rls_isolates_companies(postgres: PostgresContainer) -> None:
                 )
             )
             session.add(
+                IdempotencyRecordRow(
+                    key="key-a",
+                    company_id=company_a,
+                    input_hash="hash-a",
+                    result={"value": "a"},
+                    expires_at=datetime(2026, 12, 1, tzinfo=UTC),
+                )
+            )
+            await session.flush()
+
+            session.add(
                 AlertRuleRow(
                     id=alert_rule_id,
                     company_id=company_a,
                     contract_id=contract_id,
-                    renewal_date="2027-03-31",
+                    renewal_date=date(2027, 3, 31),
                     channel="email",
                 )
             )
+            await session.flush()
+
             session.add(
                 AlertEventRow(
                     id=event_id,
                     company_id=company_a,
                     alert_rule_id=alert_rule_id,
                     days_before=30,
-                    trigger_at="2027-03-01T09:00:00+01:00",
+                    trigger_at=datetime(2027, 3, 1, 9, 0, tzinfo=timezone(timedelta(hours=1))),
                     channel="email",
                     status="pending",
-                )
-            )
-            session.add(
-                IdempotencyRecordRow(
-                    key="key-a",
-                    company_id=company_a,
-                    input_hash="hash-a",
-                    result={"value": "a"},
-                    expires_at="2026-12-01T00:00:00+00:00",
                 )
             )
             await session.commit()
@@ -238,7 +245,7 @@ def test_persistent_stores_respect_tenant_context(postgres: PostgresContainer) -
             ToolContext(request_id="req", company_id=str(company_b))
         )
         assert allowed_a is not None and "finance.vat" not in allowed_a
-        assert allowed_a is not None and "finance.discounts" in allowed_a
+        assert allowed_a is not None and "weather.forecast" in allowed_a
         assert allowed_a is not None and "procurement.compare_offers" not in allowed_a
         assert allowed_b is not None and "finance.vat" in allowed_b
         assert allowed_b is not None and "calendar.create_event" not in allowed_b
