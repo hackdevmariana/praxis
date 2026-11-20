@@ -14,6 +14,7 @@ Todas las entradas notables se documentarán en este archivo. Formato: Keep a Ch
 - Adaptadores reales configurables para Google Calendar OAuth, OCR Tesseract, WeasyPrint, almacenamiento local, persistencia SQL de eventos/contratos/avisos y notificación SMTP.
 - 4 tools v2 de compras: `procurement.detect_price_increase`, `procurement.savings_ledger`, `procurement.renewal_calendar` y `procurement.rfp_generation`.
 - Migración `0004_procurement_v2` con `savings_entries` y RLS; repositorios SQL de ahorros y renovaciones y `ArtifactStore.save_artifact`.
+- 3 tools v2 de energía determinista: `energy.carbon_footprint`, `energy.tariff_simulator` y `energy.self_consumption_payback`.
 
 ### Changed
 

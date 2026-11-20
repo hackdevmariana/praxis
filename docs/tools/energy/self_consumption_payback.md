@@ -185,6 +185,7 @@ class SelfConsumptionOutput(BaseModel):
 
 ## 8. Decisiones pendientes
 
+- Implementado: flujo anual con degradación, excedentes y OPEX; payback simple/interpolado, VAN y TIR por bisección con `irr_pct=null` cuando no hay cambio de signo.
 - Pendiente: modelo horario de autoconsumo con curva de consumo y producción (v3); dataset.
 - Pendiente: subvenciones (BDNS) y deducciones fiscales (IRPF/IS) como ajustes de `capex`; validación legal.
 - Pendiente: precios de la energía crecientes (`price_escalation_pct`); decisión de producto.

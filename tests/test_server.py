@@ -179,6 +179,57 @@ def test_rest_v2_procurement_rfp_generation() -> None:
     assert body["metadata"]["effect"] == "document_created"
 
 
+def test_rest_v2_energy_deterministic_tools() -> None:
+    with TestClient(create_app(AuthSettings())) as client:
+        carbon = client.post(
+            "/api/tools/energy.carbon_footprint",
+            json={"electricity_kwh": "1000", "factor_overrides": None},
+        )
+        tariffs = client.post(
+            "/api/tools/energy.tariff_simulator",
+            json={
+                "annual_consumption_kwh": "3500",
+                "peak_share_pct": "40",
+                "contracted_power_kw": "4.6",
+                "tariffs": [
+                    {
+                        "name": "A",
+                        "power_price_eur_kw_year": "40",
+                        "energy_price_peak_eur_kwh": "0.22",
+                        "energy_price_valley_eur_kwh": "0.14",
+                        "standing_charge_eur_month": "2",
+                    },
+                    {
+                        "name": "B",
+                        "power_price_eur_kw_year": "35",
+                        "energy_price_peak_eur_kwh": "0.19",
+                        "energy_price_valley_eur_kwh": "0.12",
+                        "standing_charge_eur_month": "3",
+                    },
+                ],
+            },
+        )
+        payback = client.post(
+            "/api/tools/energy.self_consumption_payback",
+            json={
+                "installation_kwp": "5",
+                "annual_production_kwh": "7000",
+                "self_consumption_pct": "60",
+                "capex": "5000",
+                "electricity_price_eur_kwh": "0.18",
+                "export_price_eur_kwh": "0.06",
+                "annual_opex": "50",
+            },
+        )
+
+    assert carbon.status_code == 200
+    assert carbon.json()["data"]["total_kgco2e"] == "150.00"
+    assert tariffs.status_code == 200
+    assert tariffs.json()["data"]["ranking"][0]["name"] == "B"
+    assert payback.status_code == 200
+    assert payback.json()["data"]["year1_savings"] == "874.00"
+
+
 def test_rest_validation_error_returns_422() -> None:
     with TestClient(create_app(AuthSettings())) as client:
         response = client.post("/api/tools/finance.vat", json={"amount": "-1"})

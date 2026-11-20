@@ -61,7 +61,7 @@ El MVP combina el top-3 real del cliente con un conjunto de herramientas determi
 - **Documentos:** extracción de facturas (PDF → JSON) y generación de facturas/albaranes.
 - **Agenda:** consultar y agendar citas con Google Calendar vía OAuth **por usuario** (agenda personal y de empresa separadas); el conector OAuth y el espejo persistente de eventos ya están implementados.
 - **Comparativas de negocio:** comparación de ofertas y precios, calculadora de ahorro de comisiones TPV, detector de subidas, registro de ahorros, calendario de renovaciones y generación de pliegos (Markdown/PDF). El cálculo de KPIs con datos aportados ya está disponible en v2; sobre datos contables conectados llega con los conectores.
-- **Calculadoras deterministas:** IVA, márgenes, préstamos, descuentos, fechas, validaciones, unidades, divisas, clima, geocoding.
+- **Calculadoras deterministas:** IVA, márgenes, préstamos, descuentos, fechas, validaciones, unidades, divisas, clima, geocoding, huella de carbono, comparativa de tarifas eléctricas y rentabilidad de autoconsumo.
 - **Alertas mínimas:** renovaciones de contratos a 60/30/15 días.
 
 El detalle y los criterios de corte están en [`02-mvp-scope.md`](02-mvp-scope.md). El catálogo completo está en [`03-tools-catalog.md`](03-tools-catalog.md).

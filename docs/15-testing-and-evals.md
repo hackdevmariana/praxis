@@ -54,6 +54,9 @@ Con `Hypothesis`:
 - `finance.cashflow_13w`: `end_balance = opening_balance + Σ(neto semanal)`; cierres negativos y warning coinciden.
 - `datetime.business_days`: nunca cuenta festivos; simétrico salvo extremos.
 - `units.convert`: convertir ida y vuelta recupera el valor (tolerancia).
+- `energy.carbon_footprint`: scopes y fuentes suman exactamente el total; factores override solo sobre actividades conocidas.
+- `energy.tariff_simulator`: ranking ordenado por coste, puestos consecutivos y ahorro contra la tarifa más cara.
+- `energy.self_consumption_payback`: payback interpolado no anterior al simple con producción decreciente.
 
 Reglas de dinero:
 
@@ -110,6 +113,6 @@ uv run ruff format --check .
 uv run pyright
 uv run python scripts/check_markdown.py
 uv run pytest -q --cov=app --cov-report=xml --cov-fail-under=80
-uv run coverage report --include="app/tools/finance/*,app/tools/datetime/*,app/tools/units/*,app/tools/validate/*,app/tools/procurement/*,app/money.py,app/business_days.py,app/holidays.py,app/clock.py" --fail-under=90
+uv run coverage report --include="app/tools/finance/*,app/tools/datetime/*,app/tools/units/*,app/tools/validate/*,app/tools/procurement/*,app/tools/energy/*,app/money.py,app/business_days.py,app/holidays.py,app/clock.py" --fail-under=90
 uv run pytest -q -m integration   # testcontainers
 ```

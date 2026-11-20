@@ -5,7 +5,7 @@ version: 0.1.0
 
 # Catálogo de herramientas
 
-Este documento describe las **29 herramientas implementadas** (21 MVP y 8 v2) y el backlog documentado para la comunidad. La definición canónica vive en código (decorador `@tool`); este catálogo es su reflejo navegable. El índice de las 42 specs (21 MVP, 18 v2 —8 implementadas— y 3 backlog) está en [`tools/README.md`](tools/README.md).
+Este documento describe las **32 herramientas implementadas** (21 MVP y 11 v2) y el backlog documentado para la comunidad. La definición canónica vive en código (decorador `@tool`); este catálogo es su reflejo navegable. El índice de las 42 specs (21 MVP, 18 v2 —11 implementadas— y 3 backlog) está en [`tools/README.md`](tools/README.md).
 
 ## Convenciones
 
@@ -28,6 +28,7 @@ Cada nombre enlaza a su spec detallada en [`docs/tools/`](tools/README.md).
 | Validación | [`validate.spanish_id`](tools/validate/spanish_id.md), [`validate.iban`](tools/validate/iban.md), [`validate.email_phone`](tools/validate/email_phone.md), [`units.convert`](tools/units/convert.md) |
 | Datos externos | [`currency.convert`](tools/currency/convert.md), [`weather.forecast`](tools/weather/forecast.md), [`geo.geocode`](tools/geo/geocode.md) |
 | Compras | [`procurement.tpv_savings`](tools/procurement/tpv_savings.md), [`procurement.compare_offers`](tools/procurement/compare_offers.md), [`procurement.detect_price_increase`](tools/procurement/detect_price_increase.md), [`procurement.savings_ledger`](tools/procurement/savings_ledger.md), [`procurement.renewal_calendar`](tools/procurement/renewal_calendar.md), [`procurement.rfp_generation`](tools/procurement/rfp_generation.md) |
+| Energía | [`energy.carbon_footprint`](tools/energy/carbon_footprint.md), [`energy.tariff_simulator`](tools/energy/tariff_simulator.md), [`energy.self_consumption_payback`](tools/energy/self_consumption_payback.md) |
 | Agenda | [`calendar.list_events`](tools/calendar/list_events.md), [`calendar.create_event`](tools/calendar/create_event.md) |
 | Documentos | [`documents.extract_invoice`](tools/documents/extract_invoice.md), [`documents.generate_invoice`](tools/documents/generate_invoice.md) |
 | Alertas | [`alerts.contract_renewal`](tools/alerts/contract_renewal.md) |
@@ -417,6 +418,63 @@ Salida: `{ document_id, path, title, deadline, criteria_count, suppliers_count, 
 
 ---
 
+## Energía
+
+Tools v2 deterministas sobre datos aportados por el usuario; no consultan ESIOS/OMIE ni usan `TenantProfile` con catálogo propio (`catalog_key=general`).
+
+### `energy.carbon_footprint` — v0.1.0
+
+Convierte consumos de electricidad, gas, diesel, gasolina, residuos y transporte en emisiones `kgCO₂e` por alcance y fuente.
+
+- `read_only: true`, `idempotent: true`, `requires_confirmation: false`
+- Permiso: `energy.read` · Clasificación: `business`
+- Perfil: `all`
+- Factores `2026.1`; `factor_overrides` permite seis claves y valores `>= 0`.
+
+| Entrada | Tipo |
+|---|---|
+| `electricity_kwh`, `gas_kwh`, `diesel_liters`, `gasoline_liters`, `waste_kg`, `transport_km` | Decimal `>= 0` (por defecto `0`) |
+| `period_start`, `period_end` | date (opcionales, obligatorios juntos y ordenados) |
+| `factor_overrides` | dict[str, Decimal] o null |
+
+Salida: `{ period_start, period_end, scope1_kgco2e, scope2_kgco2e, scope3_kgco2e, total_kgco2e, intensity_kgco2e_per_kwh, by_source }`. Avisos: `custom_factors` y `possible_double_counting`.
+
+### `energy.tariff_simulator` — v0.1.0
+
+Compara 2-5 tarifas eléctricas con un único tramo punta/valle y potencia contratada.
+
+- `read_only: true`, `idempotent: true`, `requires_confirmation: false`
+- Permiso: `energy.read` · Clasificación: `business`
+- Perfil: `all`
+
+| Entrada | Tipo |
+|---|---|
+| `annual_consumption_kwh` | Decimal `>= 0` |
+| `peak_share_pct` | Decimal 0-100 (por defecto `40`) |
+| `contracted_power_kw` | Decimal `> 0` |
+| `tariffs` | list[TariffInput] (2-5, nombres únicos) |
+
+Salida: `{ annual_consumption_kwh, peak_kwh, valley_kwh, currency, ranking, savings_pct_best }`. Cada resultado incluye desglose de potencia, energía y cargo fijo, `rank`, `savings_vs_most_expensive` e `is_cheapest`.
+
+### `energy.self_consumption_payback` — v0.1.0
+
+Simula 1-40 anualidades de una instalación fotovoltaica con degradación, autoconsumo, excedentes y OPEX.
+
+- `read_only: true`, `idempotent: true`, `requires_confirmation: false`
+- Permiso: `energy.read` · Clasificación: `business`
+- Perfil: `all`
+
+| Entrada | Tipo |
+|---|---|
+| `installation_kwp`, `annual_production_kwh` | Decimal `> 0` |
+| `self_consumption_pct`, `degradation_pct`, `discount_rate_pct` | Decimal con rangos 0-100, 0-10 y 0-30 |
+| `capex`, `electricity_price_eur_kwh`, `export_price_eur_kwh`, `annual_opex` | Decimal `>= 0` |
+| `years`, `currency` | int 1-40 (por defecto `25`), str de 3 letras (por defecto `EUR`) |
+
+Salida: `{ year1_savings, simple_payback_years, payback_years, npv, irr_pct, cashflows, currency }`. `irr_pct` es `null` sin cambio de signo y `payback_years` es `null` si no se alcanza dentro del horizonte.
+
+---
+
 ## Agenda
 
 OAuth de Google **por usuario**: cada persona conecta su cuenta. Los eventos de empresa y personales viven en calendarios separados; la escritura también persiste un espejo en `calendar_events`. Ver [`13-connectors.md`](13-connectors.md).
@@ -535,7 +593,7 @@ Salida: `{ alert_rule_id, renewal_date, next_trigger_at, schedule: [{days_before
 
 ## Backlog documentado
 
-Herramientas previstas para la comunidad, con estado `backlog` (sin fecha) o `v2`. Las ocho tools v2 ya implementadas están en el resumen anterior; esta tabla recoge el resto del backlog. Sirven de guía y deben cumplir los criterios de entrada de [`02-mvp-scope.md`](02-mvp-scope.md#criterios-de-entrada-para-herramientas-de-backlog). Las specs completas están en el [índice de herramientas](tools/README.md).
+Herramientas previstas para la comunidad, con estado `backlog` (sin fecha) o `v2`. Las once tools v2 ya implementadas están en el resumen anterior; esta tabla recoge el resto del backlog. Sirven de guía y deben cumplir los criterios de entrada de [`02-mvp-scope.md`](02-mvp-scope.md#criterios-de-entrada-para-herramientas-de-backlog). Las specs completas están en el [índice de herramientas](tools/README.md).
 
 | Categoría | Ejemplos (aspiracionales; solo algunos tienen spec) | Estado |
 |---|---|---|
@@ -552,4 +610,4 @@ Herramientas previstas para la comunidad, con estado `backlog` (sin fecha) o `v2
 | Utilidades | QR, auditoría web (WHOIS/SSL), subvenciones (BDNS), imágenes de producto | backlog |
 | Simuladores | rentabilidad solar, contratación de comercial → `praxis-sim` | v2 |
 
-Las 42 specs (21 MVP, 18 v2 —8 implementadas— y 3 backlog) se mantienen en el [índice de herramientas](tools/README.md) de este repositorio.
+Las 42 specs (21 MVP, 18 v2 —11 implementadas— y 3 backlog) se mantienen en el [índice de herramientas](tools/README.md) de este repositorio.

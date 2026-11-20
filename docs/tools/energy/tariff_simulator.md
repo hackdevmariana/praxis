@@ -202,6 +202,7 @@ class TariffSimulatorOutput(BaseModel):
 
 ## 8. Decisiones pendientes
 
+- Implementado: reparto punta/valle, potencia y cargo fijo para 2-5 tarifas con nombres únicos; ranking, ahorro porcentual y `savings_pct_best=null` sin consumo.
 - Pendiente: periodos horarios P1/P2/P3 (2.0TD/3.0TD) y potencias por periodo; dataset.
 - Pendiente: impuestos (IVA, impuesto eléctrico) y excedentes de autoconsumo; validación legal.
 - Pendiente: tarifas indexadas con fórmula PVPC + margen; decisión de producto.

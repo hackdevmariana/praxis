@@ -9,6 +9,12 @@ from app.context import ToolContext
 from app.money import quantize_money
 from app.tools.datetime.business_days.schemas import BusinessDaysInput
 from app.tools.datetime.business_days.tool import business_days
+from app.tools.energy.carbon_footprint.schemas import CarbonInput
+from app.tools.energy.carbon_footprint.tool import calculate_carbon_footprint
+from app.tools.energy.self_consumption_payback.schemas import SelfConsumptionInput
+from app.tools.energy.self_consumption_payback.tool import calculate_self_consumption_payback
+from app.tools.energy.tariff_simulator.schemas import TariffSimulatorInput
+from app.tools.energy.tariff_simulator.tool import simulate_tariffs
 from app.tools.finance.break_even.schemas import BreakEvenInput
 from app.tools.finance.break_even.tool import calculate_break_even
 from app.tools.finance.business_kpi.schemas import BusinessKpiInput
@@ -258,6 +264,98 @@ def test_cashflow_closing_balance_chain(
     assert output.weeks_with_negative_balance == sum(
         week.closing_balance < 0 for week in output.weeks
     )
+
+
+@settings(max_examples=40, deadline=None)
+@given(
+    electricity=st.decimals(min_value=0, max_value=10000, places=2),
+    gas=st.decimals(min_value=0, max_value=10000, places=2),
+)
+def test_carbon_scopes_are_additive(electricity: Decimal, gas: Decimal) -> None:
+    output = asyncio.run(
+        calculate_carbon_footprint(
+            CarbonInput.model_validate({"electricity_kwh": electricity, "gas_kwh": gas}),
+            CTX,
+        )
+    ).data
+
+    assert output.total_kgco2e == (
+        output.scope1_kgco2e + output.scope2_kgco2e + output.scope3_kgco2e
+    )
+    assert sum(item.emissions_kgco2e for item in output.by_source) == output.total_kgco2e
+
+
+@settings(max_examples=40, deadline=None)
+@given(
+    consumption=st.decimals(min_value=0, max_value=10000, places=2),
+    peak_share=st.decimals(min_value=0, max_value=100, places=2),
+)
+def test_tariff_ranking_is_consistent(consumption: Decimal, peak_share: Decimal) -> None:
+    output = asyncio.run(
+        simulate_tariffs(
+            TariffSimulatorInput.model_validate(
+                {
+                    "annual_consumption_kwh": consumption,
+                    "peak_share_pct": peak_share,
+                    "contracted_power_kw": "4.6",
+                    "tariffs": [
+                        {
+                            "name": "A",
+                            "power_price_eur_kw_year": "40",
+                            "energy_price_peak_eur_kwh": "0.22",
+                            "energy_price_valley_eur_kwh": "0.14",
+                            "standing_charge_eur_month": "2",
+                        },
+                        {
+                            "name": "B",
+                            "power_price_eur_kw_year": "35",
+                            "energy_price_peak_eur_kwh": "0.19",
+                            "energy_price_valley_eur_kwh": "0.12",
+                            "standing_charge_eur_month": "3",
+                        },
+                    ],
+                }
+            ),
+            CTX,
+        )
+    ).data
+    costs = [item.annual_cost for item in output.ranking]
+
+    assert costs == sorted(costs)
+    assert [item.rank for item in output.ranking] == list(range(1, len(costs) + 1))
+    assert [item.is_cheapest for item in output.ranking] == [
+        item.rank == 1 for item in output.ranking
+    ]
+    assert all(
+        item.savings_vs_most_expensive == max(costs) - item.annual_cost for item in output.ranking
+    )
+
+
+@settings(max_examples=20, deadline=None)
+@given(price=st.decimals(min_value=Decimal("0.10"), max_value=Decimal("0.50"), places=2))
+def test_payback_is_not_earlier_than_simple_payback(price: Decimal) -> None:
+    output = asyncio.run(
+        calculate_self_consumption_payback(
+            SelfConsumptionInput.model_validate(
+                {
+                    "installation_kwp": "5",
+                    "annual_production_kwh": "7000",
+                    "self_consumption_pct": "60",
+                    "capex": "5000",
+                    "electricity_price_eur_kwh": price,
+                    "export_price_eur_kwh": "0.06",
+                    "annual_opex": "50",
+                    "degradation_pct": "0.5",
+                    "years": 25,
+                }
+            ),
+            CTX,
+        )
+    ).data
+
+    assert output.simple_payback_years is not None
+    assert output.payback_years is not None
+    assert output.payback_years >= output.simple_payback_years - Decimal("0.01")
 
 
 @settings(max_examples=40, deadline=None)

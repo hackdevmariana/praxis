@@ -33,7 +33,7 @@ Punto de entrada único de la documentación de PRAXIS. El alcance canónico del
 ## Decisiones y especificaciones
 
 - [ADRs](adr/README.md) — decisiones de arquitectura ADR-001 a ADR-008.
-- [Especificaciones de tools](tools/README.md) — 42 specs: 21 MVP, 18 v2 (8 implementadas) y 3 backlog.
+- [Especificaciones de tools](tools/README.md) — 42 specs: 21 MVP, 18 v2 (11 implementadas) y 3 backlog.
 - [Scripts](../scripts/README.md) — utilidades de desarrollo, datos y despliegue local.
 
 ## Estado

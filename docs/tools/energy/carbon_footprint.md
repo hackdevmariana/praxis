@@ -198,6 +198,7 @@ class CarbonOutput(BaseModel):
 
 ## 8. Decisiones pendientes
 
+- Implementado: factores `2026.1` por defecto y `factor_overrides` acotados a las seis actividades definidas; intensidad y avisos `custom_factors`/`possible_double_counting`.
 - Pendiente: factores oficiales por año y comunidad (MITECO) y factores de mercado (location-based vs market-based); dataset.
 - Pendiente: alcance 3 ampliado (compras, viajes, cadena de suministro); decisión de producto.
 - Pendiente: verificación/auditoría del inventario y exportación a formatos GHG Protocol; requiere auditoría externa.

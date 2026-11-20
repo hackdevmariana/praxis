@@ -21,7 +21,7 @@ jobs:
       - name: Coverage de lógica determinista
         run: >-
           uv run coverage report
-          --include="app/tools/finance/*,app/tools/datetime/*,app/tools/units/*,app/tools/validate/*,app/tools/procurement/*,app/money.py,app/business_days.py,app/holidays.py,app/clock.py"
+          --include="app/tools/finance/*,app/tools/datetime/*,app/tools/units/*,app/tools/validate/*,app/tools/procurement/*,app/tools/energy/*,app/money.py,app/business_days.py,app/holidays.py,app/clock.py"
           --fail-under=90
 
   integration:

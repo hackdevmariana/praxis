@@ -144,6 +144,14 @@
 - [x] Tests golden, límites, errores, propiedades, integración RLS y smoke REST para las 4 tools.
 - [x] Specs §8, catálogo y modelos de datos actualizados con las decisiones implementadas.
 
+### Energía v2
+
+- [x] `energy.carbon_footprint` — factores versionados, personalizables y análisis por alcance/fuente.
+- [x] `energy.tariff_simulator` — reparto punta/valle, costes anuales y ranking de 2-5 tarifas.
+- [x] `energy.self_consumption_payback` — flujo anual, payback simple/interpolado, VAN y TIR por bisección.
+- [x] Tests golden, límites, errores, propiedades y smoke REST para las 3 tools.
+- [x] Specs §8 y catálogo actualizados con las decisiones implementadas.
+
 ### Pendiente del roadmap v2
 
 - [ ] Conectores contables y bancarios (PSD2) para KPIs sobre datos reales del tenant.

@@ -13,7 +13,7 @@ Este documento define qué se construyó, en qué orden y qué queda fuera. El M
 |---|---|---|
 | **Fase 0 — Documentación (completada)** | Cerrar arquitectura, modelos, catálogo y compatibilidades antes de codificar. | `docs/` completo y coherente (42 specs). |
 | **Fase 1 — MVP (completada)** | Implementar 21 herramientas y el servidor MCP con multi-tenancy. | Backend ejecutable + tests (verificado). |
-| **Fase 2 — v2 (en curso)** | Conectores, routing semántico, canal WhatsApp/Telegram, simuladores. | Finanzas determinista implementada; backlog priorizado. |
+| **Fase 2 — v2 (en curso)** | Conectores, routing semántico, canal WhatsApp/Telegram, simuladores. | Finanzas, compras y energía deterministas implementadas; backlog priorizado. |
 | **Fase 3 — Futuro** | C-Level completo, SaaS por planes, comunidad de herramientas. | Roadmap abierto. |
 
 > En esta tabla, Fase 2/3 significan el roadmap de producto. `TODO.md` usó “Fase 2” para persistencia y “Fase 3” para cierre de decisiones; ambos hitos están completados y ahora usa “Fase 2 — v2” para el roadmap.
@@ -50,7 +50,7 @@ Este documento define qué se construyó, en qué orden y qué queda fuera. El M
 
 ### Herramientas documentadas pero fuera del MVP
 
-Sus specs completas (42 en total: 21 MVP, 18 v2 —8 implementadas— y 3 backlog) están en el [índice de herramientas](tools/README.md); [`03-tools-catalog.md`](03-tools-catalog.md) ofrece un resumen por categoría y los criterios de entrada. Incluyen:
+Sus specs completas (42 en total: 21 MVP, 18 v2 —11 implementadas— y 3 backlog) están en el [índice de herramientas](tools/README.md); [`03-tools-catalog.md`](03-tools-catalog.md) ofrece un resumen por categoría y los criterios de entrada. Incluyen:
 
 - **Energía:** PVPC/OMIE horario, horas más baratas, simulador de tarifa, optimizador de potencia, autoconsumo, huella de carbono.
 - **Tesorería y finanzas:** previsor a 13 semanas, escenarios de estrés, DSO/DPO/DIO, cash conversion cycle, factoring.
@@ -101,5 +101,5 @@ Cada escenario debe devolver JSON con metadatos completos y quedar registrado en
 
 | Fase | Contenido |
 |---|---|
-| **v2** | Finanzas determinista (implementada), conectores contables y bancarios (PSD2), ESIOS/OMIE, routing semántico, gateway WhatsApp/Telegram, `praxis-sim`, S3, OIDC, simulador de decisión. |
+| **v2** | Finanzas, compras y energía deterministas (implementadas), conectores contables y bancarios (PSD2), ESIOS/OMIE, routing semántico, gateway WhatsApp/Telegram, `praxis-sim`, S3, OIDC, simulador de decisión. |
 | **Futuro** | C-Level completo, planes SaaS con catálogo por `TenantProfile`, marketplace de herramientas comunitarias, ESG, análisis de competencia/SEO, generación de contenidos con modelo mixto. |

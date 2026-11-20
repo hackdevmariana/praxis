@@ -13,7 +13,7 @@ Su valor no es la cantidad de herramientas, sino que cada resultado responda de 
 
 ## Estado
 
-**Fase 2 — v2 (en curso).** Las 21 tools del MVP, 4 tools v2 de finanzas determinista (`finance.business_kpi`, `finance.ebitda`, `finance.break_even` y `finance.cashflow_13w`) y 4 tools v2 de compras (`procurement.detect_price_increase`, `procurement.savings_ledger`, `procurement.renewal_calendar` y `procurement.rfp_generation`) están registradas y expuestas por REST y MCP; el toolchain, la autenticación, el control de toolsets por tenant, la idempotencia y el registro de ejecución funcionan con stores en memoria o SQLAlchemy protegidos por RLS. El esquema, el seeder demo y los defaults §8 del MVP están cerrados. Los adaptadores reales de Google Calendar, OCR, renderizado PDF, almacenamiento de documentos, repositorio de contratos, notificación SMTP y repositorios SQL de ahorros/renovaciones ya están disponibles; siguen pendientes la validación legal, el QR v3 y el resto del roadmap v2. El estado detallado está en [`TODO.md`](TODO.md) y el alcance canónico en [`docs/02-mvp-scope.md`](docs/02-mvp-scope.md).
+**Fase 2 — v2 (en curso).** Las 21 tools del MVP, 4 tools v2 de finanzas determinista (`finance.business_kpi`, `finance.ebitda`, `finance.break_even` y `finance.cashflow_13w`), 4 tools v2 de compras (`procurement.detect_price_increase`, `procurement.savings_ledger`, `procurement.renewal_calendar` y `procurement.rfp_generation`) y 3 tools v2 de energía (`energy.carbon_footprint`, `energy.tariff_simulator` y `energy.self_consumption_payback`) están registradas y expuestas por REST y MCP; el toolchain, la autenticación, el control de toolsets por tenant, la idempotencia y el registro de ejecución funcionan con stores en memoria o SQLAlchemy protegidos por RLS. El esquema, el seeder demo y los defaults §8 del MVP están cerrados. Los adaptadores reales de Google Calendar, OCR, renderizado PDF, almacenamiento de documentos, repositorio de contratos, notificación SMTP y repositorios SQL de ahorros/renovaciones ya están disponibles; siguen pendientes la validación legal, el QR v3 y el resto del roadmap v2. El estado detallado está en [`TODO.md`](TODO.md) y el alcance canónico en [`docs/02-mvp-scope.md`](docs/02-mvp-scope.md).
 
 ## Arquitectura en una frase
 
@@ -52,10 +52,10 @@ Comprobar el estado del servidor:
 
 ```bash
 curl http://127.0.0.1:8000/health
-# {"status":"ok","service":"praxis","version":"0.1.0","tools":29}
+# {"status":"ok","service":"praxis","version":"0.1.0","tools":32}
 ```
 
-El catálogo incluye 29 tools (21 del MVP y 8 v2) y se puede invocar por REST:
+El catálogo incluye 32 tools (21 del MVP y 11 v2) y se puede invocar por REST:
 
 ```bash
 curl -X POST http://127.0.0.1:8000/api/tools/finance.vat \
@@ -125,7 +125,7 @@ Las credenciales, binarios del sistema (`tesseract`, librerías nativas de Weasy
 - [`00-overview.md`](docs/00-overview.md) — qué es PRAXIS, por qué y para quién.
 - [`01-architecture.md`](docs/01-architecture.md) — verticales, capas y flujo de ejecución.
 - [`02-mvp-scope.md`](docs/02-mvp-scope.md) — alcance, herramientas y criterios de corte.
-- [`03-tools-catalog.md`](docs/03-tools-catalog.md) — catálogo de las 29 herramientas implementadas y backlog.
+- [`03-tools-catalog.md`](docs/03-tools-catalog.md) — catálogo de las 32 herramientas implementadas y backlog.
 - [`04-routing.md`](docs/04-routing.md) — capa de canal y `intents.yaml` (v2).
 - [`05-data-models.md`](docs/05-data-models.md) — dominios, RLS y modelos.
 - [`06-external-apis.md`](docs/06-external-apis.md) — proveedores, límites y fallbacks.
