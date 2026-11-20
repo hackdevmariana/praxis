@@ -117,19 +117,24 @@ class SqlAlchemyToolAccessPolicy:
             )
             if profile is None or not profile.is_active:
                 return frozenset()
+            catalog_key = profile.catalog_key
             activations = (
                 await session.scalars(
                     select(ToolActivationRow).where(ToolActivationRow.company_id == company_id)
                 )
             ).all()
+            enabled = {
+                row.tool_name for row in activations if row.is_enabled and not row.deprecated
+            }
+            disabled = {
+                row.tool_name for row in activations if not row.is_enabled or row.deprecated
+            }
 
         try:
-            tools = catalog_tools(profile.catalog_key)
+            tools = catalog_tools(catalog_key)
         except ValueError:
             return frozenset()
 
-        enabled = {row.tool_name for row in activations if row.is_enabled and not row.deprecated}
-        disabled = {row.tool_name for row in activations if not row.is_enabled or row.deprecated}
         if enabled or disabled:
             tools = (tools - disabled) | (enabled & tools)
         return frozenset(tools)
