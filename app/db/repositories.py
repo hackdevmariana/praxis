@@ -86,6 +86,7 @@ class SqlAlertRuleRepository:
                     idempotency_key=rule.idempotency_key,
                 )
             )
+            await session.flush()
             session.add_all(
                 [
                     AlertEventRow(
