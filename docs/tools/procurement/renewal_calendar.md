@@ -93,7 +93,7 @@ class RenewalCalendarOutput(BaseModel):
 
 ## 5. Golden cases
 
-Sin fixture en `tests/fixtures`; tool v2 sin tests propios. La tool MVP `alerts.contract_renewal` usa contratos inline en `tests/test_alerts_contract_renewal.py` con reloj fijo **2026-11-13**.
+Sin fixture en `tests/fixtures`; la tool v2 tiene tests inline en `tests/test_procurement_renewal_calendar.py` con proveedor inyectado. La tool MVP `alerts.contract_renewal` usa contratos inline en `tests/test_alerts_contract_renewal.py` con reloj fijo **2026-11-13**.
 
 ```json
 {
@@ -178,6 +178,8 @@ Sin fixture en `tests/fixtures`; tool v2 sin tests propios. La tool MVP `alerts.
 
 ## 8. Decisiones pendientes
 
+- Implementado: `RenewalRepository` inyectable (`PRAXIS_RENEWAL_REPOSITORY=sql`) sobre `contracts`, `alert_rules` y `alert_events`, `notice_days` derivado de `days_before` y fail-closed con `provider_unavailable`.
+- Implementado: `next_renewal` con `days_remaining`, filtro `category`, scope `procurement.read` y tests golden/límites/errores en `tests/`.
 - Pendiente: exportación a iCalendar (`.ics`) y vista por proveedor; decisión de producto.
 - Pendiente: renovaciones tácitas y preavisos legales por tipo de contrato; validación legal.
 - Pendiente: coste estimado real (facturas) frente a coste de contrato; dataset.

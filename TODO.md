@@ -135,6 +135,15 @@
 - [x] Tests golden, límites, errores, propiedades y smoke REST para las 4 tools.
 - [x] Specs §8 y catálogo actualizados con las decisiones implementadas.
 
+### Compras v2
+
+- [x] `procurement.detect_price_increase` — umbrales fijos, basis points y propiedades.
+- [x] `procurement.savings_ledger` — `savings_entries` con RLS y proveedor SQL inyectable.
+- [x] `procurement.renewal_calendar` — renovaciones desde contratos, reglas y avisos.
+- [x] `procurement.rfp_generation` — pliego Markdown/PDF con confirmación e idempotencia central.
+- [x] Tests golden, límites, errores, propiedades, integración RLS y smoke REST para las 4 tools.
+- [x] Specs §8, catálogo y modelos de datos actualizados con las decisiones implementadas.
+
 ### Pendiente del roadmap v2
 
 - [ ] Conectores contables y bancarios (PSD2) para KPIs sobre datos reales del tenant.

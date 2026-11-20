@@ -109,7 +109,7 @@ tool: dominio.accion
 
 ### Extras v2
 
-Las cuatro tools de finanzas determinista ya están implementadas; el resto sigue en roadmap.
+Las cuatro tools de finanzas determinista y las cuatro de compras v2 ya están implementadas; el resto sigue en roadmap.
 
 | Tool | Spec |
 |---|---|

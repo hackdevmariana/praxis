@@ -1,6 +1,8 @@
 import asyncio
 import json
+from datetime import date, timedelta
 from typing import Any
+from uuid import UUID
 
 from fastapi.testclient import TestClient
 from mcp.client._memory import InMemoryTransport  # pyright: ignore[reportPrivateImportUsage]
@@ -15,6 +17,9 @@ from app.auth import (
     issue_access_token,
 )
 from app.main import create_app
+from app.providers.documents import set_artifact_store
+from app.providers.renewals import set_renewal_repository
+from app.providers.savings import set_savings_repository
 from app.registry import registry
 from app.tenancy import InMemoryToolAccessPolicy, TenantProfile
 
@@ -67,6 +72,111 @@ def test_rest_v2_finance_tool_returns_envelope() -> None:
     assert body["data"]["gross_profit"] == "400.00"
     assert body["metadata"]["source"] == "user_input"
     assert body["metadata"]["legal_disclaimer_required"] is True
+
+
+class _EmptySavingsRepository:
+    async def list_for_company(
+        self, *, company_id: str, period_start: date, period_end: date
+    ) -> list[Any]:
+        return []
+
+
+class _EmptyRenewalRepository:
+    async def list_for_company(self, *, company_id: str) -> list[Any]:
+        return []
+
+
+class _FakeArtifactStore:
+    async def save_artifact(
+        self,
+        *,
+        company_id: str,
+        document_id: UUID,
+        document_type: str,
+        extension: str,
+        content: bytes,
+        index_key: str,
+    ) -> str:
+        return f"{company_id}/{document_id}.{extension}"
+
+
+def test_rest_v2_procurement_detect_price_increase() -> None:
+    with TestClient(create_app(AuthSettings())) as client:
+        response = client.post(
+            "/api/tools/procurement.detect_price_increase",
+            json={
+                "items": [
+                    {
+                        "supplier": "Aceites S.L.",
+                        "description": "Aceite",
+                        "previous_unit_price": "20",
+                        "current_unit_price": "24",
+                    }
+                ]
+            },
+        )
+
+    body = response.json()
+    assert response.status_code == 200
+    assert body["success"] is True
+    assert body["data"]["high_count"] == 1
+    assert body["metadata"]["source"] == "user_input"
+
+
+def test_rest_v2_procurement_savings_ledger() -> None:
+    set_savings_repository(_EmptySavingsRepository())
+    with TestClient(create_app(AuthSettings())) as client:
+        response = client.post(
+            "/api/tools/procurement.savings_ledger",
+            json={"period_start": "2026-01-01", "period_end": "2026-12-31"},
+        )
+
+    body = response.json()
+    assert response.status_code == 200
+    assert body["success"] is True
+    assert body["data"]["count"] == 0
+    assert body["metadata"]["source"] == "database"
+
+
+def test_rest_v2_procurement_renewal_calendar() -> None:
+    set_renewal_repository(_EmptyRenewalRepository())
+    with TestClient(create_app(AuthSettings())) as client:
+        response = client.post(
+            "/api/tools/procurement.renewal_calendar",
+            json={"reference_date": "2026-11-13", "horizon_days": 30},
+        )
+
+    body = response.json()
+    assert response.status_code == 200
+    assert body["success"] is True
+    assert body["data"]["count"] == 0
+    assert body["metadata"]["source"] == "database"
+
+
+def test_rest_v2_procurement_rfp_generation() -> None:
+    set_artifact_store(_FakeArtifactStore())
+    deadline = (date.today() + timedelta(days=30)).isoformat()
+    with TestClient(create_app(AuthSettings())) as client:
+        response = client.post(
+            "/api/tools/procurement.rfp_generation",
+            json={
+                "title": "Suministro de aceite",
+                "category": "supplies",
+                "scope_description": "Acuerdo marco anual.",
+                "requirements": ["Entrega en 72 horas"],
+                "evaluation_criteria": [{"name": "Precio", "weight_pct": "100"}],
+                "deadline": deadline,
+                "contact_email": "compras@asociacion.example",
+                "idempotency_key": "rfp-smoke-2027",
+            },
+            headers={"X-PRAXIS-Confirm": "true"},
+        )
+
+    body = response.json()
+    assert response.status_code == 200
+    assert body["success"] is True
+    assert body["data"]["format"] == "md"
+    assert body["metadata"]["effect"] == "document_created"
 
 
 def test_rest_validation_error_returns_422() -> None:

@@ -202,6 +202,8 @@ class RfpOutput(BaseModel):
 
 ## 8. Decisiones pendientes
 
+- Implementado: Markdown y PDF con `ArtifactStore` inyectable, HTML saneado, `checksum_sha256`, confirmación (`confirmation_required`) e idempotencia central en el ejecutor; scope `procurement.write`.
+- Implementado: `PRAXIS_DOCUMENTS_ADAPTER=local` habilita `save_artifact`, `default_language=es`, `currency=EUR`, `source=user_input` y tests golden/límites/errores/dedupe en `tests/`.
 - Pendiente: plantillas por sector y cláusulas legales revisadas; validación legal.
 - Pendiente: envío de invitaciones y portal de recepción de ofertas; requiere API.
 - Pendiente: firma electrónica y registro de comunicaciones; validación legal.

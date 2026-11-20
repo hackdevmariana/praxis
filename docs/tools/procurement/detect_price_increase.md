@@ -150,6 +150,8 @@ class PriceIncreaseOutput(BaseModel):
 
 ## 8. Decisiones pendientes
 
+- Implementado: umbral fijo configurable (`threshold_pct`), `change_amount` y `change_pct` con `Decimal`, `is_new_price` sin porcentaje, `source=user_input` y tests golden/límites/propiedades en `tests/`.
+- Implementado: scope `procurement.read` y errores estables (`invalid_params`, `provider_unavailable`); sin LLM en el cálculo de la señal.
 - Pendiente: detección estadística (media/mediana histórica, z-score) además del umbral fijo; decisión de producto.
 - Pendiente: comparación entre proveedores para el mismo producto; decisión de producto.
 - Pendiente: estacionalidad y variaciones de materia prima (índices públicos); dataset.

@@ -5,7 +5,7 @@ version: 0.1.0
 
 # Catálogo de herramientas
 
-Este documento describe las **25 herramientas implementadas** (21 MVP y 4 v2) y el backlog documentado para la comunidad. La definición canónica vive en código (decorador `@tool`); este catálogo es su reflejo navegable. El índice de las 42 specs (21 MVP, 18 v2 —4 implementadas— y 3 backlog) está en [`tools/README.md`](tools/README.md).
+Este documento describe las **29 herramientas implementadas** (21 MVP y 8 v2) y el backlog documentado para la comunidad. La definición canónica vive en código (decorador `@tool`); este catálogo es su reflejo navegable. El índice de las 42 specs (21 MVP, 18 v2 —8 implementadas— y 3 backlog) está en [`tools/README.md`](tools/README.md).
 
 ## Convenciones
 
@@ -27,7 +27,7 @@ Cada nombre enlaza a su spec detallada en [`docs/tools/`](tools/README.md).
 | Finanzas | [`finance.vat`](tools/finance/vat.md), [`finance.margin`](tools/finance/margin.md), [`finance.loan_schedule`](tools/finance/loan_schedule.md), [`finance.discounts`](tools/finance/discounts.md), [`finance.business_kpi`](tools/finance/business_kpi.md), [`finance.ebitda`](tools/finance/ebitda.md), [`finance.break_even`](tools/finance/break_even.md), [`finance.cashflow_13w`](tools/finance/cashflow_13w.md) |
 | Validación | [`validate.spanish_id`](tools/validate/spanish_id.md), [`validate.iban`](tools/validate/iban.md), [`validate.email_phone`](tools/validate/email_phone.md), [`units.convert`](tools/units/convert.md) |
 | Datos externos | [`currency.convert`](tools/currency/convert.md), [`weather.forecast`](tools/weather/forecast.md), [`geo.geocode`](tools/geo/geocode.md) |
-| Compras | [`procurement.tpv_savings`](tools/procurement/tpv_savings.md), [`procurement.compare_offers`](tools/procurement/compare_offers.md) |
+| Compras | [`procurement.tpv_savings`](tools/procurement/tpv_savings.md), [`procurement.compare_offers`](tools/procurement/compare_offers.md), [`procurement.detect_price_increase`](tools/procurement/detect_price_increase.md), [`procurement.savings_ledger`](tools/procurement/savings_ledger.md), [`procurement.renewal_calendar`](tools/procurement/renewal_calendar.md), [`procurement.rfp_generation`](tools/procurement/rfp_generation.md) |
 | Agenda | [`calendar.list_events`](tools/calendar/list_events.md), [`calendar.create_event`](tools/calendar/create_event.md) |
 | Documentos | [`documents.extract_invoice`](tools/documents/extract_invoice.md), [`documents.generate_invoice`](tools/documents/generate_invoice.md) |
 | Alertas | [`alerts.contract_renewal`](tools/alerts/contract_renewal.md) |
@@ -337,6 +337,84 @@ Normaliza 2-5 presupuestos (PDF o datos estructurados) en una tabla comparable p
 
 Salida: `{ years, normalize_by, currency, ranking, normalized_table }`. La tabla incluye coste recurrente, costes puntuales, total, anual, mensual, ranking y ahorro frente a la oferta más cara.
 
+### `procurement.detect_price_increase` — v0.1.0
+
+Detecta subidas de precio anómalas en precios unitarios aportados por el usuario.
+
+- `read_only: true`, `idempotent: true`
+- Permiso: `procurement.read` · Clasificación: `business`
+- Perfil: `asociacion`
+
+| Entrada | Tipo |
+|---|---|
+| `items` | list[PriceItem] (1-500) |
+| `threshold_pct` | Decimal (0-100, por defecto `10`) |
+
+Salida: `{ alerts, anomalous_count, high_count, medium_count, new_price_count, currency }`. Cada alerta incluye `change_amount`, `change_pct` (nulo si el precio anterior era 0), `annual_impact`, `severity` e `is_new_price`.
+
+### `procurement.savings_ledger` — v0.1.0
+
+Agrega el registro de ahorros del tenant desde `savings_entries` (protegidas por RLS).
+
+- `read_only: true`, `idempotent: true`
+- Permiso: `procurement.read` · Clasificación: `business`
+- Perfil: `asociacion`
+- Proveedor: `PRAXIS_SAVINGS_REPOSITORY=sql`; sin proveedor devuelve `provider_unavailable`.
+
+| Entrada | Tipo |
+|---|---|
+| `period_start` | date (opcional, con `period_end`) |
+| `period_end` | date (opcional, con `period_start`) |
+| `category` | enum: `tpv`, `supplies`, `energy`, `other` (opcional) |
+| `status` | enum: `realized`, `projected`, `all` (por defecto `all`) |
+| `currency` | str (por defecto `EUR`) |
+
+Salida: `{ period_start, period_end, entries, total_savings, total_annualized, by_category, count, currency }`.
+
+### `procurement.renewal_calendar` — v0.1.0
+
+Consulta renovaciones de contratos y avisos a 60/30/15 días desde contratos, reglas y eventos persistidos.
+
+- `read_only: true`, `idempotent: true`
+- Permiso: `procurement.read` · Clasificación: `business`
+- Perfil: `asociacion`
+- Proveedor: `PRAXIS_RENEWAL_REPOSITORY=sql`; sin proveedor devuelve `provider_unavailable`.
+
+| Entrada | Tipo |
+|---|---|
+| `reference_date` | date (opcional) |
+| `horizon_days` | int (1-365, por defecto `90`) |
+| `include_expired` | bool (por defecto `false`) |
+| `category` | str (opcional) |
+| `currency` | str (por defecto `EUR`) |
+
+Salida: `{ reference_date, horizon_end, renewals, count, notice_due_count, next_renewal, currency }`. Cada renovación incluye `days_remaining`, `notice_days`, `status` y `estimated_annual_cost` cuando está disponible.
+
+### `procurement.rfp_generation` — v0.1.0
+
+Genera un pliego RFP en Markdown o PDF y lo guarda como artefacto del tenant.
+
+- `read_only: false`, `idempotent: true`, `requires_confirmation: true`
+- Permiso: `procurement.write` · Clasificación: `business`
+- Perfil: `asociacion`
+- Proveedor: `ArtifactStore` inyectable (`PRAXIS_DOCUMENTS_ADAPTER=local`).
+
+| Entrada | Tipo |
+|---|---|
+| `title` | str (1-200) |
+| `category` | str (1-80) |
+| `scope_description` | str (1-5000) |
+| `requirements` | list[str] (1-100) |
+| `evaluation_criteria` | list[Criterion] (1-20, pesos 100) |
+| `deadline` | date |
+| `budget_max` | Decimal (opcional) |
+| `contact_email` | EmailStr |
+| `suppliers` | list[SupplierRef] (0-50) |
+| `document_format` | enum: `md`, `pdf` (por defecto `md`) |
+| `idempotency_key` | str (8-64) |
+
+Salida: `{ document_id, path, title, deadline, criteria_count, suppliers_count, format, checksum_sha256, deduplicated }`. No envía invitaciones: esa funcionalidad queda para v3.
+
 ---
 
 ## Agenda
@@ -457,14 +535,14 @@ Salida: `{ alert_rule_id, renewal_date, next_trigger_at, schedule: [{days_before
 
 ## Backlog documentado
 
-Herramientas previstas para la comunidad, con estado `backlog` (sin fecha) o `v2`. Las cuatro tools v2 ya implementadas están en el resumen anterior; esta tabla recoge el resto del backlog. Sirven de guía y deben cumplir los criterios de entrada de [`02-mvp-scope.md`](02-mvp-scope.md#criterios-de-entrada-para-herramientas-de-backlog). Las specs completas están en el [índice de herramientas](tools/README.md).
+Herramientas previstas para la comunidad, con estado `backlog` (sin fecha) o `v2`. Las ocho tools v2 ya implementadas están en el resumen anterior; esta tabla recoge el resto del backlog. Sirven de guía y deben cumplir los criterios de entrada de [`02-mvp-scope.md`](02-mvp-scope.md#criterios-de-entrada-para-herramientas-de-backlog). Las specs completas están en el [índice de herramientas](tools/README.md).
 
 | Categoría | Ejemplos (aspiracionales; solo algunos tienen spec) | Estado |
 |---|---|---|
 | Energía | PVPC/OMIE horario, horas baratas, simulador de tarifa, optimizador de potencia, autoconsumo, huella de carbono | v2 |
 | Tesorería | escenarios de estrés, factoring, vencimientos por factura | v2 |
 | Finanzas empresa | ratios avanzados, presupuestos vs. real, KPIs con semáforos, segmentos | v2 |
-| Compras | detector de subidas anómalas, RFP centralizada, registro de ahorro, renovaciones unificadas | v2 |
+| Compras | comparación multi-divisa con normalización fiscal avanzada, portal de recepción de ofertas, envío de invitaciones RFP | v2 |
 | Legal/regulatorio | concursos (BORME/Registro Concursal), lista de morosos, convenio colectivo, indemnización, obligaciones por CNAE | v2 |
 | RR. HH. | vacaciones, absentismo, coste laboral, rotación | backlog |
 | ESG | huella de carbono, intensidad energética, residuos, informe ESG | backlog |
@@ -474,4 +552,4 @@ Herramientas previstas para la comunidad, con estado `backlog` (sin fecha) o `v2
 | Utilidades | QR, auditoría web (WHOIS/SSL), subvenciones (BDNS), imágenes de producto | backlog |
 | Simuladores | rentabilidad solar, contratación de comercial → `praxis-sim` | v2 |
 
-Las 42 specs (21 MVP, 18 v2 —4 implementadas— y 3 backlog) se mantienen en el [índice de herramientas](tools/README.md) de este repositorio.
+Las 42 specs (21 MVP, 18 v2 —8 implementadas— y 3 backlog) se mantienen en el [índice de herramientas](tools/README.md) de este repositorio.

@@ -5,7 +5,7 @@ version: 0.1.0
 
 # Modelos de datos y dominios
 
-Este documento consolida el diseño objetivo de dominios, compatibilidad y aislamiento multi-tenant. La implementación real vive en el paquete `app/`: esquema mínimo en `app/db/models.py` y migraciones `0001_initial_rls`, `0002_tool_execution_log` y `0003_integration_persistence` (`companies`, `tenant_profiles`, `tool_activations`, `idempotency_records`, `tool_execution_logs`, `data_sources`, `calendar_events`, `contracts`, `alert_rules`, `alert_events`). El resto de entidades descritas son diseño/backlog y aún no están materializadas como modelos/tablas. La separación futura en `praxis-biz`/`praxis-knowledge` sigue siendo un objetivo arquitectónico.
+Este documento consolida el diseño objetivo de dominios, compatibilidad y aislamiento multi-tenant. La implementación real vive en el paquete `app/`: esquema mínimo en `app/db/models.py` y migraciones `0001_initial_rls`, `0002_tool_execution_log`, `0003_integration_persistence` y `0004_procurement_v2` (`companies`, `tenant_profiles`, `tool_activations`, `idempotency_records`, `tool_execution_logs`, `data_sources`, `calendar_events`, `contracts`, `alert_rules`, `alert_events`, `savings_entries`). El resto de entidades descritas son diseño/backlog y aún no están materializadas como modelos/tablas. La separación futura en `praxis-biz`/`praxis-knowledge` sigue siendo un objetivo arquitectónico.
 
 ## Convenciones
 
@@ -22,13 +22,13 @@ Este documento consolida el diseño objetivo de dominios, compatibilidad y aisla
 | Grupo | Tablas | `company_id` | RLS |
 |---|---|---|---|
 | Global compartido | `Location`, `EnergyPrice`, `DataSource`, `FiscalCalendarRule`, `LegalNorm`, `RuleParameter`, `TaxRate`, `KnowledgeSource` (genérica), `KnowledgeDocument` (genérica), `KnowledgeChunk` (genérica), `Plan` | No | No aplica |
-| Tenant-scoped | `User`, `Company`, `Membership`, `TenantProfile`, `Client`, `Supplier`, `Contract`, `Order`, `Document`, `DocumentExtraction`, `DocumentComparison`, `Event`, `Task`, `CompanyTaxObligation`, `KPI`, `KPIThreshold`, `Budget`, `CashFlowProjection`, `Loan`, `AlertRule`, `AlertEvent`, `Notification`, `EnergyBill`, `EnergyConsumptionProfile`, `CarbonFootprint`, `Employee`, `Leave`, `PayrollEntry`, `Metric`, `AnomalyDetection`, `Score`, `Message`, `QRCode`, `AuditLog`, `DataConsent`, `Integration`, `IntegrationCredential`, `SyncLog`, `Subscription`, `UsageRecord`, `Invoice` | Sí | Sí |
+| Tenant-scoped | `User`, `Company`, `Membership`, `TenantProfile`, `Client`, `Supplier`, `Contract`, `Order`, `Document`, `DocumentExtraction`, `DocumentComparison`, `Event`, `Task`, `CompanyTaxObligation`, `KPI`, `KPIThreshold`, `Budget`, `CashFlowProjection`, `Loan`, `AlertRule`, `AlertEvent`, `Notification`, `EnergyBill`, `EnergyConsumptionProfile`, `CarbonFootprint`, `Employee`, `Leave`, `PayrollEntry`, `Metric`, `AnomalyDetection`, `Score`, `Message`, `QRCode`, `AuditLog`, `DataConsent`, `Integration`, `IntegrationCredential`, `SyncLog`, `Subscription`, `UsageRecord`, `Invoice`, `SavingsEntry` | Sí | Sí |
 
 > `User` no es estrictamente de una empresa (puede pertenecer a varias vía `Membership`), pero sus datos se filtran por las empresas a las que tiene acceso. Las entidades hijas de tenant (`Score`, `AuditLog`, `DataConsent`, `Notification`, `IntegrationCredential`, `SyncLog`, `Invoice`) **heredan** `company_id` para poder aplicar RLS y borrado GDPR.
 
 ### Implementación MVP de RLS
 
-- La migración `0001_initial_rls` crea el esquema mínimo: `companies`, `tenant_profiles`, `tool_activations`, `idempotency_records` y la tabla global `data_sources`.
+- La migración `0001_initial_rls` crea el esquema mínimo: `companies`, `tenant_profiles`, `tool_activations`, `idempotency_records` y la tabla global `data_sources`; `0004_procurement_v2` añade `savings_entries` y columnas de compras a `contracts`.
 - Todas las tablas tenant llevan `company_id` (en `companies`, su `id` actúa como tal) y activan `ROW LEVEL SECURITY` con `FORCE ROW LEVEL SECURITY`.
 - La política usa `current_setting('praxis.company_id', true)::uuid`. Si no hay contexto, la consulta no devuelve filas tenant.
 - `app/db/rls.py` fija el valor con `set_config('praxis.company_id', :company_id, true)` dentro de la transacción; `company_session(engine, company_id)` es el único acceso recomendado.
@@ -175,6 +175,22 @@ AlertEvent
 Notification
   id, company_id, user_id, channel, message,
   alert_event_id, sent_at, delivered_at, status, created_at
+```
+
+## Dominio 5 bis — Procurement (implementado en `0004_procurement_v2`)
+
+```txt
+SavingsEntry (implementado: app/db/models.py::SavingsEntryRow, migración 0004)
+  id TEXT, company_id UUID, entry_date DATE, category VARCHAR(20),
+  supplier TEXT NULL, description TEXT,
+  baseline_cost NUMERIC(14,2), actual_cost NUMERIC(14,2),
+  annualized_savings NUMERIC(14,2), status VARCHAR(20), created_at
+  RLS por company_id; SqlSavingsRepository.list_for_company filtra por periodo/categoría/estado.
+
+Contract (columnas añadidas en 0004)
+  supplier TEXT NULL, category VARCHAR(80) NULL,
+  estimated_annual_cost NUMERIC(14,2) NULL
+  RenewalRepository construye las renovaciones desde Contract + AlertRule + AlertEvent.
 ```
 
 ## Dominio 6 — Document

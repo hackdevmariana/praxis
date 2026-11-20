@@ -50,7 +50,7 @@ Este documento define qué se construyó, en qué orden y qué queda fuera. El M
 
 ### Herramientas documentadas pero fuera del MVP
 
-Sus specs completas (42 en total: 21 MVP, 18 v2 —4 implementadas— y 3 backlog) están en el [índice de herramientas](tools/README.md); [`03-tools-catalog.md`](03-tools-catalog.md) ofrece un resumen por categoría y los criterios de entrada. Incluyen:
+Sus specs completas (42 en total: 21 MVP, 18 v2 —8 implementadas— y 3 backlog) están en el [índice de herramientas](tools/README.md); [`03-tools-catalog.md`](03-tools-catalog.md) ofrece un resumen por categoría y los criterios de entrada. Incluyen:
 
 - **Energía:** PVPC/OMIE horario, horas más baratas, simulador de tarifa, optimizador de potencia, autoconsumo, huella de carbono.
 - **Tesorería y finanzas:** previsor a 13 semanas, escenarios de estrés, DSO/DPO/DIO, cash conversion cycle, factoring.

@@ -117,7 +117,7 @@ class SavingsLedgerOutput(BaseModel):
 
 ## 5. Golden cases
 
-Los golden cases están inline en esta spec; no hay fixture `savings-ledger-2026.json` en `tests/fixtures` ni implementación/tests para esta tool v2.
+Los golden cases están inline en esta spec; no hay fixture `savings-ledger-2026.json` en `tests/fixtures`. La implementación y sus tests (`tests/test_procurement_savings_ledger.py`) usan entradas inline, con proveedor SQL inyectado.
 
 ```json
 {
@@ -178,6 +178,8 @@ Los golden cases están inline en esta spec; no hay fixture `savings-ledger-2026
 
 ## 8. Decisiones pendientes
 
+- Implementado: `savings_entries` con RLS por `company_id`, `SqlSavingsRepository` inyectable (`PRAXIS_SAVINGS_REPOSITORY=sql`) y fail-closed con `provider_unavailable` si no hay proveedor.
+- Implementado: filtro por periodo y categoría, agregación por `category`, `status` configurable, scope `procurement.read` y tests golden/límites/errores en `tests/`.
 - Pendiente: modelo de alta manual y aprobación de ahorros proyectados; decisión de producto.
 - Pendiente: amortización temporal del ahorro (mensual vs anualizado); decisión de producto.
 - Pendiente: evitar doble conteo entre herramientas que miden el mismo ahorro; decisión de producto.

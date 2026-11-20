@@ -90,7 +90,7 @@ Los tres escenarios de [`02-mvp-scope.md`](02-mvp-scope.md#definición-de-hecho-
 
 1. Hotel: consultar agenda + crear cita con confirmación.
 2. Polígono/CEO: IVA + extracción de factura + comparación de ofertas.
-3. Asociación: ahorro TPV + alerta de renovación.
+3. Asociación: ahorro TPV, detector de subidas, registro de ahorros, renovaciones y pliego RFP; la alerta de renovación sigue cubierta por `alerts.contract_renewal`.
 
 Cada escenario valida JSON de salida, metadatos completos y registro en `ToolExecutionLog`.
 

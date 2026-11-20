@@ -6,6 +6,7 @@ from hypothesis import given, settings
 from hypothesis import strategies as st
 
 from app.context import ToolContext
+from app.money import quantize_money
 from app.tools.datetime.business_days.schemas import BusinessDaysInput
 from app.tools.datetime.business_days.tool import business_days
 from app.tools.finance.break_even.schemas import BreakEvenInput
@@ -22,6 +23,8 @@ from app.tools.finance.loan_schedule.schemas import LoanInput
 from app.tools.finance.loan_schedule.tool import loan_schedule
 from app.tools.finance.vat.schemas import VatInput
 from app.tools.finance.vat.tool import calculate_vat
+from app.tools.procurement.detect_price_increase.schemas import PriceIncreaseInput
+from app.tools.procurement.detect_price_increase.tool import detect_price_increase
 from app.tools.units.convert.schemas import UnitsConvertInput
 from app.tools.units.convert.tool import convert
 
@@ -255,3 +258,34 @@ def test_cashflow_closing_balance_chain(
     assert output.weeks_with_negative_balance == sum(
         week.closing_balance < 0 for week in output.weeks
     )
+
+
+@settings(max_examples=40, deadline=None)
+@given(
+    previous=st.decimals(min_value=Decimal("0"), max_value=Decimal("1000"), places=2),
+    current=st.decimals(min_value=Decimal("0"), max_value=Decimal("1000"), places=2),
+)
+def test_detect_price_increase_change_is_consistent(previous: Decimal, current: Decimal) -> None:
+    output = asyncio.run(
+        detect_price_increase(
+            PriceIncreaseInput.model_validate(
+                {
+                    "items": [
+                        {
+                            "supplier": "Proveedor",
+                            "description": "Producto",
+                            "previous_unit_price": previous,
+                            "current_unit_price": current,
+                        }
+                    ]
+                }
+            ),
+            CTX,
+        )
+    ).data
+    alert = output.alerts[0]
+
+    assert alert.change_amount == quantize_money(current - previous)
+    assert alert.is_new_price is (previous == 0)
+    assert (alert.change_pct is None) is alert.is_new_price
+    assert output.anomalous_count == sum(item.is_anomalous for item in output.alerts)
