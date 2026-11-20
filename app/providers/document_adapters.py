@@ -126,6 +126,35 @@ class LocalFileDocumentStore:
             (self.root / company / "documents.json").write_text(json.dumps(index))
         return f"{company}/{document_id}.pdf"
 
+    async def save_artifact(
+        self,
+        *,
+        company_id: str,
+        document_id: UUID,
+        document_type: str,
+        extension: str,
+        content: bytes,
+        index_key: str,
+    ) -> str:
+        if extension not in {"md", "pdf"}:
+            raise ToolError(
+                ErrorCode.INVALID_PARAMS,
+                "Extensión de documento no soportada.",
+            )
+        company = self.company(company_id)
+        with self.lock(company):
+            target = self.root / company / f"{document_id}.{extension}"
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(content)
+            index = self.read_index(company)
+            index[index_key] = {
+                "document_id": str(document_id),
+                "filename": target.name,
+                "document_type": document_type,
+            }
+            (self.root / company / "documents.json").write_text(json.dumps(index))
+        return f"{company}/{document_id}.{extension}"
+
     def read_index(self, company: str) -> dict[str, Any]:
         path = self.root / company / "documents.json"
         if not path.exists():

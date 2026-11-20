@@ -26,10 +26,12 @@ from app.db.models import (
     ContractRow,
     DataSourceRow,
     IdempotencyRecordRow,
+    SavingsEntryRow,
     TenantProfileRow,
     ToolActivationRow,
     ToolExecutionLogRow,
 )
+from app.db.repositories import SqlRenewalRepository, SqlSavingsRepository
 from app.db.rls import company_session
 from app.idempotency import scoped_key
 from app.result import ToolResult, tool_result
@@ -98,6 +100,24 @@ def test_rls_isolates_companies(postgres: PostgresContainer) -> None:
                     company_id=company_a,
                     external_ref="CTR-1",
                     title="Contrato A",
+                    renewal_date=date(2027, 3, 31),
+                    supplier="Suministros García S.L.",
+                    category="supplies",
+                    estimated_annual_cost=Decimal("12000.00"),
+                )
+            )
+            session.add(
+                SavingsEntryRow(
+                    id="sv_rls_1",
+                    company_id=company_a,
+                    entry_date=date(2026, 11, 10),
+                    category="energy",
+                    supplier="Eléctrica X",
+                    description="Cambio de tarifa",
+                    baseline_cost=Decimal("100.00"),
+                    actual_cost=Decimal("80.00"),
+                    annualized_savings=Decimal("20.00"),
+                    status="realized",
                 )
             )
             session.add(
@@ -190,11 +210,122 @@ def test_rls_isolates_companies(postgres: PostgresContainer) -> None:
             assert events == []
             assert rules == []
             assert alerts == []
+            assert (await session.scalars(select(SavingsEntryRow))).all() == []
 
         async with company_session(engine, company_a) as session:
             session.add(TenantProfileRow(company_id=company_b, catalog_key="hotel"))
             with pytest.raises(SQLAlchemyError):
                 await session.commit()
+
+    asyncio.run(scenario())
+    asyncio.run(engine.dispose())
+
+
+def test_procurement_repositories_respect_tenant_context(postgres: PostgresContainer) -> None:
+    _run_migrations(postgres)
+    engine = create_async_engine(_app_database_url(postgres))
+    company_a = uuid4()
+    company_b = uuid4()
+    contract_id = uuid4()
+    rule_id = uuid4()
+
+    async def scenario() -> None:
+        async with company_session(engine, company_a) as session:
+            session.add(CompanyRow(id=company_a, name="Asociación A"))
+            session.add(TenantProfileRow(company_id=company_a, catalog_key="asociacion"))
+            await session.flush()
+            session.add(
+                ContractRow(
+                    id=contract_id,
+                    company_id=company_a,
+                    title="Suministro eléctrico",
+                    renewal_date=date(2027, 1, 15),
+                    supplier="Eléctrica X",
+                    category="energy",
+                    estimated_annual_cost=Decimal("8400.00"),
+                )
+            )
+            await session.flush()
+            session.add(
+                AlertRuleRow(
+                    id=rule_id,
+                    company_id=company_a,
+                    contract_id=contract_id,
+                    renewal_date=date(2027, 1, 15),
+                    channel="email",
+                )
+            )
+            await session.flush()
+            for days, event_id in ((60, uuid4()), (30, uuid4()), (15, uuid4())):
+                session.add(
+                    AlertEventRow(
+                        id=event_id,
+                        company_id=company_a,
+                        alert_rule_id=rule_id,
+                        days_before=days,
+                        trigger_at=datetime(
+                            2026, 11, 16, 9, 0, tzinfo=timezone(timedelta(hours=1))
+                        ),
+                        channel="email",
+                        status="pending",
+                    )
+                )
+            session.add(
+                SavingsEntryRow(
+                    id="sv_sql_1",
+                    company_id=company_a,
+                    entry_date=date(2026, 6, 1),
+                    category="energy",
+                    supplier="Eléctrica X",
+                    description="Cambio de tarifa",
+                    baseline_cost=Decimal("4200.00"),
+                    actual_cost=Decimal("3000.00"),
+                    annualized_savings=Decimal("1400.00"),
+                    status="realized",
+                )
+            )
+            await session.commit()
+
+        async with company_session(engine, company_b) as session:
+            session.add(CompanyRow(id=company_b, name="Asociación B"))
+            session.add(TenantProfileRow(company_id=company_b, catalog_key="asociacion"))
+            await session.commit()
+
+        savings_repo = SqlSavingsRepository(engine)
+        in_period = await savings_repo.list_for_company(
+            company_id=str(company_a),
+            period_start=date(2026, 1, 1),
+            period_end=date(2026, 12, 31),
+        )
+        assert [entry.id for entry in in_period] == ["sv_sql_1"]
+        assert in_period[0].annualized_savings == Decimal("1400.00")
+        assert (
+            await savings_repo.list_for_company(
+                company_id=str(company_a),
+                period_start=date(2027, 1, 1),
+                period_end=date(2027, 12, 31),
+            )
+            == []
+        )
+        assert (
+            await savings_repo.list_for_company(
+                company_id=str(company_b),
+                period_start=date(2026, 1, 1),
+                period_end=date(2026, 12, 31),
+            )
+            == []
+        )
+
+        renewal_repo = SqlRenewalRepository(engine)
+        renewals = await renewal_repo.list_for_company(company_id=str(company_a))
+        assert len(renewals) == 1
+        assert renewals[0].contract_id == str(contract_id)
+        assert renewals[0].supplier == "Eléctrica X"
+        assert renewals[0].category == "energy"
+        assert renewals[0].renewal_date == date(2027, 1, 15)
+        assert renewals[0].notice_days == (60, 30, 15)
+        assert renewals[0].estimated_annual_cost == Decimal("8400.00")
+        assert await renewal_repo.list_for_company(company_id=str(company_b)) == []
 
     asyncio.run(scenario())
     asyncio.run(engine.dispose())

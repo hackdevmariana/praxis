@@ -61,6 +61,19 @@ class DocumentStore(Protocol):
     ) -> str: ...
 
 
+class ArtifactStore(Protocol):
+    async def save_artifact(
+        self,
+        *,
+        company_id: str,
+        document_id: UUID,
+        document_type: str,
+        extension: str,
+        content: bytes,
+        index_key: str,
+    ) -> str: ...
+
+
 class InvoiceRenderer(Protocol):
     def render_pdf(self, html: str) -> bytes: ...
 
@@ -111,6 +124,23 @@ class _UnconfiguredDocumentStore:
         )
 
 
+class _UnconfiguredArtifactStore:
+    async def save_artifact(
+        self,
+        *,
+        company_id: str,
+        document_id: UUID,
+        document_type: str,
+        extension: str,
+        content: bytes,
+        index_key: str,
+    ) -> str:
+        raise ToolError(
+            ErrorCode.PROVIDER_UNAVAILABLE,
+            "El almacén de documentos no está configurado.",
+        )
+
+
 class _UnconfiguredInvoiceRenderer:
     def render_pdf(self, html: str) -> bytes:
         raise ToolError(
@@ -128,6 +158,7 @@ class _UnconfiguredInvoiceOcr:
 
 
 _store: DocumentStore = _UnconfiguredDocumentStore()
+_artifact_store: ArtifactStore = _UnconfiguredArtifactStore()
 _renderer: InvoiceRenderer = _UnconfiguredInvoiceRenderer()
 _repository: DocumentRepository = _UnconfiguredDocumentRepository()
 _ocr: InvoiceOcr = _UnconfiguredInvoiceOcr()
@@ -135,6 +166,15 @@ _ocr: InvoiceOcr = _UnconfiguredInvoiceOcr()
 
 def get_document_store(ctx: ToolContext) -> DocumentStore:
     return _store
+
+
+def get_artifact_store(ctx: ToolContext) -> ArtifactStore:
+    return _artifact_store
+
+
+def set_artifact_store(store: ArtifactStore | None) -> None:
+    global _artifact_store
+    _artifact_store = store or _UnconfiguredArtifactStore()
 
 
 def get_invoice_renderer(ctx: ToolContext) -> InvoiceRenderer:

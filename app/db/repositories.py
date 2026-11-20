@@ -1,16 +1,25 @@
 from __future__ import annotations
 
+from datetime import date
 from uuid import UUID
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncEngine
 
-from app.db.models import AlertEventRow, AlertRuleRow, CalendarEventRow, ContractRow
+from app.db.models import (
+    AlertEventRow,
+    AlertRuleRow,
+    CalendarEventRow,
+    ContractRow,
+    SavingsEntryRow,
+)
 from app.db.rls import company_session
 from app.errors import ErrorCode, ToolError
 from app.providers.alerts import AlertEventRecord, AlertRuleRecord
 from app.providers.contracts import ContractRecord
 from app.providers.google_calendar import PersistedEvent
+from app.providers.renewals import RenewalRecord
+from app.providers.savings import SavingsEntryRecord
 
 
 def _company(company_id: str) -> UUID:
@@ -102,3 +111,76 @@ class SqlAlertRuleRepository:
                 ]
             )
             await session.commit()
+
+
+class SqlSavingsRepository:
+    def __init__(self, engine: AsyncEngine) -> None:
+        self.engine = engine
+
+    async def list_for_company(
+        self, *, company_id: str, period_start: date, period_end: date
+    ) -> list[SavingsEntryRecord]:
+        company = _company(company_id)
+        async with company_session(self.engine, company) as session:
+            rows = (
+                await session.scalars(
+                    select(SavingsEntryRow)
+                    .where(SavingsEntryRow.entry_date >= period_start)
+                    .where(SavingsEntryRow.entry_date <= period_end)
+                    .order_by(SavingsEntryRow.entry_date.desc(), SavingsEntryRow.id.desc())
+                )
+            ).all()
+            return [
+                SavingsEntryRecord(
+                    id=row.id,
+                    company_id=company_id,
+                    entry_date=row.entry_date,
+                    category=row.category,
+                    supplier=row.supplier,
+                    description=row.description,
+                    baseline_cost=row.baseline_cost,
+                    actual_cost=row.actual_cost,
+                    annualized_savings=row.annualized_savings,
+                    status=row.status,
+                )
+                for row in rows
+            ]
+
+
+class SqlRenewalRepository:
+    def __init__(self, engine: AsyncEngine) -> None:
+        self.engine = engine
+
+    async def list_for_company(self, *, company_id: str) -> list[RenewalRecord]:
+        company = _company(company_id)
+        async with company_session(self.engine, company) as session:
+            contracts = (
+                await session.scalars(
+                    select(ContractRow)
+                    .where(ContractRow.is_active.is_(True))
+                    .where(ContractRow.renewal_date.is_not(None))
+                )
+            ).all()
+            rules = (await session.scalars(select(AlertRuleRow))).all()
+            events = (await session.scalars(select(AlertEventRow))).all()
+            days_by_contract: dict[UUID, list[int]] = {}
+            rule_ids = {rule.id: rule.contract_id for rule in rules}
+            for event in events:
+                contract_id = rule_ids.get(event.alert_rule_id)
+                if contract_id is not None:
+                    days_by_contract.setdefault(contract_id, []).append(event.days_before)
+            renewals: list[RenewalRecord] = []
+            for row in contracts:
+                if row.renewal_date is None:
+                    continue
+                renewals.append(
+                    RenewalRecord(
+                        contract_id=str(row.id),
+                        supplier=row.supplier or "",
+                        category=row.category or "",
+                        renewal_date=row.renewal_date,
+                        notice_days=tuple(sorted(days_by_contract.get(row.id, []), reverse=True)),
+                        estimated_annual_cost=row.estimated_annual_cost,
+                    )
+                )
+            return renewals

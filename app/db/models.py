@@ -1,6 +1,7 @@
 """Minimal tenant and global tables protected by the initial RLS migration."""
 
 from datetime import date, datetime
+from decimal import Decimal
 from typing import Any
 from uuid import UUID, uuid4
 
@@ -11,6 +12,7 @@ from sqlalchemy import (
     ForeignKey,
     Index,
     Integer,
+    Numeric,
     String,
     Text,
     UniqueConstraint,
@@ -120,7 +122,26 @@ class ContractRow(Base):
     external_ref: Mapped[str | None] = mapped_column(Text)
     title: Mapped[str] = mapped_column(Text)
     renewal_date: Mapped[date | None] = mapped_column(Date)
+    supplier: Mapped[str | None] = mapped_column(Text)
+    category: Mapped[str | None] = mapped_column(String(80))
+    estimated_annual_cost: Mapped[Decimal | None] = mapped_column(Numeric(14, 2))
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class SavingsEntryRow(Base):
+    __tablename__ = "savings_entries"
+
+    id: Mapped[str] = mapped_column(Text, primary_key=True)
+    company_id: Mapped[UUID] = mapped_column(ForeignKey("companies.id", ondelete="CASCADE"))
+    entry_date: Mapped[date] = mapped_column(Date)
+    category: Mapped[str] = mapped_column(String(20))
+    supplier: Mapped[str | None] = mapped_column(Text)
+    description: Mapped[str] = mapped_column(Text)
+    baseline_cost: Mapped[Decimal] = mapped_column(Numeric(14, 2))
+    actual_cost: Mapped[Decimal] = mapped_column(Numeric(14, 2))
+    annualized_savings: Mapped[Decimal] = mapped_column(Numeric(14, 2))
+    status: Mapped[str] = mapped_column(String(20))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 

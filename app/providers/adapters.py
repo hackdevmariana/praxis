@@ -13,13 +13,19 @@ from app.providers.document_adapters import (
     TesseractInvoiceOcr,
     WeasyPrintInvoiceRenderer,
 )
-from app.providers.documents import set_document_adapters, set_document_repository
+from app.providers.documents import (
+    set_artifact_store,
+    set_document_adapters,
+    set_document_repository,
+)
 from app.providers.google_calendar import set_calendar_connector, set_event_repository
 from app.providers.google_calendar_adapters import (
     GoogleCalendarConnector,
     RefreshTokenProvider,
     StaticTokenProvider,
 )
+from app.providers.renewals import set_renewal_repository
+from app.providers.savings import set_savings_repository
 
 
 def _flag(name: str, *, default: bool = False) -> bool:
@@ -46,6 +52,9 @@ def configure_adapters(engine: AsyncEngine | None = None, *, reset: bool = False
         set_alert_notifier(None)
         set_document_adapters()
         set_document_repository(None)
+        set_artifact_store(None)
+        set_savings_repository(None)
+        set_renewal_repository(None)
 
     if os.getenv("PRAXIS_CALENDAR_ADAPTER", "").lower() == "google":
         static_token = os.getenv("PRAXIS_GOOGLE_ACCESS_TOKEN")
@@ -81,6 +90,8 @@ def configure_adapters(engine: AsyncEngine | None = None, *, reset: bool = False
         ocr = TesseractInvoiceOcr(languages=os.getenv("PRAXIS_TESSERACT_LANGUAGES", "spa+eng"))
     if store is not None or renderer is not None or ocr is not None:
         set_document_adapters(store, renderer, ocr)
+    if store is not None:
+        set_artifact_store(store)
     if repository is not None:
         set_document_repository(repository)
 
@@ -89,6 +100,8 @@ def configure_adapters(engine: AsyncEngine | None = None, *, reset: bool = False
             SqlAlertRuleRepository,
             SqlContractRepository,
             SqlEventRepository,
+            SqlRenewalRepository,
+            SqlSavingsRepository,
         )
 
         if os.getenv("PRAXIS_EVENT_REPOSITORY", "").lower() == "sql":
@@ -97,6 +110,10 @@ def configure_adapters(engine: AsyncEngine | None = None, *, reset: bool = False
             set_contract_repository(SqlContractRepository(engine))
         if os.getenv("PRAXIS_ALERT_REPOSITORY", "").lower() == "sql":
             set_alert_rule_repository(SqlAlertRuleRepository(engine))
+        if os.getenv("PRAXIS_SAVINGS_REPOSITORY", "").lower() == "sql":
+            set_savings_repository(SqlSavingsRepository(engine))
+        if os.getenv("PRAXIS_RENEWAL_REPOSITORY", "").lower() == "sql":
+            set_renewal_repository(SqlRenewalRepository(engine))
 
     if os.getenv("PRAXIS_ALERT_NOTIFIER", "").lower() == "smtp":
         host = os.getenv("SMTP_HOST", "")

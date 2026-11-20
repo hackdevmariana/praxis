@@ -5,8 +5,14 @@ from app.idempotency import InMemoryIdempotencyStore, set_idempotency_store
 from app.providers.alerts import set_alert_notifier, set_alert_rule_repository
 from app.providers.cache import clear_all_caches
 from app.providers.contracts import set_contract_repository
-from app.providers.documents import set_document_adapters, set_document_repository
+from app.providers.documents import (
+    set_artifact_store,
+    set_document_adapters,
+    set_document_repository,
+)
 from app.providers.google_calendar import set_calendar_connector, set_event_repository
+from app.providers.renewals import set_renewal_repository
+from app.providers.savings import set_savings_repository
 
 
 @pytest.fixture(autouse=True)
@@ -21,3 +27,6 @@ def clear_runtime_state() -> None:
     set_alert_notifier(None)
     set_document_adapters()
     set_document_repository(None)
+    set_artifact_store(None)
+    set_savings_repository(None)
+    set_renewal_repository(None)
